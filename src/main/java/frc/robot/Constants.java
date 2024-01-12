@@ -36,14 +36,11 @@ public final class Constants {
     public static final double MAX_SPEED_METERS_PER_SECOND = 4.3,
         MAX_ANGULAR_SPEED_RAD_PER_SECONDS = 2 * Math.PI; // radians per second
 
-    /** Chassis configuration */
-
     /** Distance between centers of right and left wheels on robot */
-    // TODO: Get these values
-    public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(20.48);
+    public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(22.5);
 
     /** Distance between front and back wheels on robot */
-    public static final double WHEEL_BASE_METERS = Units.inchesToMeters(20.48);
+    public static final double WHEEL_BASE_METERS = Units.inchesToMeters(22.5);
 
     public static final boolean GYRO_REVERSED = false;
 
@@ -91,11 +88,10 @@ public final class Constants {
       public static final double WHEEL_DIAMETER_METERS =
           Units.inchesToMeters(3) * WHEEL_DIAMETER_FUDGE_FACTOR;
       private static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
-      //      TODO: Verify which pinion was installed
       //      12T	 5.50:1
       //      13T	 5.08:1
       //      14T	 4.71:1
-      private static final double DRIVING_MOTOR_REDUCTION = 4.7;
+      private static final double DRIVING_MOTOR_REDUCTION = 4.71;
       public static final double DRIVING_ENCODER_POSITION_FACTOR_METERS =
           WHEEL_CIRCUMFERENCE_METERS / DRIVING_MOTOR_REDUCTION; // meters
       public static final double DRIVING_ENCODER_VELOCITY_FACTOR_METERS_PER_SECOND =

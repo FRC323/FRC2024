@@ -34,7 +34,6 @@ public class SwerveModule implements Sendable {
 
     drivingEncoder = drivingSpark.getEncoder();
     drivingPIDController = drivingSpark.getPIDController();
-    //        TODO: Determine actual encoder type from rev (there's sample code I'm pretty sure)
     turningEncoder = turningSpark.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
     turningPIDController = turningSpark.getPIDController();
 
