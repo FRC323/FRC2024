@@ -54,7 +54,6 @@ public final class Constants {
             new Translation2d(-WHEEL_BASE_METERS / 2, TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2));
 
-    public static final boolean GYRO_REVERSED = false;
     public static int FRONT_LEFT_DRIVING_CAN_ID = 0;
     public static int FRONT_LEFT_TURNING_CAN_ID = 0;
     public static double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
