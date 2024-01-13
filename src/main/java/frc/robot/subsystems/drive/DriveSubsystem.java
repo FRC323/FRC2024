@@ -1,11 +1,13 @@
 package frc.robot.subsystems.drive;
 
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
@@ -14,7 +16,7 @@ import java.util.Optional;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
-  //    TODO: NavX stuff
+  AHRS navx;
   public final SwerveModule frontLeft =
       new SwerveModule(
           Constants.Swerve.FRONT_LEFT_DRIVING_CAN_ID,
@@ -47,7 +49,8 @@ public class DriveSubsystem extends SubsystemBase {
           Constants.Swerve.DRIVE_KINEMATICS, Rotation2d.fromDegrees(0.0), getModulePositions());
 
   public DriveSubsystem() {
-    // TODO: Reset/initialize Gyro
+    navx = new AHRS(SerialPort.Port.kMXP);
+    navx.reset();
   }
 
   @Override
@@ -88,12 +91,14 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getGyroYaw() {
-//    TODO: When you add a gyro replace this with `gyro.getYaw()`
-    return 0.0;
+    navx.getAngle();
   }
 
   public void setGyroYaw(double yawDeg) {
-    // TODO: When you add a gyro replace this with `gyro.setYaw(yawDeg)`
+    // I'm not 100% sure on this to be honest
+    // Reset it to 0, then add an offset negative what you want.
+    navx.reset();
+    navx.setAngleAdjustment(-yawDeg);
   }
 
   public void resetYawToAngle(double yawDeg) {
