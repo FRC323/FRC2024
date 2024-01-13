@@ -146,6 +146,10 @@ public class SwerveModule implements Sendable {
         optimizedState.angle.getRadians(), CANSparkBase.ControlType.kPosition);
   }
 
+  public double getEncoderAbsPositionRad() {
+    return turningEncoder.getPosition();
+  }
+
   public void periodic() {
     turningAbsoluteEncoderChecker.addReading(turningEncoder.getPosition());
   }

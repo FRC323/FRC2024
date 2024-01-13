@@ -4,9 +4,9 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -16,6 +16,8 @@ import java.util.Optional;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
+  private double throttleMultiplier = 1.0;
+  private ChassisSpeeds lastSetChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   AHRS navx;
   public final SwerveModule frontLeft =
       new SwerveModule(
@@ -65,10 +67,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] {
-            frontLeft.getPosition(),
-            frontRight.getPosition(),
-            rearLeft.getPosition(),
-            rearRight.getPosition()
+      frontLeft.getPosition(),
+      frontRight.getPosition(),
+      rearLeft.getPosition(),
+      rearRight.getPosition()
     };
   }
 
@@ -83,7 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
-//  Useful for resetting the pose off of april tag
+  //  Useful for resetting the pose off of april tag
   public void resetOdometry(Pose2d pose) {
     // Just update the translation, not the yaw
     Pose2d resetPose = new Pose2d(pose.getTranslation(), Rotation2d.fromDegrees(getGyroYaw()));
@@ -124,18 +126,103 @@ public class DriveSubsystem extends SubsystemBase {
   private static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
     final double LOOP_TIME_S = 0.02;
     Pose2d futureRobotPose =
-            new Pose2d(
-                    originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
-                    originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,
-                    Rotation2d.fromRadians(originalSpeeds.omegaRadiansPerSecond * LOOP_TIME_S));
+        new Pose2d(
+            originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
+            originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,
+            Rotation2d.fromRadians(originalSpeeds.omegaRadiansPerSecond * LOOP_TIME_S));
     Twist2d twistForPose = GeometryUtils.log(futureRobotPose);
     ChassisSpeeds updatedSpeeds =
-            new ChassisSpeeds(
-                    twistForPose.dx / LOOP_TIME_S,
-                    twistForPose.dy / LOOP_TIME_S,
-                    twistForPose.dtheta / LOOP_TIME_S);
+        new ChassisSpeeds(
+            twistForPose.dx / LOOP_TIME_S,
+            twistForPose.dy / LOOP_TIME_S,
+            twistForPose.dtheta / LOOP_TIME_S);
     return updatedSpeeds;
   }
+
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param xSpeed Desired speed of the robot in the x direction (forward), [-1,1].
+   * @param ySpeed Desired speed of the robot in the y direction (sideways), [-1,1].
+   * @param rot Desired angular rate of the robot, [-1,1].
+   * @param fieldRelative Whether the provided x and y speeds are relative to the field.
+   */
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+
+    // Adjust input based on max speed
+    xSpeed *= Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
+    ySpeed *= Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
+    rot *= Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
+
+    xSpeed *= throttleMultiplier;
+    ySpeed *= throttleMultiplier;
+    rot *= throttleMultiplier;
+
+    ChassisSpeeds desiredChassisSpeeds =
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getGyroYaw()))
+            : new ChassisSpeeds(xSpeed, ySpeed, rot);
+
+    desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
+    lastSetChassisSpeeds = desiredChassisSpeeds;
+
+    var swerveModuleStates =
+        Constants.Swerve.DRIVE_KINEMATICS.toSwerveModuleStates(desiredChassisSpeeds);
+
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        swerveModuleStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
+    frontLeft.setDesiredState(swerveModuleStates[0]);
+    frontRight.setDesiredState(swerveModuleStates[1]);
+    rearLeft.setDesiredState(swerveModuleStates[2]);
+    rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+            desiredStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
+    frontLeft.setDesiredState(desiredStates[0]);
+    frontRight.setDesiredState(desiredStates[1]);
+    rearLeft.setDesiredState(desiredStates[2]);
+    rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+    addChild("Front Right", frontRight);
+    addChild("Front Left", frontLeft);
+    addChild("Rear Right", rearRight);
+    addChild("Rear Left", rearLeft);
+
+    builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
+    builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
+    builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
+    builder.addDoubleProperty(
+            "Odometry Yaw (deg)", () -> getPose().getRotation().getDegrees(), null);
+    builder.addDoubleProperty(
+            "Front Left Abs Encoder (rad)", frontLeft::getEncoderAbsPositionRad, null);
+    builder.addDoubleProperty(
+            "Front Right Abs Encoder (rad)", frontRight::getEncoderAbsPositionRad, null);
+    builder.addDoubleProperty(
+            "Rear Left Abs Encoder (rad)", rearLeft::getEncoderAbsPositionRad, null);
+    builder.addDoubleProperty(
+            "Rear Right Abs Encoder (rad)", rearRight::getEncoderAbsPositionRad, null);
+    builder.addDoubleProperty(
+            "Front Left Module Pos (rad)", () -> frontLeft.getPosition().angle.getRadians(), null);
+    builder.addDoubleProperty(
+            "Front Right Module Pos (rad)", () -> frontRight.getPosition().angle.getRadians(), null);
+    builder.addDoubleProperty(
+            "Rear Left Module Pos (rad)", () -> rearLeft.getPosition().angle.getRadians(), null);
+    builder.addDoubleProperty(
+            "Rear Right Module Pos (rad)", () -> rearRight.getPosition().angle.getRadians(), null);
+    builder.addDoubleProperty(
+            "Front Left Distance (m)", () -> frontLeft.getPosition().distanceMeters, null);
+    builder.addDoubleProperty(
+            "Front Right Distance (m)", () -> frontRight.getPosition().distanceMeters, null);
+    builder.addDoubleProperty(
+            "Rear Left Distance (m)", () -> rearLeft.getPosition().distanceMeters, null);
+    builder.addDoubleProperty(
+            "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
+  }
 }
-
-
