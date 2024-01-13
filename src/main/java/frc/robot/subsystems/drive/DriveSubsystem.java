@@ -93,7 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getGyroYaw() {
-    navx.getAngle();
+    return navx.getAngle();
   }
 
   public void setGyroYaw(double yawDeg) {
