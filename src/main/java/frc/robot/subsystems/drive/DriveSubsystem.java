@@ -6,12 +6,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
-
 import java.util.Optional;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -49,9 +47,11 @@ public class DriveSubsystem extends SubsystemBase {
   SwerveDriveOdometry odometry =
       new SwerveDriveOdometry(
           Constants.Swerve.DRIVE_KINEMATICS, Rotation2d.fromDegrees(0.0), getModulePositions());
+  private ChassisSpeeds actualChassisSpeed;
 
   public DriveSubsystem() {
     navx = new AHRS(SerialPort.Port.kMXP);
+    actualChassisSpeed = new ChassisSpeeds(0,0,0);
     navx.reset();
   }
 
@@ -85,6 +85,10 @@ public class DriveSubsystem extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+
+  public ChassisSpeeds getChassisSpeed() {
+    return actualChassisSpeed;
+  }
   //  Useful for resetting the pose off of april tag
   public void resetOdometry(Pose2d pose) {
     // Just update the translation, not the yaw
@@ -165,6 +169,7 @@ public class DriveSubsystem extends SubsystemBase {
             : new ChassisSpeeds(xSpeed, ySpeed, rot);
 
     desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
+//    This is the last commanded chassis speed not the last actual chassis speed
     lastSetChassisSpeeds = desiredChassisSpeeds;
 
     var swerveModuleStates =
@@ -176,6 +181,14 @@ public class DriveSubsystem extends SubsystemBase {
     frontRight.setDesiredState(swerveModuleStates[1]);
     rearLeft.setDesiredState(swerveModuleStates[2]);
     rearRight.setDesiredState(swerveModuleStates[3]);
+
+    actualChassisSpeed = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(swerveModuleStates);
+  }
+
+  public void setChassisSpeed(ChassisSpeeds speed) {
+    double maxSpeed = Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
+    double maxRotationalSpeed = Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
+    drive(speed.vxMetersPerSecond/maxSpeed, speed.vyMetersPerSecond/maxSpeed, speed.omegaRadiansPerSecond/maxRotationalSpeed, false);
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {

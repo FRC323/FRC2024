@@ -50,6 +50,8 @@ public final class Constants {
             new Translation2d(WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2));
+      public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 2.0;
+    public static final double MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2 = 2.0;
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 0;
     public static int FRONT_LEFT_TURNING_CAN_ID = 0;
