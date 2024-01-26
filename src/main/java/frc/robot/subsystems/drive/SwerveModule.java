@@ -86,10 +86,12 @@ public class SwerveModule implements Sendable {
     int errors = 0;
     errors += check(drivingSpark.restoreFactoryDefaults());
     RelativeEncoder drivingEncoderTmp = drivingSpark.getEncoder();
-    SparkPIDController drivingPidTmp = turningSpark.getPIDController();
+    SparkPIDController drivingPidTmp = drivingSpark.getPIDController();
     errors += check(drivingPidTmp.setFeedbackDevice(drivingEncoderTmp));
-    errors +=
-        check(drivingEncoderTmp.setInverted(Constants.Swerve.Module.DRIVING_ENCODER_INVERTED));
+//    errors +=
+//        check(drivingEncoderTmp.setInverted(Constants.Swerve.Module.DRIVING_ENCODER_INVERTED));
+    // TODO: Is this correct?
+    drivingSpark.setInverted(Constants.Swerve.Module.DRIVING_ENCODER_INVERTED);
     errors += check(drivingPidTmp.setPositionPIDWrappingEnabled(false));
     errors += check(drivingPidTmp.setP(Constants.Swerve.Module.DRIVING_K_P));
     errors += check(drivingPidTmp.setI(Constants.Swerve.Module.DRIVING_K_I));
