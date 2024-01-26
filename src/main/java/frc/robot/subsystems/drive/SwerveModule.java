@@ -1,13 +1,18 @@
 package frc.robot.subsystems.drive;
 
 import com.revrobotics.*;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 import frc.robot.utils.AbsoluteEncoderChecker;
 import frc.robot.utils.SparkMaxUtils;
@@ -44,6 +49,22 @@ public class SwerveModule implements Sendable {
 
     desiredState.angle = new Rotation2d(turningEncoder.getPosition());
     drivingEncoder.setPosition(0.0);
+
+    wheelSim = new FlywheelSim(
+            DCMotor.getNEO(1),
+            Constants.Swerve.Module.DRIVING_MOTOR_REDUCTION,
+            Constants.Swerve.Module.WHEEL_MOI
+    );
+    steeringSim = new SingleJointedArmSim(
+            DCMotor.getNeo550(1),
+            Constants.Swerve.Module.STEERING_MOTOR_REDUCTION,
+            0.001, // MOI - you could in theory get this from CAD?
+            0.0, // Length in M
+            Double.NEGATIVE_INFINITY, // min angle
+            Double.POSITIVE_INFINITY, // max angle
+            false, // We don't want to simulate gravity
+            0.0 // Initial Angle
+    );
   }
 
   private boolean initTurnSpark() {
@@ -165,6 +186,11 @@ public class SwerveModule implements Sendable {
 
   public void setModuleOffset(double offset){
     this.moduleOffset = offset;
+  }
+
+  public void simulationInit() {
+    REVPhysicsSim.getInstance().addSparkMax(turningSpark, DCMotor.getNEO(1));
+    REVPhysicsSim.getInstance().addSparkMax(drivingSpark, DCMotor.getNEO(1));
   }
 
   @Override

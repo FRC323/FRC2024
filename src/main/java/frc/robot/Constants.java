@@ -25,6 +25,12 @@ public final class Constants {
     public static final double FREE_SPEED_RPM = 5676;
   }
 
+  public static final class UltraPlanetary {
+    public static final double REDUCTION_3_1 = 2.89;
+    public static final double REDUCTION_4_1 = 3.61;
+    public static final double REDUCTION_5_1 = 5.23;
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
@@ -52,7 +58,7 @@ public final class Constants {
             new Translation2d(WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2));
-      public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 2.0;
+    public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 2.0;
     public static final double MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2 = 2.0;
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 11;
@@ -101,11 +107,11 @@ public final class Constants {
 
       public static final double WHEEL_DIAMETER_METERS =
           Units.inchesToMeters(3) * WHEEL_DIAMETER_FUDGE_FACTOR;
-      private static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
+      public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
       //      12T	 5.50:1
       //      13T	 5.08:1
       //      14T	 4.71:1
-      private static final double DRIVING_MOTOR_REDUCTION = 4.71;
+      public static final double DRIVING_MOTOR_REDUCTION = 4.71;
       public static final double DRIVING_ENCODER_POSITION_FACTOR_METERS =
           WHEEL_CIRCUMFERENCE_METERS / DRIVING_MOTOR_REDUCTION; // meters
       public static final double DRIVING_ENCODER_VELOCITY_FACTOR_METERS_PER_SECOND =
@@ -124,6 +130,14 @@ public final class Constants {
       public static final CANSparkBase.IdleMode TURNING_MOTOR_IDLE_MODE =
           CANSparkBase.IdleMode.kBrake;
       public static final int TURNING_MOTOR_CURRENT_LIMIT_AMPS = 20; // amps
+      // in KG
+      // This mass includes gears and bearings but not fasteners, it's probably close enough
+      public static final double WHEEL_MASS = Units.lbsToKilograms(0.6590326);
+      //      We're modeling the wheel as a solid cylinder
+      public static final double WHEEL_MOI =
+          Math.pow(WHEEL_DIAMETER_METERS / 2, 2) * WHEEL_MASS * 0.5;
+
+      public static final double STEERING_MOTOR_REDUCTION =  UltraPlanetary.REDUCTION_3_1 * UltraPlanetary.REDUCTION_4_1;
 
       public static boolean TURNING_ENCODER_INVERTED = true;
       public static double TURNING_ENCODER_POSITION_PID_MIN_INPUT_RADIANS = 0.0;
