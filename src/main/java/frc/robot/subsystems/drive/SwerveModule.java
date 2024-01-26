@@ -32,6 +32,9 @@ public class SwerveModule implements Sendable {
     turningSpark = new CANSparkMax(turningCanId, MotorType.kBrushless);
     this.moduleOffset = moduleOffset;
 
+    SparkMaxUtils.initWithRetry(this::initDriveSpark, Constants.SPARK_INIT_RETRY_ATTEMPTS);
+    SparkMaxUtils.initWithRetry(this::initTurnSpark, Constants.SPARK_INIT_RETRY_ATTEMPTS);
+
     drivingEncoder = drivingSpark.getEncoder();
     drivingPIDController = drivingSpark.getPIDController();
     turningEncoder = turningSpark.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);

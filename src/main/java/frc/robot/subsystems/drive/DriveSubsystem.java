@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
+  @SuppressWarnings({"FieldCanBeLocal","FieldMayBeFinal"})
   private double throttleMultiplier = 1.0;
   private ChassisSpeeds lastSetChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   AHRS navx;
@@ -89,6 +90,12 @@ public class DriveSubsystem extends SubsystemBase {
   public ChassisSpeeds getChassisSpeed() {
     return actualChassisSpeed;
   }
+
+  // Useful for figuring out if we should go to X pose
+  public ChassisSpeeds getLastSetChassisSpeed(){
+    return lastSetChassisSpeeds;
+  }
+
   //  Useful for resetting the pose off of april tag
   public void resetOdometry(Pose2d pose) {
     // Just update the translation, not the yaw
@@ -97,12 +104,14 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getGyroYaw() {
+    // TODO: Handle Gyro Reverse
     return navx.getAngle();
   }
 
   public void setGyroYaw(double yawDeg) {
     // I'm not 100% sure on this to be honest
     // Reset it to 0, then add an offset negative what you want.
+    // TODO: Handle Gyro Reverse
     navx.reset();
     navx.setAngleAdjustment(-yawDeg);
   }
@@ -170,7 +179,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
 //    This is the last commanded chassis speed not the last actual chassis speed
-    lastSetChassisSpeeds = desiredChassisSpeeds;
+    this.lastSetChassisSpeeds = desiredChassisSpeeds;
 
     var swerveModuleStates =
         Constants.Swerve.DRIVE_KINEMATICS.toSwerveModuleStates(desiredChassisSpeeds);
