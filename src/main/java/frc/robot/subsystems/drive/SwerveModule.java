@@ -1,7 +1,6 @@
 package frc.robot.subsystems.drive;
 
 import com.revrobotics.*;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
