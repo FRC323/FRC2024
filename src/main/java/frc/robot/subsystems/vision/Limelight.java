@@ -13,12 +13,13 @@ public class Limelight implements Sendable {
         setCamMode(LimelightOptions.VisionMode.VisionProcessing);
     }
 
-    public FrameDetail readFrame() {
-        var fi = new FrameDetail();
-        fi.AprilTagId = (int) _dataTable.getEntry("tid").getInteger(-1);
-        fi.HasTarget = _dataTable.getEntry("tv").getBoolean(false);
+    public LimeLightCaptureDetail capture() {
+        var fi = new LimeLightCaptureDetail();
+        fi.AprilTagId = _dataTable.getEntry("tid").getInteger(-1);
+        fi.HasTarget = _dataTable.getEntry("tv").getInteger(0) == 1;
         fi.xOffset = _dataTable.getEntry("tx").getDouble(0);
         fi.yOffset = _dataTable.getEntry("ty").getDouble(0);
+        fi.CameraMode = _dataTable.getEntry("camMode").getInteger(0);
         return fi;
     }
 
@@ -28,21 +29,20 @@ public class Limelight implements Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-       //SMDB logging
+        LimeLightCaptureDetail capture = capture();
+        builder.setSmartDashboardType("Limelight");
+        builder.addIntegerProperty("April Tag Id", () -> capture.AprilTagId, null);
+        builder.addBooleanProperty("Found Target", () -> capture.HasTarget, null);
+        builder.addDoubleProperty("Target xOffset", () -> capture.xOffset, null);
+        builder.addDoubleProperty("Target yOffset", () -> capture.yOffset, null);
+        builder.addIntegerProperty("Camera Mode", () -> capture.CameraMode, null);
     }
 
-    public static class FrameDetail {
-        public int AprilTagId = -1; //-1=no target
+    public static class LimeLightCaptureDetail {
+        public long AprilTagId = -1; //-1=no target
         public boolean HasTarget = false;
         public double xOffset = 0d;
         public double yOffset = 0d;
-
-        public FrameDetail() {}
-        public FrameDetail(int tagId, boolean hasTarget, double xoffset, double yoffset) {
-            this.AprilTagId = tagId;
-            this.HasTarget = hasTarget;
-            this.xOffset = xoffset;
-            this.yOffset = yoffset;
-        }
+        public long CameraMode = 0;
     }
 }

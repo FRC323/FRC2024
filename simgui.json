@@ -1,0 +1,42 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Subsystems/DriveSubsystem": "Subsystem",
+      "/Shuffleboard/Subsystems/VisionSubsystem": "Subsystem"
+    },
+    "windows": {
+      "/Shuffleboard/Subsystems/DriveSubsystem": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Subsystems/VisionSubsystem": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
+    "Retained Values": {
+      "open": false
+    },
+    "transitory": {
+      "limelight": {
+        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "Server": {
+      "Subscribers": {
+        "open": true
+      }
+    },
+    "visible": true
+  }
+}
