@@ -33,7 +33,6 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
-
   }
 
   /**
@@ -47,10 +46,16 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-//    TODO: Field Centric Enable
-    driveSubsystem.setDefaultCommand(new RunCommand(
-            () -> driveSubsystem.drive(m_driverController.getRightX(), m_driverController.getRightY(), m_driverController.getLeftX(), false)
-    ));
+    //    TODO: Field Centric Enable
+    driveSubsystem.setDefaultCommand(
+        new RunCommand(
+            () ->
+                driveSubsystem.drive(
+                    m_driverController.getRightX(),
+                    m_driverController.getRightY(),
+                    m_driverController.getLeftX(),
+                    false),
+            driveSubsystem));
   }
 
   /**
@@ -60,7 +65,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-//    return Autos.exampleAuto(m_exampleSubsystem);
+    //    return Autos.exampleAuto(m_exampleSubsystem);
     return new InstantCommand();
   }
+
+  public void simulationInit() {}
 }

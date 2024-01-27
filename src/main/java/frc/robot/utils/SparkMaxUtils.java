@@ -4,6 +4,8 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 
+import java.util.function.BooleanSupplier;
+
 //Largely borrowed from 3005's code
 public class SparkMaxUtils {
     public static int check(REVLibError error) { return error == REVLibError.kOk ? 0 : 1; }
@@ -58,6 +60,15 @@ public class SparkMaxUtils {
             }
 
             return sparkMaxEncoder.setVelocityConversionFactor(radsPerRotationPerSecond);
+        }
+    }
+    public static void initWithRetry(BooleanSupplier initFunction, int maxRetryAttempts) {
+        int numAttempts = 0;
+        while (!initFunction.getAsBoolean()) {
+            numAttempts++;
+            if (numAttempts > maxRetryAttempts) {
+                break;
+            }
         }
     }
 }
