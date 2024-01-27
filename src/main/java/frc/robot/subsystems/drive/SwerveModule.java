@@ -24,13 +24,15 @@ public class SwerveModule implements Sendable {
   private final SparkPIDController drivingPIDController;
   private final SparkPIDController turningPIDController;
   //    Radians offset for the module
-  private final double moduleOffset;
+  private double moduleOffset;
+  private final boolean isInverted;
   private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d(0));
 
-  public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset) {
+  public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset,boolean isInverted) {
     drivingSpark = new CANSparkMax(drivingCanId, MotorType.kBrushless);
     turningSpark = new CANSparkMax(turningCanId, MotorType.kBrushless);
     this.moduleOffset = moduleOffset;
+    this.isInverted = isInverted;
 
     SparkMaxUtils.initWithRetry(this::initDriveSpark, Constants.SPARK_INIT_RETRY_ATTEMPTS);
     SparkMaxUtils.initWithRetry(this::initTurnSpark, Constants.SPARK_INIT_RETRY_ATTEMPTS);
@@ -111,12 +113,14 @@ public class SwerveModule implements Sendable {
             drivingEncoderTmp.setVelocityConversionFactor(
                 Constants.Swerve.Module.DRIVING_ENCODER_VELOCITY_FACTOR_METERS_PER_SECOND));
 
-    errors += check(turningSpark.setIdleMode(Constants.Swerve.Module.DRIVING_MOTOR_IDLE_MODE));
+    errors += check(drivingSpark.setIdleMode(Constants.Swerve.Module.DRIVING_MOTOR_IDLE_MODE));
     errors +=
         check(
-            turningSpark.setSmartCurrentLimit(
+            drivingSpark.setSmartCurrentLimit(
                 Constants.Swerve.Module.DRIVING_MOTOR_CURRENT_LIMIT_AMPS));
-    return errors == 0;
+        drivingSpark.setInverted(isInverted);
+
+                return errors == 0;
   }
 
   //    Writes config to flash so it will persist through power loss
@@ -157,6 +161,10 @@ public class SwerveModule implements Sendable {
 
   public void periodic() {
     turningAbsoluteEncoderChecker.addReading(turningEncoder.getPosition());
+  }
+
+  public void setModuleOffset(double offset){
+    this.moduleOffset = offset;
   }
 
   @Override

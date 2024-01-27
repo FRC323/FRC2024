@@ -44,7 +44,7 @@ public final class Constants {
     /** Distance between front and back wheels on robot */
     public static final double WHEEL_BASE_METERS = Units.inchesToMeters(22.5);
 
-    public static final boolean GYRO_REVERSED = false;
+    public static final boolean GYRO_REVERSED = true;
 
     public static final SwerveDriveKinematics DRIVE_KINEMATICS =
         new SwerveDriveKinematics(
@@ -57,17 +57,21 @@ public final class Constants {
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 11;
     public static int FRONT_LEFT_TURNING_CAN_ID = 21;
+    public static boolean FRONT_LEFT_IS_INVERTED = false;
     public static double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
     public static int FRONT_RIGHT_DRIVING_CAN_ID = 12;
     public static int FRONT_RIGHT_TURNING_CAN_ID = 22;
     public static double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
+    public static boolean FRONT_RIGHT_IS_INVERTED = true;
 
     public static int REAR_LEFT_DRIVING_CAN_ID = 14;
     public static int REAR_LEFT_TURNING_CAN_ID = 24;
     public static double REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
+    public static boolean REAR_LEFT_IS_INVERTED = false;
     public static int REAR_RIGHT_DRIVING_CAN_ID = 13;
     public static int REAR_RIGHT_TURNING_CAN_ID = 23;
     public static double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
+    public static boolean REAR_RIGHT_IS_INVERTED = true;
 
     public static class Module {
       //      TODO: Group these in a sane way

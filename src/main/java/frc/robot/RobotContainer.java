@@ -5,12 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.StoredDrivetrainOffsets;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 /**
@@ -25,14 +28,18 @@ public class RobotContainer {
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
+  private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
+
+  private final CommandJoystick m_driveJoystick = new CommandJoystick(0);
+  private final CommandJoystick m_steerJoystick = new CommandJoystick(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
+    SmartDashboard.putData(driveSubsystem);
   }
 
   /**
@@ -51,11 +58,13 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 driveSubsystem.drive(
-                    m_driverController.getRightX(),
-                    m_driverController.getRightY(),
-                    m_driverController.getLeftX(),
+                    m_driveJoystick.getY(),
+                    m_driveJoystick.getX(),
+                    m_steerJoystick.getX(),
                     false),
             driveSubsystem));
+            
+        SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
   }
 
   /**

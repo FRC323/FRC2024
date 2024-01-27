@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
 import java.util.Optional;
+import edu.wpi.first.wpilibj.Preferences;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
@@ -22,25 +23,29 @@ public class DriveSubsystem extends SubsystemBase {
       new SwerveModule(
           Constants.Swerve.FRONT_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_LEFT_TURNING_CAN_ID,
-          Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD);
+          Preferences.getDouble("FL_Offset",Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Constants.Swerve.FRONT_LEFT_IS_INVERTED);
 
   public final SwerveModule frontRight =
       new SwerveModule(
           Constants.Swerve.FRONT_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_RIGHT_TURNING_CAN_ID,
-          Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD);
+          Preferences.getDouble("FR_Offset",Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Constants.Swerve.FRONT_RIGHT_IS_INVERTED);
 
   public final SwerveModule rearLeft =
       new SwerveModule(
           Constants.Swerve.REAR_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_LEFT_TURNING_CAN_ID,
-          Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD);
+          Preferences.getDouble("RL_Offset",Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Constants.Swerve.REAR_LEFT_IS_INVERTED);
 
   public final SwerveModule rearRight =
       new SwerveModule(
           Constants.Swerve.REAR_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_RIGHT_TURNING_CAN_ID,
-          Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD);
+          Preferences.getDouble("RR_Offset",Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Constants.Swerve.REAR_RIGHT_IS_INVERTED);
 
   private ChassisSpeeds lastSetChassisSpeed = new ChassisSpeeds(0, 0, 0);
   private Optional<Pose2d> targetPose = Optional.empty();
@@ -105,7 +110,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double getGyroYaw() {
     // TODO: Handle Gyro Reverse
-    return navx.getAngle();
+    return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ?  -1 : 1);
   }
 
   public void setGyroYaw(double yawDeg) {
@@ -128,6 +133,24 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void resetYaw() {
     resetYawToAngle(0.0);
+  }
+
+  public void setWheelOffsets(){
+    double frontLeftOffset = frontLeft.getEncoderAbsPositionRad();
+    double frontRightOffset = frontRight.getEncoderAbsPositionRad();
+    double rearLeftOffset = rearLeft.getEncoderAbsPositionRad();
+    double rearRightOffset = rearRight.getEncoderAbsPositionRad();
+     
+
+    Preferences.setDouble("FL_Offset", frontLeftOffset);
+    Preferences.setDouble("FR_Offset", frontRightOffset);
+    Preferences.setDouble("RL_Offset", rearRightOffset);
+    Preferences.setDouble("RR_Offset", rearLeftOffset);
+
+    frontLeft.setModuleOffset(frontLeftOffset);
+    frontRight.setModuleOffset(frontRightOffset);
+    rearLeft.setModuleOffset(rearLeftOffset);
+    rearRight.setModuleOffset(rearRightOffset);
   }
 
   /**
@@ -177,7 +200,7 @@ public class DriveSubsystem extends SubsystemBase {
                 xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getGyroYaw()))
             : new ChassisSpeeds(xSpeed, ySpeed, rot);
 
-    desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
+    // desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
 //    This is the last commanded chassis speed not the last actual chassis speed
     this.lastSetChassisSpeeds = desiredChassisSpeeds;
 
