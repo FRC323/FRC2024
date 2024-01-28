@@ -1,22 +1,18 @@
 package frc.robot.subsystems.drive;
 
+import static frc.robot.utils.SparkMaxUtils.check;
+
 import com.revrobotics.*;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 import frc.robot.utils.AbsoluteEncoderChecker;
 import frc.robot.utils.SparkMaxUtils;
-
-import static frc.robot.utils.SparkMaxUtils.check;
 
 public class SwerveModule implements Sendable {
 
@@ -32,7 +28,7 @@ public class SwerveModule implements Sendable {
   private final boolean isInverted;
   private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d(0));
 
-  public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset,boolean isInverted) {
+  public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset, boolean isInverted) {
     drivingSpark = new CANSparkMax(drivingCanId, MotorType.kBrushless);
     turningSpark = new CANSparkMax(turningCanId, MotorType.kBrushless);
     this.moduleOffset = moduleOffset;
@@ -48,22 +44,6 @@ public class SwerveModule implements Sendable {
 
     desiredState.angle = new Rotation2d(turningEncoder.getPosition());
     drivingEncoder.setPosition(0.0);
-
-    wheelSim = new FlywheelSim(
-            DCMotor.getNEO(1),
-            Constants.Swerve.Module.DRIVING_MOTOR_REDUCTION,
-            Constants.Swerve.Module.WHEEL_MOI
-    );
-    steeringSim = new SingleJointedArmSim(
-            DCMotor.getNeo550(1),
-            Constants.Swerve.Module.STEERING_MOTOR_REDUCTION,
-            0.001, // MOI - you could in theory get this from CAD?
-            0.0, // Length in M
-            Double.NEGATIVE_INFINITY, // min angle
-            Double.POSITIVE_INFINITY, // max angle
-            false, // We don't want to simulate gravity
-            0.0 // Initial Angle
-    );
   }
 
   private boolean initTurnSpark() {
@@ -110,8 +90,9 @@ public class SwerveModule implements Sendable {
     RelativeEncoder drivingEncoderTmp = drivingSpark.getEncoder();
     SparkPIDController drivingPidTmp = drivingSpark.getPIDController();
     errors += check(drivingPidTmp.setFeedbackDevice(drivingEncoderTmp));
-//    errors +=
-//        check(drivingEncoderTmp.setInverted(Constants.Swerve.Module.DRIVING_ENCODER_INVERTED));
+    //    errors +=
+    //
+    // check(drivingEncoderTmp.setInverted(Constants.Swerve.Module.DRIVING_ENCODER_INVERTED));
     // TODO: Is this correct?
     drivingSpark.setInverted(Constants.Swerve.Module.DRIVING_ENCODER_INVERTED);
     errors += check(drivingPidTmp.setPositionPIDWrappingEnabled(false));
@@ -138,12 +119,12 @@ public class SwerveModule implements Sendable {
         check(
             drivingSpark.setSmartCurrentLimit(
                 Constants.Swerve.Module.DRIVING_MOTOR_CURRENT_LIMIT_AMPS));
-        drivingSpark.setInverted(isInverted);
+    drivingSpark.setInverted(isInverted);
 
-                return errors == 0;
+    return errors == 0;
   }
 
-  //    Writes config to flash so it will persist through power loss
+  // Writes config to flash, so it will persist through power loss
   public void burnFlashSparks() {
     Timer.delay(0.005);
     drivingSpark.burnFlash();
@@ -183,14 +164,11 @@ public class SwerveModule implements Sendable {
     turningAbsoluteEncoderChecker.addReading(turningEncoder.getPosition());
   }
 
-  public void setModuleOffset(double offset){
+  public void setModuleOffset(double offset) {
     this.moduleOffset = offset;
   }
 
-  public void simulationInit() {
-    REVPhysicsSim.getInstance().addSparkMax(turningSpark, DCMotor.getNEO(1));
-    REVPhysicsSim.getInstance().addSparkMax(drivingSpark, DCMotor.getNEO(1));
-  }
+  public void simulationInit() {}
 
   @Override
   public void initSendable(SendableBuilder builder) {
