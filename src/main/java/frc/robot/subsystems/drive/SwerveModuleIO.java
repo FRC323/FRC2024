@@ -1,6 +1,8 @@
 package frc.robot.subsystems.drive;
 
-public interface SwerveModuleIO {
+import edu.wpi.first.util.sendable.Sendable;
+
+public interface SwerveModuleIO extends Sendable {
   public static class SwerveModuleInputs {
     public double turnOutputVolts = 0.0;
     public double turnOutputCurrent = 0.0;

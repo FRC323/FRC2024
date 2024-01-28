@@ -2,8 +2,10 @@ package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -13,14 +15,17 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   private FlywheelSim driveSim;
   private SingleJointedArmSim turningSim;
 
-  private PIDController turningController;
-  private PIDController driveController;
+  private PIDController turningPIDController;
+  private PIDController drivingPIDController;
+  private SimpleMotorFeedforward drivingFF;
   private double turningCommandVoltage;
-  private double drivignCommandVoltage;
+  private double drivingCommandVoltage;
   private double direction = 1.0;
 
+  private double _targetVel, _targetAngle;
+
   public SwerveModuleIOSim(boolean isInverted) {
-    this.direction = isInverted?-1.0:1.0;
+    this.direction = isInverted ? -1.0 : 1.0;
     driveSim =
         new FlywheelSim(
             DCMotor.getNEO(1),
@@ -38,27 +43,28 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
             0.0 // Initial Angle
             );
 
-    turningController =
+    turningPIDController =
         new PIDController(
             Constants.Swerve.Module.TURNING_K_P,
             Constants.Swerve.Module.TURNING_K_I,
-            Constants.Swerve.Module.TURNING_K_D,
-            Constants.Swerve.Module.TURNING_K_FF);
-    turningController.enableContinuousInput(
+            Constants.Swerve.Module.TURNING_K_D);
+    turningPIDController.enableContinuousInput(
         Constants.Swerve.Module.TURNING_ENCODER_POSITION_PID_MIN_INPUT_RADIANS,
         Constants.Swerve.Module.TURNING_ENCODER_POSITION_PID_MAX_INPUT_RADIANS);
-    driveController =
+
+    drivingPIDController =
         new PIDController(
             Constants.Swerve.Module.DRIVING_K_P,
             Constants.Swerve.Module.DRIVING_K_I,
-            Constants.Swerve.Module.DRIVING_K_D,
-            Constants.Swerve.Module.DRIVING_K_FF);
+            Constants.Swerve.Module.DRIVING_K_D);
+    // TODO: I have no idea if setting KS to 1 is appropriate
+    drivingFF = new SimpleMotorFeedforward(1.0, Constants.Swerve.Module.DRIVING_K_FF);
   }
 
   @Override
   public void updateInputs(SwerveModuleInputs inputs) {
     turningSim.setInput(turningCommandVoltage);
-    driveSim.setInput(drivignCommandVoltage);
+    driveSim.setInput(drivingCommandVoltage);
     turningSim.update(TimedRobot.kDefaultPeriod);
     driveSim.update(TimedRobot.kDefaultPeriod);
 
@@ -81,12 +87,14 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   @Override
   public void setCommandedOutputs(double steeringAngle, double wheelVelocity) {
-    turningCommandVoltage = turningController.calculate(turningSim.getAngleRads(), steeringAngle);
-    drivignCommandVoltage =
-        driveController.calculate(
+    turningCommandVoltage = turningPIDController.calculate(turningSim.getAngleRads(), steeringAngle);
+    drivingCommandVoltage =
+        drivingPIDController.calculate(
             driveSim.getAngularVelocityRadPerSec()
                 * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS,
-            wheelVelocity * direction);
+            wheelVelocity * direction) + drivingFF.calculate(wheelVelocity);
+  _targetAngle = steeringAngle;
+  _targetVel = wheelVelocity;
   }
 
   @Override
@@ -112,5 +120,25 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   @Override
   public void burnFlashSparks() {
     // This method intentionally left blank
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Driving kP", drivingPIDController::getP, drivingPIDController::setP);
+    builder.addDoubleProperty("Driving kI", drivingPIDController::getI, drivingPIDController::setI);
+    builder.addDoubleProperty("Driving kD", drivingPIDController::getD, drivingPIDController::setD);
+    builder.addDoubleProperty(
+            "Driving kFF", () -> 0, (val) -> {});
+    builder.addDoubleProperty("Turning kP", turningPIDController::getP, turningPIDController::setP);
+    builder.addDoubleProperty("Turning kI", turningPIDController::getI, turningPIDController::setI);
+    builder.addDoubleProperty("Turning kD", turningPIDController::getD, turningPIDController::setD);
+    builder.addDoubleProperty(
+            "Driving kFF", () -> 0, null);
+    builder.addDoubleProperty("Driving Vel (m/s)", () -> driveSim.getAngularVelocityRadPerSec() * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS, null);
+    builder.addDoubleProperty("Steering Pos (rad)", turningSim::getAngleRads, null);
+    builder.addDoubleProperty("Desired Vel (m/s)", () -> _targetVel, null);
+    builder.addDoubleProperty("Desired Steer (rad)", () -> _targetAngle, null);
+    builder.addBooleanProperty(
+            "Turning encoder connected", () -> true, null);
   }
 }

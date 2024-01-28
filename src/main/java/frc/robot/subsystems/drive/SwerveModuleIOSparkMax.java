@@ -4,6 +4,7 @@ import com.revrobotics.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.utils.AbsoluteEncoderChecker;
@@ -169,5 +170,25 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
     @Override
     public void periodic() {
 
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Driving kP", drivingPIDController::getP, drivingPIDController::setP);
+        builder.addDoubleProperty("Driving kI", drivingPIDController::getI, drivingPIDController::setI);
+        builder.addDoubleProperty("Driving kD", drivingPIDController::getD, drivingPIDController::setD);
+        builder.addDoubleProperty(
+                "Driving kFF", drivingPIDController::getFF, drivingPIDController::setFF);
+        builder.addDoubleProperty("Turning kP", turningPIDController::getP, turningPIDController::setP);
+        builder.addDoubleProperty("Turning kI", turningPIDController::getI, turningPIDController::setI);
+        builder.addDoubleProperty("Turning kD", turningPIDController::getD, turningPIDController::setD);
+        builder.addDoubleProperty(
+                "Turning kFF", turningPIDController::getFF, turningPIDController::setFF);
+        builder.addDoubleProperty("Driving Vel (m/s)", drivingEncoder::getVelocity, null);
+        builder.addDoubleProperty("Steering Pos (rad)", turningEncoder::getPosition, null);
+        builder.addDoubleProperty("Desired Vel (m/s)", () -> desiredState.speedMetersPerSecond, null);
+        builder.addDoubleProperty("Desired Steer (rad)", () -> desiredState.angle.getRadians(), null);
+        builder.addBooleanProperty(
+                "Turning encoder connected", turningAbsoluteEncoderChecker::encoderConnected, null);
     }
 }
