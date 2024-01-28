@@ -6,7 +6,7 @@ public interface SwerveModuleIO {
     public double turnOutputCurrent = 0.0;
     public double turnEncoderPositionDeg = 0.0;
     public double turnAngleDeg = 0.0;
-    public double turnAngularVelocityDegPerSec = 0.0;
+    public double turnAngularVelocityRPM = 0.0;
 
     public double drivePositionMeters = 0.0;
     public double driveVelocityMetersPerSecond = 0.0;
@@ -47,4 +47,6 @@ public interface SwerveModuleIO {
   Will be called during periodic
    */
   public void periodic();
+
+  public void burnFlashSparks();
 }

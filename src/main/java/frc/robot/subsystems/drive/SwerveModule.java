@@ -168,8 +168,6 @@ public class SwerveModule implements Sendable {
     this.moduleOffset = offset;
   }
 
-  public void simulationInit() {}
-
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addDoubleProperty("Driving kP", drivingPIDController::getP, drivingPIDController::setP);

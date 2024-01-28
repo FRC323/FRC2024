@@ -274,11 +274,4 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty(
         "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
   }
-
-  public void simulationInit() {
-    frontLeft.simulationInit();
-    frontRight.simulationInit();
-    rearLeft.simulationInit();
-    rearRight.simulationInit();
-  }
 }

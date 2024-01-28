@@ -77,8 +77,4 @@ public class RobotContainer {
 //    return Autos.exampleAuto(m_exampleSubsystem);
     return new InstantCommand();
   }
-
-  public void simulationInit() {
-    driveSubsystem.simulationInit();
-  }
 }

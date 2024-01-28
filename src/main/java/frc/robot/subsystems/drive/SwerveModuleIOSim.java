@@ -61,11 +61,13 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     driveSim.setInput(drivignCommandVoltage);
     turningSim.update(TimedRobot.kDefaultPeriod);
     driveSim.update(TimedRobot.kDefaultPeriod);
+
     inputs.turnOutputVolts = MathUtil.clamp(turningSim.getOutput(0), -12.0, 12.0);
     inputs.turnOutputCurrent = turningSim.getCurrentDrawAmps();
     inputs.turnEncoderPositionDeg +=
         Units.radiansToDegrees(turningSim.getVelocityRadPerSec()) * TimedRobot.kDefaultPeriod;
     inputs.turnAngleDeg = Units.radiansToDegrees(turningSim.getAngleRads());
+    inputs.turnAngularVelocityRPM = Units.radiansPerSecondToRotationsPerMinute(turningSim.getVelocityRadPerSec());
 
     inputs.driveOutputVolts = MathUtil.clamp(driveSim.getOutput(0), -12.0, 12.0);
     inputs.driveOutputCurrent = driveSim.getCurrentDrawAmps();
@@ -102,6 +104,13 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     return true;
   }
 
+
+
   @Override
   public void periodic() {}
+
+  @Override
+  public void burnFlashSparks() {
+    // This method intentionally left blank
+  }
 }
