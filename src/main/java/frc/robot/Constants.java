@@ -137,7 +137,11 @@ public final class Constants {
       public static final double WHEEL_MOI =
           Math.pow(WHEEL_DIAMETER_METERS / 2, 2) * WHEEL_MASS * 0.5;
 
-      public static final double STEERING_MOTOR_REDUCTION =  UltraPlanetary.REDUCTION_3_1 * UltraPlanetary.REDUCTION_4_1;
+      // The correct way to  calculate this... missing the last stage reduction
+      //      public static final double STEERING_MOTOR_REDUCTION =  UltraPlanetary.REDUCTION_3_1 *
+      // UltraPlanetary.REDUCTION_4_1;
+      // The wrong way... which was just ask Greg
+      public static final double STEERING_MOTOR_REDUCTION = 9424.0/203.0
 
       public static boolean TURNING_ENCODER_INVERTED = true;
       public static double TURNING_ENCODER_POSITION_PID_MIN_INPUT_RADIANS = 0.0;

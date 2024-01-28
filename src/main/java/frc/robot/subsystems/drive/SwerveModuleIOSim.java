@@ -15,8 +15,8 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   private PIDController turningController;
   private PIDController driveController;
-  private double _turningCommandVoltage;
-  private double _drivignCommandVoltage;
+  private double turningCommandVoltage;
+  private double drivignCommandVoltage;
 
   public SwerveModuleIOSim(int drivingCanId, int turningCanId, double moduleOffset) {
     driveSim =
@@ -55,8 +55,8 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   @Override
   public void updateInputs(SwerveModuleInputs inputs) {
-    turningSim.setInput(_turningCommandVoltage);
-    driveSim.setInput(_drivignCommandVoltage);
+    turningSim.setInput(turningCommandVoltage);
+    driveSim.setInput(drivignCommandVoltage);
     turningSim.update(TimedRobot.kDefaultPeriod);
     driveSim.update(TimedRobot.kDefaultPeriod);
     inputs.turnOutputVolts = MathUtil.clamp(turningSim.getOutput(0), -12.0, 12.0);
@@ -77,8 +77,8 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   @Override
   public void setCommandedOutputs(double steeringAngle, double wheelVelocity) {
-    _turningCommandVoltage = turningController.calculate(turningSim.getAngleRads(), steeringAngle);
-    _drivignCommandVoltage =
+    turningCommandVoltage = turningController.calculate(turningSim.getAngleRads(), steeringAngle);
+    drivignCommandVoltage =
         driveController.calculate(
             driveSim.getAngularVelocityRadPerSec()
                 * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS,
