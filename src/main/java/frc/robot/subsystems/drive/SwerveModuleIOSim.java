@@ -17,8 +17,10 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   private PIDController driveController;
   private double turningCommandVoltage;
   private double drivignCommandVoltage;
+  private double direction = 1.0;
 
-  public SwerveModuleIOSim(int drivingCanId, int turningCanId, double moduleOffset) {
+  public SwerveModuleIOSim(boolean isInverted) {
+    this.direction = isInverted?-1.0:1.0;
     driveSim =
         new FlywheelSim(
             DCMotor.getNEO(1),
@@ -82,7 +84,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         driveController.calculate(
             driveSim.getAngularVelocityRadPerSec()
                 * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS,
-            wheelVelocity);
+            wheelVelocity * direction);
   }
 
   @Override
