@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.StoredDrivetrainOffsets;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,6 +27,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_operatorController =
@@ -40,6 +42,9 @@ public class RobotContainer {
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
     SmartDashboard.putData(driveSubsystem);
+
+    Shuffleboard.getTab("Subsystems").add(visionSubsystem.getName(), visionSubsystem);
+    SmartDashboard.putData(visionSubsystem);
   }
 
   /**
@@ -63,7 +68,7 @@ public class RobotContainer {
                     m_steerJoystick.getX(),
                     false),
             driveSubsystem));
-            
+
         SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
   }
 

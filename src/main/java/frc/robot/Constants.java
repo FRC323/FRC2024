@@ -19,6 +19,22 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
+  public static class Vision {
+    // TODO: BALLPARK - VERIFY VALUES
+    public static final int APRIL_TAG_PIPELINE = 0;
+    public static final double LIMELIGHT_MOUNT_ANGLE_DEGRESS = 25.0;
+    public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 19.395;
+    public static final int[] APRIL_TAG_CENTER_SPEAKER_IDS = { 4, 7 };
+    public static final int[] APRIL_TAG_SIDE_SPEAKER_IDS = { 3, 8 };
+
+    //ballpark to center of speaker goal from floor
+    //might be weird with the smaller opening far away
+    //bottom = 6'6"
+    //top = 6'10 7/8"
+    public static final double SPEAKER_GOAL_HEIGHT_INCHES = 80;
+
+  }
+
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;
 
   public static final class NeoMotor {
