@@ -200,7 +200,7 @@ public class DriveSubsystem extends SubsystemBase {
                 xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getGyroYaw()))
             : new ChassisSpeeds(xSpeed, ySpeed, rot);
 
-    // desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
+    desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
 //    This is the last commanded chassis speed not the last actual chassis speed
     this.lastSetChassisSpeeds = desiredChassisSpeeds;
 
