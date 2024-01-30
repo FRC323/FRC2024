@@ -23,28 +23,28 @@ public class DriveSubsystem extends SubsystemBase {
       new SwerveModule(
           Constants.Swerve.FRONT_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_LEFT_TURNING_CAN_ID,
-          Preferences.getDouble("FL_Offset",Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(Constants.Swerve.FRONT_LEFT_OFFSET_KEY,Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.FRONT_LEFT_IS_INVERTED);
 
   public final SwerveModule frontRight =
       new SwerveModule(
           Constants.Swerve.FRONT_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_RIGHT_TURNING_CAN_ID,
-          Preferences.getDouble("FR_Offset",Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(Constants.Swerve.FRONT_RIGHT_OFFSET_KEY,Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.FRONT_RIGHT_IS_INVERTED);
 
   public final SwerveModule rearLeft =
       new SwerveModule(
           Constants.Swerve.REAR_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_LEFT_TURNING_CAN_ID,
-          Preferences.getDouble("RL_Offset",Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(Constants.Swerve.REAR_LEFT_OFFSET_KEY,Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.REAR_LEFT_IS_INVERTED);
 
   public final SwerveModule rearRight =
       new SwerveModule(
           Constants.Swerve.REAR_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_RIGHT_TURNING_CAN_ID,
-          Preferences.getDouble("RR_Offset",Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(Constants.Swerve.REAR_RIGHT_OFFSET_KEY,Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.REAR_RIGHT_IS_INVERTED);
 
   private ChassisSpeeds lastSetChassisSpeed = new ChassisSpeeds(0, 0, 0);
@@ -142,10 +142,10 @@ public class DriveSubsystem extends SubsystemBase {
     double rearRightOffset = rearRight.getEncoderAbsPositionRad();
      
 
-    Preferences.setDouble("FL_Offset", frontLeftOffset);
-    Preferences.setDouble("FR_Offset", frontRightOffset);
-    Preferences.setDouble("RL_Offset", rearRightOffset);
-    Preferences.setDouble("RR_Offset", rearLeftOffset);
+    Preferences.setDouble(Constants.Swerve.FRONT_LEFT_OFFSET_KEY, frontLeftOffset);
+    Preferences.setDouble(Constants.Swerve.FRONT_RIGHT_OFFSET_KEY, frontRightOffset);
+    Preferences.setDouble(Constants.Swerve.REAR_LEFT_OFFSET_KEY, rearLeftOffset);
+    Preferences.setDouble(Constants.Swerve.REAR_RIGHT_OFFSET_KEY, rearRightOffset);
 
     frontLeft.setModuleOffset(frontLeftOffset);
     frontRight.setModuleOffset(frontRightOffset);
