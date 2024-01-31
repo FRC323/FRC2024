@@ -71,16 +71,24 @@ public class DriveSubsystem extends SubsystemBase {
                 Constants.Swerve.REAR_RIGHT_OFFSET_KEY, Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
             Constants.Swerve.REAR_RIGHT_IS_INVERTED,
             isSimulation);
+    if(isSimulation) {
+      driveIO = new DriveIOSim(frontLeft, frontRight, rearLeft, rearRight);
+    }
+    else {
+      driveIO = new DriveIOSparkMax();
+    }
   }
 
   @Override
   public void periodic() {
-    // Update the odometry in the periodic block
     frontLeft.periodic();
     frontRight.periodic();
     rearLeft.periodic();
     rearRight.periodic();
+    driveIO.periodic();
+    // Update the odometry in the periodic block
     odometry.update(Rotation2d.fromDegrees(getGyroDegrees()), getModulePositions());
+
   }
 
   public SwerveModulePosition[] getModulePositions() {
