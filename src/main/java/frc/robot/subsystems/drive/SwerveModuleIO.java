@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 
 public interface SwerveModuleIO extends Sendable {
@@ -27,6 +28,9 @@ public interface SwerveModuleIO extends Sendable {
   In the case of real IO you should also write the outputs to the ESCs
    */
   public void setCommandedOutputs(double steeringAngle, double wheelVelocity);
+  public default void setDesiredState(SwerveModuleState state) {
+    setCommandedOutputs(state.angle.getRadians(), state.speedMetersPerSecond);
+  }
 
   public void resetSteeringEncoder(double newValue);
 
