@@ -26,28 +26,28 @@ public class DriveSubsystem extends SubsystemBase {
           Constants.Swerve.FRONT_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_LEFT_TURNING_CAN_ID,
           Preferences.getDouble(Constants.Swerve.FRONT_LEFT_OFFSET_KEY,Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
-          Constants.Swerve.FRONT_LEFT_IS_INVERTED);
+          Constants.Swerve.FRONT_LEFT_IS_INVERTED, false);
 
   public final SwerveModule frontRight =
       new SwerveModule(
           Constants.Swerve.FRONT_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_RIGHT_TURNING_CAN_ID,
           Preferences.getDouble(Constants.Swerve.FRONT_RIGHT_OFFSET_KEY,Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
-          Constants.Swerve.FRONT_RIGHT_IS_INVERTED);
+          Constants.Swerve.FRONT_RIGHT_IS_INVERTED, false);
 
   public final SwerveModule rearLeft =
       new SwerveModule(
           Constants.Swerve.REAR_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_LEFT_TURNING_CAN_ID,
           Preferences.getDouble(Constants.Swerve.REAR_LEFT_OFFSET_KEY,Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
-          Constants.Swerve.REAR_LEFT_IS_INVERTED);
+          Constants.Swerve.REAR_LEFT_IS_INVERTED, false);
 
   public final SwerveModule rearRight =
       new SwerveModule(
           Constants.Swerve.REAR_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_RIGHT_TURNING_CAN_ID,
           Preferences.getDouble(Constants.Swerve.REAR_RIGHT_OFFSET_KEY,Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
-          Constants.Swerve.REAR_RIGHT_IS_INVERTED);
+          Constants.Swerve.REAR_RIGHT_IS_INVERTED, false);
 
   private ChassisSpeeds lastSetChassisSpeed = new ChassisSpeeds(0, 0, 0);
   private Optional<Pose2d> targetPose = Optional.empty();
@@ -80,13 +80,6 @@ public class DriveSubsystem extends SubsystemBase {
       rearLeft.getPosition(),
       rearRight.getPosition()
     };
-  }
-
-  public void burnFlashSparks() {
-    frontLeft.burnFlashSparks();
-    frontRight.burnFlashSparks();
-    rearLeft.burnFlashSparks();
-    rearRight.burnFlashSparks();
   }
 
   public Pose2d getPose() {

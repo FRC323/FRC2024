@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -22,7 +23,9 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   private double drivingCommandVoltage;
   private double direction = 1.0;
 
-  private double _targetVel, _targetAngle;
+  private double _targetVel;
+  private Rotation2d _targetAngle;
+  private double _positionMeters = 0;
 
   public SwerveModuleIOSim(boolean isInverted) {
     this.direction = isInverted ? -1.0 : 1.0;
@@ -85,9 +88,9 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         driveSim.getAngularVelocityRadPerSec() * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS;
   }
 
-  @Override
-  public void setCommandedOutputs(double steeringAngle, double wheelVelocity) {
-    turningCommandVoltage = turningPIDController.calculate(turningSim.getAngleRads(), steeringAngle);
+    @Override
+  public void setCommandedOutputs(Rotation2d steeringAngle, double wheelVelocity) {
+    turningCommandVoltage = turningPIDController.calculate(turningSim.getAngleRads(), steeringAngle.getRadians());
     drivingCommandVoltage =
         drivingPIDController.calculate(
             driveSim.getAngularVelocityRadPerSec()
@@ -98,12 +101,8 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   }
 
   @Override
-  public void resetSteeringEncoder(double newValue) {
-    turningSim.setState(newValue, turningSim.getVelocityRadPerSec());
-  }
-
-  @Override
   public void resetDriveEncoder(double newValue) {
+    _positionMeters = 0.0;
     driveSim.setState(newValue);
   }
 
@@ -115,11 +114,31 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    this._positionMeters +=
+    driveSim.getAngularVelocityRadPerSec()
+            * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS
+            * TimedRobot.kDefaultPeriod;
+  }
 
   @Override
   public void burnFlashSparks() {
     // This method intentionally left blank
+  }
+
+  @Override
+  public Rotation2d getModuleHeading() {
+    return new Rotation2d(turningSim.getAngleRads());
+  }
+
+  @Override
+  public double getVelocity() {
+    return  driveSim.getAngularVelocityRadPerSec() * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS;
+  }
+
+  @Override
+  public double getPosition() {
+    return _positionMeters;
   }
 
   @Override
@@ -137,7 +156,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     builder.addDoubleProperty("Driving Vel (m/s)", () -> driveSim.getAngularVelocityRadPerSec() * Constants.Swerve.Module.WHEEL_CIRCUMFERENCE_METERS, null);
     builder.addDoubleProperty("Steering Pos (rad)", turningSim::getAngleRads, null);
     builder.addDoubleProperty("Desired Vel (m/s)", () -> _targetVel, null);
-    builder.addDoubleProperty("Desired Steer (rad)", () -> _targetAngle, null);
+    builder.addDoubleProperty("Desired Steer (rad)", () -> _targetAngle.getRadians(), null);
     builder.addBooleanProperty(
             "Turning encoder connected", () -> true, null);
   }
