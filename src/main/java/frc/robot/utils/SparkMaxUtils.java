@@ -62,13 +62,14 @@ public class SparkMaxUtils {
             return sparkMaxEncoder.setVelocityConversionFactor(radsPerRotationPerSecond);
         }
     }
-    public static void initWithRetry(BooleanSupplier initFunction, int maxRetryAttempts) {
+    public static boolean initWithRetry(BooleanSupplier initFunction, int maxRetryAttempts) {
         int numAttempts = 0;
         while (!initFunction.getAsBoolean()) {
             numAttempts++;
             if (numAttempts > maxRetryAttempts) {
-                break;
+                return false;
             }
         }
+    return true;
     }
 }

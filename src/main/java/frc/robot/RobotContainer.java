@@ -25,7 +25,7 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+  private final DriveSubsystem driveSubsystem;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_operatorController =
@@ -35,7 +35,8 @@ public class RobotContainer {
   private final CommandJoystick m_steerJoystick = new CommandJoystick(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+  public RobotContainer(boolean isSimulation) {
+    driveSubsystem = new DriveSubsystem(isSimulation);
     // Configure the trigger bindings
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
@@ -74,9 +75,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //    return Autos.exampleAuto(m_exampleSubsystem);
+//    return Autos.exampleAuto(m_exampleSubsystem);
     return new InstantCommand();
   }
-
-  public void simulationInit() {}
 }
