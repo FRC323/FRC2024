@@ -147,17 +147,17 @@ public final class Constants {
       public static final int Shooter_CAN_Id = 43;
       public static final int Feeder_CAN_Id = 44;
 
-      public static final TrapezoidProfile.Constraints CONSTRAINTS = new Constraints(Max_Velocity, Max_Acceleration);
+      public static final TrapezoidProfile.Constraints CONSTRAINTS = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
 
       public static final double kP = 0.1;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
     }
 
-    public static final double Max_Velocity = Units.degreesToRadians(30);
-    public static final double Max_Acceleration = Units.degreesToRadians(60);
+    public static final double MAX_VELOCITY = Units.degreesToRadians(30);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(60);
 
-    public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS = new Constraints(Max_Velocity, Max_Acceleration);
+    public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
 
     //Feedforward
     public static final double kG = 0.36; //Volts

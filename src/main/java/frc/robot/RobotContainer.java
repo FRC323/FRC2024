@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.StoredDrivetrainOffsets;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 /**
@@ -26,6 +27,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+  private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_operatorController =
@@ -39,6 +41,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
+    Shuffleboard.getTab("Subsystems").add(armSubsystem.getName(),armSubsystem);
     SmartDashboard.putData(driveSubsystem);
   }
 
