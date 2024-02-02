@@ -61,7 +61,6 @@ public class ArmSubsystem extends SubsystemBase{
             + feedforward.calculate(armController.getSetpoint().velocity)
             + (Arm.kG * Math.cos(armEncoder.getPosition()))
         );
-        rightSpark.follow(leftSpark,true); //todo: move this out of the main loop
         
         encoderChecker.addReading(armEncoder.getPosition());
     
@@ -94,6 +93,8 @@ public class ArmSubsystem extends SubsystemBase{
             leftSpark.restoreFactoryDefaults()
         );
         
+        errors += check(rightSpark.follow(leftSpark,true));
+        
         errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
 
 
@@ -102,6 +103,8 @@ public class ArmSubsystem extends SubsystemBase{
 
     @Override
     public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
         builder.addDoubleProperty("kP: ",armController::getP, armController::setP);
         builder.addDoubleProperty("kI: ",armController::getI, armController::setI);            
         builder.addDoubleProperty("kD: ",armController::getD, armController::setD);
