@@ -7,6 +7,8 @@ package frc.robot;
 import com.revrobotics.CANSparkBase;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -129,4 +131,45 @@ public final class Constants {
       public static double TURNING_ENCODER_POSITION_PID_MIN_INPUT_RADIANS = 0.0;
     }
   }
+
+  public static class Arm{
+    //CAN IDs
+    public static final int Arm_Actuation_L = 41;
+    public static final int Arm_Actuation_R = 42;
+    
+
+    //Profiled PID Constants //TODO:Tune values
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+
+    public static class Shooter{
+      public static final int Shooter_CAN_Id = 43;
+      public static final int Feeder_CAN_Id = 44;
+
+      public static final TrapezoidProfile.Constraints CONSTRAINTS = new Constraints(Max_Velocity, Max_Acceleration);
+
+      public static final double kP = 0.1;
+      public static final double kI = 0.0;
+      public static final double kD = 0.0;
+    }
+
+    public static final double Max_Velocity = Units.degreesToRadians(30);
+    public static final double Max_Acceleration = Units.degreesToRadians(60);
+
+    public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS = new Constraints(Max_Velocity, Max_Acceleration);
+
+    //Feedforward
+    public static final double kG = 0.36; //Volts
+    public static final double kV = 3.12; //Volts * s/rad
+    public static final double kA = 0.02; //Volts * s^2/rad
+
+    //Motor Constants
+    public static final int CURRENT_LIMIT = 40;
+    
+
+    
+    
+  }
+
 }
