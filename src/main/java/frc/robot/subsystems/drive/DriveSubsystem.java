@@ -15,27 +15,21 @@ public class DriveSubsystem extends SubsystemBase {
   private final SwerveModule frontLeft, frontRight, rearLeft, rearRight;
   private double targetHeadingDegrees;
 
-  //  TODO Instantiate
   DriveIO driveIO;
 
   @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
   private double throttleMultiplier = 1.0;
 
   private ChassisSpeeds lastSetChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-
-
   private ChassisSpeeds lastSetChassisSpeed = new ChassisSpeeds(0, 0, 0);
   private Optional<Pose2d> targetPose = Optional.empty();
 
-  SwerveDriveOdometry odometry =
-      new SwerveDriveOdometry(
-          Constants.Swerve.DRIVE_KINEMATICS, Rotation2d.fromDegrees(0.0), getModulePositions());
+  SwerveDriveOdometry odometry;
+
   private ChassisSpeeds actualChassisSpeed;
 
   public DriveSubsystem(boolean isSimulation) {
-    //    navx = new AHRS(SerialPort.Port.kMXP);
     actualChassisSpeed = new ChassisSpeeds(0, 0, 0);
-    //    navx.reset();
     frontLeft =
         new SwerveModule(
             Constants.Swerve.FRONT_LEFT_DRIVING_CAN_ID,
@@ -77,6 +71,9 @@ public class DriveSubsystem extends SubsystemBase {
     else {
       driveIO = new DriveIOSparkMax();
     }
+
+    odometry = new SwerveDriveOdometry(
+            Constants.Swerve.DRIVE_KINEMATICS, Rotation2d.fromDegrees(0.0), getModulePositions());
   }
 
   @Override
@@ -129,7 +126,6 @@ public class DriveSubsystem extends SubsystemBase {
     // I'm not 100% sure on this to be honest
     // Reset it to 0, then add an offset negative what you want.
     // TODO: Handle Gyro Reverse
-    // TODO: Abstract out into IO layer
     driveIO.setGyroHeading(Rotation2d.fromDegrees(yawDeg));
   }
 
