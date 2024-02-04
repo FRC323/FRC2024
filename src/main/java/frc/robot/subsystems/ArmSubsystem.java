@@ -6,6 +6,7 @@ import static frc.robot.utils.SparkMaxUtils.initWithRetry;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -74,17 +75,17 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    commandedVoltage =
-        armController.calculate(getArmAngleRads())
-    // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to kp:0.1 and up slowly
-//            + armFeedForward.calculate(armController.getSetpoint().velocity)
-//            + (Arm.kG * Math.cos(getArmAngleRads()))
-            ;
+    commandedVoltage = armController.calculate(getArmAngleRads())
+    // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to
+    // kp:0.1 and up slowly
+    //            + armFeedForward.calculate(armController.getSetpoint().velocity)
+    //            + (Arm.kG * Math.cos(getArmAngleRads()))
+    ;
     leftSpark.setVoltage(commandedVoltage);
   }
 
   public void setTargetRads(double rads) {
-    this.armController.setGoal(rads);
+    this.armController.setGoal(MathUtil.clamp(rads, Arm.SOFT_LIMIT_MIN, Arm.SOFT_LIMIT_MAX));
   }
 
   public boolean armIsAtTarget() {
