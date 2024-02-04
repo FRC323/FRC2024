@@ -54,7 +54,7 @@ public final class Constants {
             new Translation2d(WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2));
-      public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 2.0;
+    public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 2.0;
     public static final double MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2 = 2.0;
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 11;
@@ -132,51 +132,50 @@ public final class Constants {
     }
   }
 
-  public static class Arm{
-    //CAN IDs
+  public static class Arm {
+    // CAN IDs
     public static final int Arm_Actuation_L = 41;
     public static final int Arm_Actuation_R = 42;
-    
 
-    //Profiled PID Constants //TODO:Tune values
+    // Profiled PID Constants //TODO:Tune values
     public static final double kP = 10.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
-      public static final String OFFSET_KEY = "Arm_Offset";
+    public static final String OFFSET_KEY = "Arm_Offset";
+    public static final double MAX_VELOCITY = Units.degreesToRadians(240);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(1920);
 
-      public static class Shooter{
+    public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS =
+        new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+
+    // Feedforward
+    public static final double kG = 0.36; // Volts
+    public static final double kV = 3.12; // Volts * s/rad
+    public static final double kA = 0.02; // Volts * s^2/rad
+
+    // Motor Constants
+    public static final int CURRENT_LIMIT = 40;
+
+    public static final double SOFT_LIMIT_MIN = Units.degreesToRadians(0.0);
+    public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(110);
+
+    public static class Shooter {
       public static final int Shooter_CAN_Id = 43;
       public static final int Feeder_CAN_Id = 44;
 
-      public static final TrapezoidProfile.Constraints CONSTRAINTS = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+      public static final TrapezoidProfile.Constraints CONSTRAINTS =
+          new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
 
       public static final double kP = 0.1;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
     }
-
-    public static final double MAX_VELOCITY = Units.degreesToRadians(240);
-    public static final double MAX_ACCELERATION = Units.degreesToRadians(1920);
-
-    public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-
-    //Feedforward
-    public static final double kG = 0.36; //Volts
-    public static final double kV = 3.12; //Volts * s/rad
-    public static final double kA = 0.02; //Volts * s^2/rad
-
-    //Motor Constants
-    public static final int CURRENT_LIMIT = 40;
-    
-
-    
-    
   }
 
   public static class Intake {
-    //CAN IDs
-    public static final int ROLLER_ID= 32;
+    // CAN IDs
+    public static final int ROLLER_ID = 32;
     public static final int ACTUATION_ID = 31;
   }
 }
