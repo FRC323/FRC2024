@@ -1,119 +1,146 @@
 package frc.robot.subsystems;
 
 import static frc.robot.utils.SparkMaxUtils.check;
+import static frc.robot.utils.SparkMaxUtils.initWithRetry;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
-import frc.robot.utils.AbsoluteEncoderChecker;
 
-public class ArmSubsystem extends SubsystemBase{
-    //Control 
-    private ProfiledPIDController armController;
-    private SimpleMotorFeedforward feedforward;
+public class ArmSubsystem extends SubsystemBase {
+  // Control
+  private ProfiledPIDController armController;
+  private SimpleMotorFeedforward feedforward;
 
-    private ProfiledPIDController shooterController;
+  private ProfiledPIDController shooterController;
 
-    //Hardware
-    private CANSparkMax leftSpark;
-    private CANSparkMax rightSpark;
-    private CANSparkMax shooterSpark;
-    private CANSparkMax feederSpark;
+  // Hardware
+  private CANSparkMax leftSpark;
+  private CANSparkMax rightSpark;
+  private CANSparkMax shooterSpark;
+  private CANSparkMax feederSpark;
 
-    private AbsoluteEncoder armEncoder;
+  //    private AbsoluteEncoder armEncoder;
+  private DutyCycleEncoder armAbsoluteEncoder;
+  private double commandedVoltage = 0.0;
 
-    private AbsoluteEncoderChecker encoderChecker;
+  //    private AbsoluteEncoderChecker encoderChecker;
 
-    public ArmSubsystem(){
-        leftSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_L, MotorType.kBrushless);       
-        rightSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_R, MotorType.kBrushless);
+  public ArmSubsystem() {
+    leftSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_L, MotorType.kBrushless);
+    rightSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_R, MotorType.kBrushless);
+    shooterSpark = new CANSparkMax(Arm.Shooter.Shooter_CAN_Id, MotorType.kBrushless);
+    feederSpark = new CANSparkMax(Arm.Shooter.Feeder_CAN_Id, MotorType.kBrushless);
 
-        shooterController = new ProfiledPIDController(
-            Arm.Shooter.kP,Arm.Shooter.kI,Arm.Shooter.kD,Arm.Shooter.CONSTRAINTS
-        );
+    shooterController =
+        new ProfiledPIDController(
+            Arm.Shooter.kP, Arm.Shooter.kI, Arm.Shooter.kD, Arm.Shooter.CONSTRAINTS);
 
-        armController = new ProfiledPIDController(
-            Arm.kP,Arm.kI,Arm.kD,Arm.ARM_CONSTRAINTS);
+    armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
 
-        feedforward = new SimpleMotorFeedforward(0, 0.0);
+    //        TODO: Rename to something like armFeedForward
+    feedforward = new SimpleMotorFeedforward(0, 0.0);
 
-        armEncoder = leftSpark.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+    //        armEncoder = leftSpark.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
-        encoderChecker = new AbsoluteEncoderChecker();
-        
+    armAbsoluteEncoder = new DutyCycleEncoder(Constants.Arm.ENCODER_PORT);
+    armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Constants.Arm.OFFSET_KEY,0.0));
+    initWithRetry(this::initSparks, 5);
+  }
 
-        initSparks();
-    }
+  public void storeArmOffset() {
+    double offset = armAbsoluteEncoder.getAbsolutePosition();
+    Preferences.setDouble(Constants.Arm.OFFSET_KEY, offset);
+    armAbsoluteEncoder.setPositionOffset(offset);
+  }
 
-    @Override
-    public void periodic(){
-        leftSpark.set(
-            armController.calculate(armEncoder.getPosition())
-            + feedforward.calculate(armController.getSetpoint().velocity)
-            + (Arm.kG * Math.cos(armEncoder.getPosition()))
-        );
-        
-        encoderChecker.addReading(armEncoder.getPosition());
-    
-        // shooterSpark.set(
+  public void setFeederSpeed(double vel) {
+    feederSpark.set(vel);
+  }
 
-        // )
-        
-    }
+  public void setShooterSpeed(double vel) {
+    shooterSpark.set(vel);
+  }
 
-    public void setTargetAngle(double angle){
-        this.armController.setGoal(angle);
-    }
+  //    TODO: This may be in range 0..1, may need to shift
+  public double getArmAngleRads() {
+    return armAbsoluteEncoder.get() * (-2*Math.PI);
+  }
 
-    public double getCurrentAngle(){
-        return this.armEncoder.getPosition();
-    }
+  @Override
+  public void periodic() {
+    commandedVoltage = armController.calculate(getArmAngleRads())
+//            + feedforward.calculate(armController.getSetpoint().velocity)
+//            + (Arm.kG * Math.cos(getArmAngleRads()))
+            ;
+    leftSpark.setVoltage(
+        commandedVoltage);
+  }
 
-    public void burnFlash(){
-        Timer.delay(0.005);
-        leftSpark.burnFlash();
-        Timer.delay(0.005);
-        rightSpark.burnFlash();     
-    }
+  public void setTargetRads(double rads) {
+    this.armController.setGoal(rads);
+  }
 
-    private void initSparks(){
-        int errors = 0;
-        //TODO: Config all
-        
-        errors += check(
-            leftSpark.restoreFactoryDefaults()
-        );
-        
-        errors += check(rightSpark.follow(leftSpark,true));
-        
-        errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
+  public boolean armIsAtTarget() {
+    return armController.atGoal();
+  }
 
+  public void burnFlash() {
+    Timer.delay(0.005);
+    leftSpark.burnFlash();
+    Timer.delay(0.005);
+    rightSpark.burnFlash();
+  }
 
-        
-    }
+  private boolean initSparks() {
+    int errors = 0;
+    // TODO: Config all
 
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
+    errors += check(leftSpark.restoreFactoryDefaults());
+    errors += check(rightSpark.restoreFactoryDefaults());
+    errors += check(shooterSpark.restoreFactoryDefaults());
+    errors += check(feederSpark.restoreFactoryDefaults());
+    //        TODO: Make sure the sparks are in vbus mode
+    errors += check(rightSpark.follow(leftSpark, true));
 
-        builder.addDoubleProperty("kP: ",armController::getP, armController::setP);
-        builder.addDoubleProperty("kI: ",armController::getI, armController::setI);            
-        builder.addDoubleProperty("kD: ",armController::getD, armController::setD);
-    
-        builder.addDoubleProperty("Velocity (m/s)", armEncoder::getVelocity,null);
-        builder.addDoubleProperty("Desired Velocity (m/s)", () -> {return armController.getGoal().velocity;}, null);
-        builder.addDoubleProperty("Position (rads)",armEncoder::getPosition,null);
-        builder.addDoubleProperty("Desired Position (rads)", () -> {return armController.getGoal().position;}, null);
-    }
+    errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
+    return errors == 0;
+  }
 
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
 
+    builder.addDoubleProperty("kP: ", armController::getP, armController::setP);
+    builder.addDoubleProperty("kI: ", armController::getI, armController::setI);
+    builder.addDoubleProperty("kD: ", armController::getD, armController::setD);
+
+    //    builder.addDoubleProperty("Velocity (m/s)", armAbsoluteEncoder::getV, null);
+    //    builder.addDoubleProperty(
+    //        "Desired Velocity (m/s)",
+    //        () -> {
+    //          return armController.getGoal().velocity;
+    //        },
+    //        null);
+    builder.addDoubleProperty("Position (rads)", this::getArmAngleRads, null);
+    builder.addDoubleProperty(
+        "Desired Position (rads)",
+        () -> {
+          return armController.getGoal().position;
+        },
+        null);
+    builder.addDoubleProperty("Arm Commanded Voltage", () -> commandedVoltage, null);
+    builder.addDoubleProperty("Arm Current L", leftSpark::getOutputCurrent, null);
+    builder.addDoubleProperty("Arm Current R", rightSpark::getOutputCurrent, null);
+    builder.addBooleanProperty("Arm Encoder Plugged In", armAbsoluteEncoder::isConnected, null);
+  }
 }
