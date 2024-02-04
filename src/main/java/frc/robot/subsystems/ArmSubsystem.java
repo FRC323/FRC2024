@@ -19,7 +19,7 @@ import frc.robot.Constants.Arm;
 public class ArmSubsystem extends SubsystemBase {
   // Control
   private ProfiledPIDController armController;
-  private SimpleMotorFeedforward feedforward;
+  private SimpleMotorFeedforward armFeedForward;
 
   private ProfiledPIDController shooterController;
 
@@ -47,13 +47,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
 
-    //        TODO: Rename to something like armFeedForward
-    feedforward = new SimpleMotorFeedforward(0, 0.0);
-
-    //        armEncoder = leftSpark.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+    armFeedForward = new SimpleMotorFeedforward(0, Arm.kV, Arm.kA);
 
     armAbsoluteEncoder = new DutyCycleEncoder(Constants.Arm.ENCODER_PORT);
-    armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Constants.Arm.OFFSET_KEY,0.0));
+    armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Constants.Arm.OFFSET_KEY, 0.0));
     initWithRetry(this::initSparks, 5);
   }
 
@@ -71,19 +68,19 @@ public class ArmSubsystem extends SubsystemBase {
     shooterSpark.set(vel);
   }
 
-  //    TODO: This may be in range 0..1, may need to shift
   public double getArmAngleRads() {
-    return armAbsoluteEncoder.get() * (-2*Math.PI);
+    return armAbsoluteEncoder.get() * (-2 * Math.PI);
   }
 
   @Override
   public void periodic() {
-    commandedVoltage = armController.calculate(getArmAngleRads())
-//            + feedforward.calculate(armController.getSetpoint().velocity)
+    commandedVoltage =
+        armController.calculate(getArmAngleRads())
+    // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to kp:0.1 and up slowly
+//            + armFeedForward.calculate(armController.getSetpoint().velocity)
 //            + (Arm.kG * Math.cos(getArmAngleRads()))
             ;
-    leftSpark.setVoltage(
-        commandedVoltage);
+    leftSpark.setVoltage(commandedVoltage);
   }
 
   public void setTargetRads(double rads) {
@@ -104,14 +101,11 @@ public class ArmSubsystem extends SubsystemBase {
   private boolean initSparks() {
     int errors = 0;
     // TODO: Config all
-
     errors += check(leftSpark.restoreFactoryDefaults());
     errors += check(rightSpark.restoreFactoryDefaults());
     errors += check(shooterSpark.restoreFactoryDefaults());
     errors += check(feederSpark.restoreFactoryDefaults());
-    //        TODO: Make sure the sparks are in vbus mode
     errors += check(rightSpark.follow(leftSpark, true));
-
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
     return errors == 0;
   }
