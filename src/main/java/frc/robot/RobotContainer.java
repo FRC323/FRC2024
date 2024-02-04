@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,8 +14,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.StoredDrivetrainOffsets;
+import frc.robot.commands.*;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 /**
@@ -28,6 +30,7 @@ public class RobotContainer {
 
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_operatorController =
@@ -41,7 +44,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
-    Shuffleboard.getTab("Subsystems").add(armSubsystem.getName(),armSubsystem);
+    Shuffleboard.getTab("Subsystems").add(armSubsystem.getName(), armSubsystem);
+    Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
     SmartDashboard.putData(driveSubsystem);
   }
 
@@ -61,13 +65,28 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 driveSubsystem.drive(
-                    m_driveJoystick.getY(),
-                    m_driveJoystick.getX(),
-                    m_steerJoystick.getX(),
-                    false),
+                    m_driveJoystick.getY(), m_driveJoystick.getX(), m_steerJoystick.getX(), false),
             driveSubsystem));
-            
-        SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
+
+    SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
+    SmartDashboard.putData(new StoreArmOffset(armSubsystem));
+    SmartDashboard.putData(
+        "Arm to Zero", new SetArmTarget(armSubsystem, Units.degreesToRadians(0)));
+    SmartDashboard.putData(
+        "Arm to Pickup", new SetArmTarget(armSubsystem, Units.degreesToRadians(17)));
+    SmartDashboard.putData(
+        "Arm to 60 deg", new SetArmTarget(armSubsystem, Units.degreesToRadians(60)));
+
+    SmartDashboard.putData(
+        "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
+
+    SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
+    SmartDashboard.putData("Shooter Slow", new SetShooterSpeed(armSubsystem, -.2));
+    SmartDashboard.putData("Shooter Off", new SetShooterSpeed(armSubsystem, 0));
+    SmartDashboard.putData("Feeder On", new SetFeederSpeed(armSubsystem, -1));
+    SmartDashboard.putData("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
+    SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, -1));
+    SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
   }
 
   /**

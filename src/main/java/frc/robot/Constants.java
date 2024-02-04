@@ -139,11 +139,13 @@ public final class Constants {
     
 
     //Profiled PID Constants //TODO:Tune values
-    public static final double kP = 0.1;
+    public static final double kP = 10.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
+    public static final int ENCODER_PORT = 0;
+      public static final String OFFSET_KEY = "Arm_Offset";
 
-    public static class Shooter{
+      public static class Shooter{
       public static final int Shooter_CAN_Id = 43;
       public static final int Feeder_CAN_Id = 44;
 
@@ -154,8 +156,8 @@ public final class Constants {
       public static final double kD = 0.0;
     }
 
-    public static final double MAX_VELOCITY = Units.degreesToRadians(30);
-    public static final double MAX_ACCELERATION = Units.degreesToRadians(60);
+    public static final double MAX_VELOCITY = Units.degreesToRadians(240);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(1920);
 
     public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
 
@@ -172,4 +174,9 @@ public final class Constants {
     
   }
 
+  public static class Intake {
+    //CAN IDs
+    public static final int ROLLER_ID= 32;
+    public static final int ACTUATION_ID = 31;
+  }
 }
