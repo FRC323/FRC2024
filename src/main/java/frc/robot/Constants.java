@@ -27,6 +27,14 @@ public final class Constants {
     public static final double FREE_SPEED_RPM = 5676;
   }
 
+  public static class DriverConstants {
+    public static final int kDriveStickPort = 0;
+    public static final int kSteerStickPort = 1;
+
+    // Buttons
+    public static final int GYRO_RESET_BUTTON = 9;
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
@@ -46,7 +54,7 @@ public final class Constants {
     /** Distance between front and back wheels on robot */
     public static final double WHEEL_BASE_METERS = Units.inchesToMeters(22.5);
 
-    public static final boolean GYRO_REVERSED = true;
+    public static final boolean GYRO_REVERSED = false;//true;
 
     public static final SwerveDriveKinematics DRIVE_KINEMATICS =
         new SwerveDriveKinematics(
