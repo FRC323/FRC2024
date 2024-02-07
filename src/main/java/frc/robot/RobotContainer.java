@@ -36,8 +36,8 @@ public class RobotContainer {
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-  private final CommandJoystick m_driveJoystick = new CommandJoystick(0);
-  private final CommandJoystick m_steerJoystick = new CommandJoystick(1);
+  private final CommandJoystick m_driveJoystick = new CommandJoystick(Constants.DriverConstants.kDriveStickPort);
+  private final CommandJoystick m_steerJoystick = new CommandJoystick(Constants.DriverConstants.kSteerStickPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -59,13 +59,21 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    m_driveJoystick.button(Constants.DriverConstants.GYRO_RESET_BUTTON).onTrue(
+      new InstantCommand(
+        () ->
+          driveSubsystem.resetYaw()
+        , driveSubsystem)
+    );
 
-    //    TODO: Field Centric Enable
     driveSubsystem.setDefaultCommand(
         new RunCommand(
             () ->
                 driveSubsystem.drive(
-                    m_driveJoystick.getY(), m_driveJoystick.getX(), m_steerJoystick.getX(), false),
+                    m_driveJoystick.getY(),
+                    m_driveJoystick.getX(),
+                    m_steerJoystick.getX(),
+                    !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
     SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
