@@ -181,6 +181,7 @@ public final class Constants {
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = Units.degreesToRadians(60);
     public static final double ARM_DOWN_POSE = 0;
+    public static final double ARM_HANDOFF_POSE = Units.degreesToRadians(5); //todo
     
   }
 

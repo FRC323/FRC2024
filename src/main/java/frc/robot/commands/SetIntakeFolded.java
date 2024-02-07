@@ -1,51 +1,16 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class SetIntakeFolded extends Command {
-    IntakeSubsystem intake;
-    ArmSubsystem armSubsystem;
-
-    private CommandState commandState;
-
-    private enum CommandState{
-        UN_FOLDED,
-        ARM_HEIGHT_REACHED,
-        FINISHED
-    }
-
-    public SetIntakeFolded(IntakeSubsystem intake,ArmSubsystem armSubsystem) {
-        addRequirements(intake);
-        this.intake = intake;
-
-        addRequirements(armSubsystem);
-        this.armSubsystem = armSubsystem;
-
-        this.commandState = CommandState.UN_FOLDED;
-    }
-
-    @Override
-    public void execute() {
-        switch (commandState) {
-            case UN_FOLDED:
-                armSubsystem.setTargetRads(Constants.Arm.ARM_INTAKE_UNFOLDING_POSE);
-                if(armSubsystem.armIsAtTarget()){
-                    commandState = CommandState.ARM_HEIGHT_REACHED;
-                }
-                break;
-            case ARM_HEIGHT_REACHED:
-                intake.setTargetRads(Constants.Intake.FOLDED_POSE);
-                if(intake.wristIsAtTarget()){
-                    commandState = CommandState.FINISHED;
-                }   
-        }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return commandState == CommandState.FINISHED;
+public class SetIntakeFolded extends SequentialCommandGroup{
+    public SetIntakeFolded(IntakeSubsystem intake,ArmSubsystem armSubsystem){
+        addCommands(
+            new SetArmTarget(armSubsystem,Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
+            new SetIntakeTarget(intake,Constants.Intake.FOLDED_POSE),
+            new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE)
+        );
     }
 }
