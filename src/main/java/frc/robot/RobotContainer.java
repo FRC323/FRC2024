@@ -90,10 +90,10 @@ public class RobotContainer {
     SmartDashboard.putData(
         "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
     SmartDashboard.putData(
-      "Intake to Zero", new SetIntakeFolded(intakeSubsystem, false)
+      "Intake to Folded", new SetIntakeFolded(intakeSubsystem,armSubsystem)
     );
     SmartDashboard.putData(
-      "Intake to In", new SetIntakeFolded(intakeSubsystem, true)
+      "Intake to Unfolded", new SetIntakeUnfolded(intakeSubsystem,armSubsystem)
     );
 
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));

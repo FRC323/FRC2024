@@ -64,11 +64,6 @@ public class IntakeSubsystem extends SubsystemBase {
         this.wristController.setGoal(MathUtil.clamp(rads, Intake.SOFT_LIMIT_MIN, Intake.SOFT_LIMIT_MAX));
     }
 
-    public void setFolded(boolean state){
-        if(state) setTargetRads(Intake.FOLDED_POSE);
-        else setTargetRads(Intake.UNFOLDED_POSE);
-    }
-
     public boolean wristIsAtTarget() {
         return wristController.atGoal();
     }

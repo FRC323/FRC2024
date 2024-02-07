@@ -5,39 +5,39 @@ import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class SetIntakeFolded extends Command {
+public class SetIntakeUnfolded extends Command {
     IntakeSubsystem intake;
     ArmSubsystem armSubsystem;
 
     private CommandState commandState;
 
     private enum CommandState{
-        UN_FOLDED,
+        FOLDED,
         ARM_HEIGHT_REACHED,
         FINISHED
     }
 
-    public SetIntakeFolded(IntakeSubsystem intake,ArmSubsystem armSubsystem) {
+    public SetIntakeUnfolded(IntakeSubsystem intake,ArmSubsystem armSubsystem) {
         addRequirements(intake);
         this.intake = intake;
 
         addRequirements(armSubsystem);
         this.armSubsystem = armSubsystem;
 
-        this.commandState = CommandState.UN_FOLDED;
+        this.commandState = CommandState.FOLDED;
     }
 
     @Override
     public void execute() {
         switch (commandState) {
-            case UN_FOLDED:
+            case FOLDED:
                 armSubsystem.setTargetRads(Constants.Arm.ARM_INTAKE_UNFOLDING_POSE);
                 if(armSubsystem.armIsAtTarget()){
                     commandState = CommandState.ARM_HEIGHT_REACHED;
                 }
                 break;
             case ARM_HEIGHT_REACHED:
-                intake.setTargetRads(Constants.Intake.FOLDED_POSE);
+                intake.setTargetRads(Constants.Intake.UNFOLDED_POSE);
                 if(intake.wristIsAtTarget()){
                     commandState = CommandState.FINISHED;
                 }   
