@@ -78,6 +78,8 @@ public class RobotContainer {
 
     SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
     SmartDashboard.putData(new StoreArmOffset(armSubsystem));
+    SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
+
     SmartDashboard.putData(
         "Arm to Zero", new SetArmTarget(armSubsystem, Units.degreesToRadians(0)));
     SmartDashboard.putData(
@@ -87,6 +89,12 @@ public class RobotContainer {
 
     SmartDashboard.putData(
         "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
+    SmartDashboard.putData(
+      "Intake to Zero", new SetIntakeFolded(intakeSubsystem, false)
+    );
+    SmartDashboard.putData(
+      "Intake to In", new SetIntakeFolded(intakeSubsystem, true)
+    );
 
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
     SmartDashboard.putData("Shooter Slow", new SetShooterSpeed(armSubsystem, -.2));
