@@ -66,7 +66,6 @@ public class RobotContainer {
         , driveSubsystem)
     );
 
-    //    TODO: Field Centric Enable
     driveSubsystem.setDefaultCommand(
         new RunCommand(
             () ->
