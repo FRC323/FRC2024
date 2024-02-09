@@ -196,13 +196,13 @@ public final class Constants {
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 1;
     public static final String OFFSET_KEY = "Wrist_Offset";
-    public static final double MAX_VELOCITY = Units.degreesToRadians(2048);
+    public static final double MAX_VELOCITY = Units.degreesToRadians(256);
     public static final double MAX_ACCELERATION = Units.degreesToRadians(4096);
 
     public static final TrapezoidProfile.Constraints WRIST_CONSTRAINTS =
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
     
-      public static final int CURRENT_LIMIT = 40;
+      public static final int CURRENT_LIMIT = 20;
 
     //TODO: Get actual constants
     public static final double ENCODER_GEAR_RATION = (16.0/20.0);

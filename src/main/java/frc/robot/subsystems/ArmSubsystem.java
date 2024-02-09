@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
+import frc.robot.utils.NoRolloverEncoder;
 
 public class ArmSubsystem extends SubsystemBase {
   // Control
@@ -31,7 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax feederSpark;
 
   //    private AbsoluteEncoder armEncoder;
-  private DutyCycleEncoder armAbsoluteEncoder;
+  private NoRolloverEncoder armAbsoluteEncoder;
   private double commandedVoltage = 0.0;
 
   //    private AbsoluteEncoderChecker encoderChecker;
@@ -50,15 +51,14 @@ public class ArmSubsystem extends SubsystemBase {
 
     armFeedForward = new SimpleMotorFeedforward(0, Arm.kV, Arm.kA);
 
-    armAbsoluteEncoder = new DutyCycleEncoder(Constants.Arm.ENCODER_PORT);
-    armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Constants.Arm.OFFSET_KEY, 0.0));
+    armAbsoluteEncoder = new NoRolloverEncoder(
+      Constants.Arm.ENCODER_PORT,Preferences.getDouble(Constants.Intake.OFFSET_KEY, 0));
     initWithRetry(this::initSparks, 5);
   }
 
   public void storeArmOffset() {
-    double offset = armAbsoluteEncoder.getAbsolutePosition();
-    Preferences.setDouble(Constants.Arm.OFFSET_KEY, offset);
-    armAbsoluteEncoder.setPositionOffset(offset);
+    armAbsoluteEncoder.reset();
+    Preferences.setDouble(Constants.Arm.OFFSET_KEY, armAbsoluteEncoder.getOffset());
   }
 
   public void setFeederSpeed(double vel) {
@@ -127,6 +127,7 @@ public class ArmSubsystem extends SubsystemBase {
     //        },
     //        null);
     builder.addDoubleProperty("Position (rads)", this::getArmAngleRads, null);
+    builder.addDoubleProperty("Absolute Position", armAbsoluteEncoder::getAbsolutePosition, null);
     builder.addDoubleProperty(
         "Desired Position (rads)",
         () -> {

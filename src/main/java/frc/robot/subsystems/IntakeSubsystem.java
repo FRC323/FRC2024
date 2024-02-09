@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Intake;
+import frc.robot.utils.NoRolloverEncoder;
 
 import static frc.robot.utils.SparkMaxUtils.check;
 import static frc.robot.utils.SparkMaxUtils.initWithRetry;
@@ -22,8 +23,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax feederRoller;
     private CANSparkMax wristSpark;
 
-    private DutyCycleEncoder wristAbsoluteEncoder;
+    private NoRolloverEncoder wristAbsoluteEncoder;
     private double commandedVoltage = 0;
+    private double armOffset;
 
     private ProfiledPIDController wristController;
     
@@ -31,17 +33,15 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(){
         feederRoller = new CANSparkMax(Constants.Intake.ROLLER_ID, CANSparkLowLevel.MotorType.kBrushless);
         wristSpark = new CANSparkMax(Constants.Intake.ACTUATION_ID, CANSparkLowLevel.MotorType.kBrushless);
-        wristAbsoluteEncoder = new DutyCycleEncoder(Intake.ENCODER_PORT);
+        wristAbsoluteEncoder = new NoRolloverEncoder(Intake.ENCODER_PORT,Preferences.getDouble(Intake.OFFSET_KEY, 0.0));
         wristController = new ProfiledPIDController(Intake.kP, Intake.kI, Intake.kD,Intake.WRIST_CONSTRAINTS);
 
-        wristAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Intake.OFFSET_KEY, 0.0));
         initWithRetry(this::initSparks, 5);
     }
 
     public void storeWristOffset() {
-        double offset = wristAbsoluteEncoder.getAbsolutePosition();
-        Preferences.setDouble(Intake.OFFSET_KEY, offset);
-        wristAbsoluteEncoder.setPositionOffset(offset);
+        wristAbsoluteEncoder.reset();
+        Preferences.setDouble(Intake.OFFSET_KEY, wristAbsoluteEncoder.getOffset());
     }
 
     public double getWristAngleRads() {
@@ -80,6 +80,8 @@ public class IntakeSubsystem extends SubsystemBase {
         errors += check(feederRoller.restoreFactoryDefaults());
         errors += check(wristSpark.restoreFactoryDefaults());
         errors += check(wristSpark.setSmartCurrentLimit(Intake.CURRENT_LIMIT));
+        // wristAbsoluteEncoder.setDutyCycleRange(errors, errors);
+        // wristAbsoluteEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
 
         return errors == 0;
     }
@@ -92,6 +94,8 @@ public class IntakeSubsystem extends SubsystemBase {
     builder.addDoubleProperty("kD: ", wristController::getD, wristController::setD);
 
     builder.addDoubleProperty("Position (rads)", this::getWristAngleRads, null);
+    builder.addBooleanProperty("AtGoal", wristController::atGoal, null);
+    builder.addDoubleProperty("AbsolutEncoder", () -> wristAbsoluteEncoder.getAbsolutePosition(), null);
     builder.addDoubleProperty(
         "Desired Position (rads)",
         () -> {
@@ -100,7 +104,7 @@ public class IntakeSubsystem extends SubsystemBase {
         null);
     builder.addDoubleProperty("Arm Commanded Voltage", () -> commandedVoltage, null);
     builder.addDoubleProperty("Arm Current L", wristSpark::getOutputCurrent, null);
-    builder.addBooleanProperty("Arm Encoder Plugged In", wristAbsoluteEncoder::isConnected, null);
+    // builder.addBooleanProperty("Arm Encoder Plugged In", wristAbsoluteEncoder::isConnected, null);
   }
 
 

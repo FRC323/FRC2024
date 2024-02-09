@@ -76,6 +76,13 @@ public class RobotContainer {
                     !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
+    armSubsystem.setDefaultCommand(
+      new RunCommand(() -> armSubsystem.setTargetRads(armSubsystem.getArmAngleRads()),armSubsystem)
+    );
+    intakeSubsystem.setDefaultCommand(
+      new RunCommand(() -> intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads()),intakeSubsystem)
+    );
+
     SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
     SmartDashboard.putData(new StoreArmOffset(armSubsystem));
     SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
