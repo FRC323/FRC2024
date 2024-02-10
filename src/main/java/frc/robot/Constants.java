@@ -205,11 +205,15 @@ public final class Constants {
       public static final int CURRENT_LIMIT = 20;
 
     //TODO: Get actual constants
-    public static final double ENCODER_GEAR_RATION = (16.0/20.0);
+    public static final double ENCODER_GEAR_RATION = (16.0/22.0);
     public static final double SOFT_LIMIT_MIN = Units.degreesToRadians(0.0);
     public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(180);
 
     public static final double UNFOLDED_POSE = 0; //rads
     public static final double FOLDED_POSE = 3.09; // rads
+    public static double kV = 0.0;
+     public static double kA =  0.0;
+//    TODO: We should check this
+     public static double kG = Units.lbsToKilograms(5.5);
   }
 }
