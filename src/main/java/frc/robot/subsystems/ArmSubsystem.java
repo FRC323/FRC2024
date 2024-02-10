@@ -32,7 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax feederSpark;
 
   //    private AbsoluteEncoder armEncoder;
-  private NoRolloverEncoder armAbsoluteEncoder;
+  private DutyCycleEncoder armAbsoluteEncoder;
   private double commandedVoltage = 0.0;
 
   //    private AbsoluteEncoderChecker encoderChecker;
@@ -50,15 +50,14 @@ public class ArmSubsystem extends SubsystemBase {
     armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
 
     armFeedForward = new SimpleMotorFeedforward(0, Arm.kV, Arm.kA);
-
-    armAbsoluteEncoder = new NoRolloverEncoder(
-      Constants.Arm.ENCODER_PORT,Preferences.getDouble(Constants.Intake.OFFSET_KEY, 0));
+    armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);
     initWithRetry(this::initSparks, 5);
   }
 
   public void storeArmOffset() {
-    armAbsoluteEncoder.reset();
-    Preferences.setDouble(Constants.Arm.OFFSET_KEY, armAbsoluteEncoder.getOffset());
+    double offset = armAbsoluteEncoder.getAbsolutePosition();
+    Preferences.setDouble(Arm.OFFSET_KEY, offset);
+    armAbsoluteEncoder.setPositionOffset(offset);
   }
 
   public void setFeederSpeed(double vel) {

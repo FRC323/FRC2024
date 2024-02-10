@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private CANSparkMax feederRoller;
   private CANSparkMax wristSpark;
 
-  private NoRolloverEncoder wristAbsoluteEncoder;
+  private DutyCycleEncoder wristAbsoluteEncoder;
   private double commandedVoltage = 0;
   private double armOffset;
 
@@ -36,8 +36,8 @@ public class IntakeSubsystem extends SubsystemBase {
         new CANSparkMax(Constants.Intake.ROLLER_ID, CANSparkLowLevel.MotorType.kBrushless);
     wristSpark =
         new CANSparkMax(Constants.Intake.ACTUATION_ID, CANSparkLowLevel.MotorType.kBrushless);
-    wristAbsoluteEncoder =
-        new NoRolloverEncoder(Intake.ENCODER_PORT, Preferences.getDouble(Intake.OFFSET_KEY, 0.0));
+    wristAbsoluteEncoder = new DutyCycleEncoder(Intake.ENCODER_PORT);
+    wristAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Intake.OFFSET_KEY, 0.0));
     wristController =
         new ProfiledPIDController(Intake.kP, Intake.kI, Intake.kD, Intake.WRIST_CONSTRAINTS);
     wristFeedForward = new SimpleMotorFeedforward(0, Constants.Intake.kV, Constants.Intake.kA);
@@ -46,8 +46,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void storeWristOffset() {
-    wristAbsoluteEncoder.reset();
-    Preferences.setDouble(Intake.OFFSET_KEY, wristAbsoluteEncoder.getOffset());
+    double offset = wristAbsoluteEncoder.getAbsolutePosition();
+    Preferences.setDouble(Intake.OFFSET_KEY, offset);
+    wristAbsoluteEncoder.setPositionOffset(offset);
   }
 
   public double getWristAngleRads() {
