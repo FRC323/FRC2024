@@ -40,19 +40,20 @@ public class IntakeSubsystem extends SubsystemBase {
     wristAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Intake.OFFSET_KEY, 0.0));
     wristController =
         new ProfiledPIDController(Intake.kP, Intake.kI, Intake.kD, Intake.WRIST_CONSTRAINTS);
+
     wristFeedForward = new SimpleMotorFeedforward(0, Constants.Intake.kV, Constants.Intake.kA);
 
     initWithRetry(this::initSparks, 5);
+    wristController.setGoal(getWristAngleRads());
   }
 
   public void storeWristOffset() {
-    double offset = wristAbsoluteEncoder.getAbsolutePosition();
-    Preferences.setDouble(Intake.OFFSET_KEY, offset);
-    wristAbsoluteEncoder.setPositionOffset(offset);
+    wristAbsoluteEncoder.reset();
+    Preferences.setDouble(Intake.OFFSET_KEY, wristAbsoluteEncoder.getPositionOffset());
   }
 
   public double getWristAngleRads() {
-    return wristAbsoluteEncoder.get() * (-2 * Math.PI) * Intake.ENCODER_GEAR_RATION;
+    return wristAbsoluteEncoder.get() * (2 * Math.PI) * Intake.ENCODER_GEAR_RATION;
   }
 
   @Override
@@ -60,9 +61,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     commandedVoltage = wristController.calculate(getWristAngleRads());
     this.wristSpark.set(
-        commandedVoltage
-            + wristFeedForward.calculate(wristController.getSetpoint().velocity)
-            + (Intake.kG * Math.cos(getWristAngleRads())));
+        commandedVoltage);
+            // + wristFeedForward.calculate(wristController.getSetpoint().velocity)
+            // + (Intake.kG * Math.cos(getWristAngleRads())));
   }
 
   public void setIntakeSpeed(double vel) {
@@ -93,7 +94,7 @@ public class IntakeSubsystem extends SubsystemBase {
     errors += check(wristSpark.setSmartCurrentLimit(Intake.CURRENT_LIMIT));
     // wristAbsoluteEncoder.setDutyCycleRange(errors, errors);
     // wristAbsoluteEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
-
+    wristSpark.setInverted(true);
     return errors == 0;
   }
 

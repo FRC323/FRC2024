@@ -76,31 +76,39 @@ public class RobotContainer {
                     !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
-    armSubsystem.setDefaultCommand(
-      new RunCommand(() -> armSubsystem.setTargetRads(armSubsystem.getArmAngleRads()),armSubsystem)
-    );
-    intakeSubsystem.setDefaultCommand(
-      new RunCommand(() -> intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads()),intakeSubsystem)
-    );
+    // armSubsystem.setDefaultCommand(
+    //   new InstantCommand(() -> armSubsystem.setTargetRads(armSubsystem.getArmAngleRads()),armSubsystem)
+    // );
+    // intakeSubsystem.setDefaultCommand(
+    //   new InstantCommand(() -> intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads()),intakeSubsystem)
+    // );
 
     SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
     SmartDashboard.putData(new StoreArmOffset(armSubsystem));
     SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
 
     SmartDashboard.putData(
-        "Arm to Zero", new SetArmTarget(armSubsystem, Units.degreesToRadians(0)));
+        "Arm to Down", new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE));
     SmartDashboard.putData(
-        "Arm to Pickup", new SetArmTarget(armSubsystem, Units.degreesToRadians(17)));
+        "Arm to Handoff", new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE));
     SmartDashboard.putData(
-        "Arm to 60 deg", new SetArmTarget(armSubsystem, Units.degreesToRadians(60)));
+        "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
 
     SmartDashboard.putData(
         "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
+
     SmartDashboard.putData(
-      "Intake to Folded", new SetIntakeFolded(intakeSubsystem,armSubsystem)
+      "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
     );
     SmartDashboard.putData(
-      "Intake to Unfolded", new SetIntakeUnfolded(intakeSubsystem,armSubsystem)
+      "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
+    );
+
+    SmartDashboard.putData(
+      "Folded Command", new SetIntakeFolded(intakeSubsystem,armSubsystem)
+    );
+    SmartDashboard.putData(
+      "Unfolded Command", new SetIntakeUnfolded(intakeSubsystem,armSubsystem)
     );
 
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));

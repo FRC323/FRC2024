@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
   // Hardware
   private CANSparkMax leftSpark;
   private CANSparkMax rightSpark;
-  private CANSparkMax shooterSpark;
+  private CANSparkMax leftShooterSpark;
   private CANSparkMax feederSpark;
 
   //    private AbsoluteEncoder armEncoder;
@@ -40,7 +40,8 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmSubsystem() {
     leftSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_L, MotorType.kBrushless);
     rightSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_R, MotorType.kBrushless);
-    shooterSpark = new CANSparkMax(Arm.Shooter.Shooter_CAN_Id, MotorType.kBrushless);
+    leftShooterSpark = new CANSparkMax(Arm.Shooter.Shooter_L_CAN_Id, MotorType.kBrushless);
+    //Todo Add Right shooter spark
     feederSpark = new CANSparkMax(Arm.Shooter.Feeder_CAN_Id, MotorType.kBrushless);
 
     shooterController =
@@ -51,13 +52,14 @@ public class ArmSubsystem extends SubsystemBase {
 
     armFeedForward = new SimpleMotorFeedforward(0, Arm.kV, Arm.kA);
     armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);
+    armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Arm.OFFSET_KEY, 0.0));
     initWithRetry(this::initSparks, 5);
+    armController.setGoal(getArmAngleRads());
   }
 
   public void storeArmOffset() {
-    double offset = armAbsoluteEncoder.getAbsolutePosition();
-    Preferences.setDouble(Arm.OFFSET_KEY, offset);
-    armAbsoluteEncoder.setPositionOffset(offset);
+    armAbsoluteEncoder.reset();
+    Preferences.setDouble(Arm.OFFSET_KEY, armAbsoluteEncoder.getPositionOffset());
   }
 
   public void setFeederSpeed(double vel) {
@@ -65,11 +67,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setShooterSpeed(double vel) {
-    shooterSpark.set(vel);
+    leftShooterSpark.set(vel);
   }
 
   public double getArmAngleRads() {
-    return armAbsoluteEncoder.get() * (-2 * Math.PI);
+    return armAbsoluteEncoder.get() * (2 * Math.PI);
   }
 
   @Override
@@ -103,11 +105,15 @@ public class ArmSubsystem extends SubsystemBase {
     // TODO: Config all
     errors += check(leftSpark.restoreFactoryDefaults());
     errors += check(rightSpark.restoreFactoryDefaults());
-    errors += check(shooterSpark.restoreFactoryDefaults());
+    errors += check(leftShooterSpark.restoreFactoryDefaults());
     errors += check(feederSpark.restoreFactoryDefaults());
     errors += check(rightSpark.follow(leftSpark, true));
+    leftSpark.setInverted(true); //TODO: Add to constants
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
+    
+
     return errors == 0;
+
   }
 
   @Override
