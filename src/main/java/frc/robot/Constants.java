@@ -25,7 +25,15 @@ public final class Constants {
 
   public static final class NeoMotor {
     public static final double FREE_SPEED_RPM = 5676;
+    public static final double STALL_TORQUE = 3.75; // Theoretical @ 150A
   }
+
+  public static final class UltraPlanetary {
+    public static final double REDUCTION_3_1 = 2.89;
+    public static final double REDUCTION_4_1 = 3.61;
+    public static final double REDUCTION_5_1 = 5.23;
+  }
+
 
   public static class DriverConstants {
     public static final int kDriveStickPort = 0;
@@ -198,18 +206,18 @@ public final class Constants {
     public static final int ACTUATION_ID = 31;
 
     // Profiled PID Constants //TODO:Tune values
-    public static final double kP = 4.0;
+    public static final double kP = 2.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 1;
     public static final String OFFSET_KEY = "Wrist_Offset";
-    public static final double MAX_VELOCITY = Units.degreesToRadians(128.0);
+    public static final double MAX_VELOCITY = Units.degreesToRadians(360.0);
     public static final double MAX_ACCELERATION = Units.degreesToRadians(4096);
 
     public static final TrapezoidProfile.Constraints WRIST_CONSTRAINTS =
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
     
-      public static final int CURRENT_LIMIT = 20;
+      public static final int CURRENT_LIMIT = 30;
 
     //TODO: Get actual constants
     public static final double ENCODER_GEAR_RATION = (16.0/22.0);
@@ -221,9 +229,9 @@ public final class Constants {
     
     public static final double INTAKE_SPEED = 0.5;
 
-    public static double kV = 0.0;
-     public static double kA =  0.0;
+    public static double kV = 0.73;
+     public static double kA =  0.01;
 //    TODO: We should check this
-     public static double kG = Units.lbsToKilograms(5.5);
+     public static double kG = 0.25;//0.57;
   }
 }
