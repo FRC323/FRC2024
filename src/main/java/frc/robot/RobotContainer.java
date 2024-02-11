@@ -76,25 +76,54 @@ public class RobotContainer {
                     !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
+    // armSubsystem.setDefaultCommand(
+    //   new InstantCommand(() -> armSubsystem.setTargetRads(armSubsystem.getArmAngleRads()),armSubsystem)
+    // );
+    // intakeSubsystem.setDefaultCommand(
+    //   new InstantCommand(() -> intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads()),intakeSubsystem)
+    // );
+
+
+  }
+
+  public void addShuffleBoardData(){
     SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
     SmartDashboard.putData(new StoreArmOffset(armSubsystem));
-    SmartDashboard.putData(
-        "Arm to Zero", new SetArmTarget(armSubsystem, Units.degreesToRadians(0)));
-    SmartDashboard.putData(
-        "Arm to Pickup", new SetArmTarget(armSubsystem, Units.degreesToRadians(17)));
-    SmartDashboard.putData(
-        "Arm to 60 deg", new SetArmTarget(armSubsystem, Units.degreesToRadians(60)));
+    SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
 
     SmartDashboard.putData(
-        "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
+        "Arm to Down", new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE));
+    SmartDashboard.putData(
+        "Arm to Handoff", new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE));
+    SmartDashboard.putData(
+        "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
+
+    // SmartDashboard.putData(
+        // "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
+
+    SmartDashboard.putData(
+      "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
+    );
+    SmartDashboard.putData(
+      "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
+    );
+
+    SmartDashboard.putData(
+      "Folded Command", new SetIntakeFolded(intakeSubsystem,armSubsystem)
+    );
+    SmartDashboard.putData(
+      "Unfolded Command", new SetIntakeUnfolded(intakeSubsystem,armSubsystem)
+    );
 
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
     SmartDashboard.putData("Shooter Slow", new SetShooterSpeed(armSubsystem, -.2));
     SmartDashboard.putData("Shooter Off", new SetShooterSpeed(armSubsystem, 0));
-    SmartDashboard.putData("Feeder On", new SetFeederSpeed(armSubsystem, -1));
+    SmartDashboard.putData("Feeder On", new SetFeederSpeed(armSubsystem, -1.0));
     SmartDashboard.putData("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
-    SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, -1));
+    SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
     SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
+
+    SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
   }
 
   /**

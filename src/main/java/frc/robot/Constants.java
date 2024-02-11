@@ -150,6 +150,7 @@ public final class Constants {
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
+    public static final int BEAM_BREAK_PORT = 2;
     public static final String OFFSET_KEY = "Arm_Offset";
     public static final double MAX_VELOCITY = Units.degreesToRadians(240);
     public static final double MAX_ACCELERATION = Units.degreesToRadians(1920);
@@ -165,12 +166,14 @@ public final class Constants {
     // Motor Constants
     public static final int CURRENT_LIMIT = 40;
 
-    public static final double SOFT_LIMIT_MIN = Units.degreesToRadians(0.0);
-    public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(110);
+    public static final double SOFT_LIMIT_MIN = Units.degreesToRadians(-110.0);
+    public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(0.0);
 
     public static class Shooter {
-      public static final int Shooter_CAN_Id = 43;
-      public static final int Feeder_CAN_Id = 44;
+      public static final int Shooter_L_CAN_Id = 61;
+      public static final int Shooter_R_CAN_Id = 62;
+
+      public static final int Feeder_CAN_Id = 51;
 
       public static final TrapezoidProfile.Constraints CONSTRAINTS =
           new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
@@ -178,12 +181,49 @@ public final class Constants {
       public static final double kP = 0.1;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
+
     }
+    public static final double ARM_INTAKE_UNFOLDING_POSE = -0.8;
+    public static final double ARM_DOWN_POSE = 0;
+    public static final double ARM_HANDOFF_POSE = -0.25; 
+
+    public static final double FEEDER_INTAKE_SPEED = -0.25;
+    public static final double FEED_SHOOT_SPEED = -1.0;
+    
   }
 
   public static class Intake {
     // CAN IDs
     public static final int ROLLER_ID = 32;
     public static final int ACTUATION_ID = 31;
+
+    // Profiled PID Constants //TODO:Tune values
+    public static final double kP = 4.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final int ENCODER_PORT = 1;
+    public static final String OFFSET_KEY = "Wrist_Offset";
+    public static final double MAX_VELOCITY = Units.degreesToRadians(128.0);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(4096);
+
+    public static final TrapezoidProfile.Constraints WRIST_CONSTRAINTS =
+        new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+    
+      public static final int CURRENT_LIMIT = 20;
+
+    //TODO: Get actual constants
+    public static final double ENCODER_GEAR_RATION = (16.0/22.0);
+    public static final double SOFT_LIMIT_MIN = Units.degreesToRadians(0.0);
+    public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(180);
+
+    public static final double UNFOLDED_POSE = 3.0;
+    public static final double FOLDED_POSE = 0.0; 
+    
+    public static final double INTAKE_SPEED = 0.5;
+
+    public static double kV = 0.0;
+     public static double kA =  0.0;
+//    TODO: We should check this
+     public static double kG = Units.lbsToKilograms(5.5);
   }
 }
