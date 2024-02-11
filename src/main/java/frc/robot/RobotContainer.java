@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.DriverConstants.DriveStick;
+import frc.robot.Constants.DriverConstants.SteerStick;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.ArmSubsystem;
@@ -110,7 +111,7 @@ public class RobotContainer {
       )
     );
 
-    // //Folded (Must be Held)
+    //Folded (Must be Held)
     m_driveJoystick.button(DriveStick.BACK_SIDE_BUTTON).whileTrue(
       new SetIntakeFolded(intakeSubsystem,armSubsystem).handleInterrupt(
         () -> {
@@ -118,9 +119,16 @@ public class RobotContainer {
           intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
         }
       )
-    ); //TODO: Implements somthing else
+    );
     
-    
+    //Arm Poses
+    m_steerJoystick.button(SteerStick.LEFT).onTrue(
+      new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE)
+    );
+
+    m_steerJoystick.button(SteerStick.MIDDLE).onTrue(
+      new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE)
+    );
 
 
   }

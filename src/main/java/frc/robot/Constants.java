@@ -115,9 +115,9 @@ public final class Constants {
     public static class Module {
       //      TODO: Group these in a sane way
       public static final boolean DRIVING_ENCODER_INVERTED = true;
-      public static final double DRIVING_K_P = 0.1;
+      public static final double DRIVING_K_P = 0.5;
       public static final double DRIVING_K_I = 0.0;
-      public static final double DRIVING_K_D = 0.1;
+      public static final double DRIVING_K_D = 0.0;
       public static final double DRIVING_K_FF =
           0.95 / Constants.Swerve.Module.DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND;
       public static final double DRIVING_MIN_OUTPUT = -1.0;
@@ -214,8 +214,9 @@ public final class Constants {
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.8;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
+    public static final double ARM_AMP_POSE = 2.0;
 
-    public static final double FEEDER_INTAKE_SPEED = -0.25;
+    public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
     
   }
