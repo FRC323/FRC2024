@@ -17,6 +17,13 @@ public class SetIntakeSpeed extends Command {
     }
 
     @Override
+    public void end(boolean interupted){
+        if(interupted){
+            intakeSubsystem.setIntakeSpeed(0);
+        }
+    }
+
+    @Override
     public boolean isFinished() {
         return true;
     }

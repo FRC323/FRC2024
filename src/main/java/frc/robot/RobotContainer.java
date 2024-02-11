@@ -9,11 +9,14 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.DriverConstants.DriveStick;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -60,13 +63,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driveJoystick.button(Constants.DriverConstants.GYRO_RESET_BUTTON).onTrue(
-      new InstantCommand(
-        () ->
-          driveSubsystem.resetYaw()
-        , driveSubsystem)
-    );
-
+    
+    //Drive Stick
     driveSubsystem.setDefaultCommand(
         new RunCommand(
             () ->
@@ -77,12 +75,52 @@ public class RobotContainer {
                     !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
-    // armSubsystem.setDefaultCommand(
-    //   new InstantCommand(() -> armSubsystem.setTargetRads(armSubsystem.getArmAngleRads()),armSubsystem)
-    // );
-    // intakeSubsystem.setDefaultCommand(
-    //   new InstantCommand(() -> intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads()),intakeSubsystem)
-    // );
+    //Reset Gyro
+    m_driveJoystick.button(DriveStick.RIGHT_SIDE_BUTTON).onTrue(
+      new InstantCommand(
+        () ->
+          driveSubsystem.resetYaw()
+        , driveSubsystem)
+    );
+
+    //Handoff Button
+    m_driveJoystick.trigger().whileTrue(
+      new HandoffProc(intakeSubsystem, armSubsystem).handleInterrupt(
+        ()->{
+          intakeSubsystem.setIntakeSpeed(0);
+          armSubsystem.setFeederSpeed(0);
+        }
+      )
+    );
+
+    //Outtake
+    m_driveJoystick.button(DriveStick.TOP_BIG_BUTTON).whileTrue(
+      new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED)
+    ).onFalse(
+      new SetIntakeSpeed(intakeSubsystem, 0)
+    );
+
+    //Shoot
+    m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
+      new ShootCommand(armSubsystem,Constants.Arm.Shooter.SPEAKER_SPEED).handleInterrupt(
+        () -> {
+          armSubsystem.setFeederSpeed(0);
+          armSubsystem.setShooterSpeed(0);
+        }
+      )
+    );
+
+    // //Folded (Must be Held)
+    m_driveJoystick.button(DriveStick.BACK_SIDE_BUTTON).whileTrue(
+      new SetIntakeFolded(intakeSubsystem,armSubsystem).handleInterrupt(
+        () -> {
+          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
+          intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
+        }
+      )
+    ); //TODO: Implements somthing else
+    
+    
 
 
   }

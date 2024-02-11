@@ -18,6 +18,13 @@ public class SetIntakeTarget extends Command {
     }
 
     @Override
+    public void end(boolean interupted){
+        if(interupted){
+            intake.setTargetRads(intake.getWristAngleRads());
+        }
+    }
+
+    @Override
     public boolean isFinished() {
         return intake.wristIsAtTarget();
     }

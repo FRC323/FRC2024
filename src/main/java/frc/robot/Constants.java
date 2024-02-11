@@ -40,7 +40,22 @@ public final class Constants {
     public static final int kSteerStickPort = 1;
 
     // Buttons
-    public static final int GYRO_RESET_BUTTON = 9;
+    public static class DriveStick{
+      public static final int LEFT_SIDE_BUTTON = 2;
+      public static final int TOP_BIG_BUTTON = 3;
+      public static final int BACK_SIDE_BUTTON = 4;
+      public static final int UP_DIRECTIONAL = 5;
+      public static final int RIGHT_DIRECTIONAL = 6;
+      public static final int DOWN_DIRECTIONAL = 7;
+      public static final int LEFT_DIRECTIONAL = 8;
+      public static final int RIGHT_SIDE_BUTTON = 9;
+      public static final int SMALL_TOP_BUTTON = 10;
+    }
+    public static class SteerStick{
+      public static final int LEFT= 2;
+      public static final int RIGHT = 3;
+      public static final int MIDDLE = 4;
+    }
   }
 
   public static class OperatorConstants {
@@ -183,12 +198,17 @@ public final class Constants {
 
       public static final int Feeder_CAN_Id = 51;
 
+      public static final double MAX_SHOOTER_VELOCITY = 100024;
+      public static final double MAX_SHOOTER_ACCELERATION = 6012;
+
       public static final TrapezoidProfile.Constraints CONSTRAINTS =
-          new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+          new Constraints(MAX_SHOOTER_VELOCITY, MAX_SHOOTER_ACCELERATION);
 
       public static final double kP = 0.1;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
+
+      public static final double SPEAKER_SPEED = -1.0;
 
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.8;
@@ -228,6 +248,7 @@ public final class Constants {
     public static final double FOLDED_POSE = 0.0; 
     
     public static final double INTAKE_SPEED = 0.5;
+    public static final double OUTTAKE_SPEED = -0.5;
 
     public static double kV = 0.73;
      public static double kA =  0.01;

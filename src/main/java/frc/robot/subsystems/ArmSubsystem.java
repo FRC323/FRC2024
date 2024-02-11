@@ -100,6 +100,10 @@ public class ArmSubsystem extends SubsystemBase {
     return armController.atGoal();
   }
 
+  public boolean atShootSpeed(){
+    return shooterController.atGoal();
+  }
+
   public boolean isHoldingNote(){
     return beamBreakSensor.get();
   }
@@ -162,5 +166,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     builder.addBooleanProperty("Beam Blocked", ()-> beamBreakSensor.get(), null);
     builder.addBooleanProperty("Is Holding Note", this::isHoldingNote, null);
+
   }
 }

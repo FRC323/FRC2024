@@ -18,6 +18,13 @@ public class SetArmTarget extends Command {
     }
 
     @Override
+    public void end(boolean interupted){
+        if(interupted){
+            arm.setTargetRads(arm.getArmAngleRads());
+        }
+    }
+
+    @Override
     public boolean isFinished() {
         return arm.armIsAtTarget();
     }
