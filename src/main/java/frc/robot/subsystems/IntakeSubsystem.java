@@ -63,8 +63,9 @@ public class IntakeSubsystem extends SubsystemBase {
     commandedVoltage = wristController.calculate(getWristAngleRads());
     this.wristSpark.set(
         commandedVoltage
-            + wristFeedForward.calculate(wristController.getSetpoint().velocity)
-            + (Intake.kG * Math.cos(getWristAngleRads())));
+            // + wristFeedForward.calculate(wristController.getSetpoint().velocity)
+            // + (Intake.kG * Math.cos(getWristAngleRads()))
+            );
   }
 
   public void setIntakeSpeed(double vel) {
@@ -117,6 +118,7 @@ public class IntakeSubsystem extends SubsystemBase {
           return wristController.getGoal().position;
         },
         null);
+    builder.addDoubleProperty("Velocity",()-> wristController.getSetpoint().velocity, null);
     builder.addDoubleProperty("Arm Commanded Voltage", () -> commandedVoltage, null);
     builder.addDoubleProperty("Arm Current L", wristSpark::getOutputCurrent, null);
     // builder.addBooleanProperty("Arm Encoder Plugged In", wristAbsoluteEncoder::isConnected,

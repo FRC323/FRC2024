@@ -47,6 +47,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Subsystems").add(armSubsystem.getName(), armSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
     SmartDashboard.putData(driveSubsystem);
+    addShuffleBoardData();
   }
 
   /**

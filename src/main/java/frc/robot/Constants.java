@@ -206,18 +206,18 @@ public final class Constants {
     public static final int ACTUATION_ID = 31;
 
     // Profiled PID Constants //TODO:Tune values
-    public static final double kP = 4.0;
+    public static final double kP = 2.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 1;
     public static final String OFFSET_KEY = "Wrist_Offset";
-    public static final double MAX_VELOCITY = Units.degreesToRadians(128.0);
+    public static final double MAX_VELOCITY = Units.degreesToRadians(360.0);
     public static final double MAX_ACCELERATION = Units.degreesToRadians(4096);
 
     public static final TrapezoidProfile.Constraints WRIST_CONSTRAINTS =
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
     
-      public static final int CURRENT_LIMIT = 20;
+      public static final int CURRENT_LIMIT = 30;
 
     //TODO: Get actual constants
     public static final double ENCODER_GEAR_RATION = (16.0/22.0);
@@ -232,6 +232,6 @@ public final class Constants {
     public static double kV = 0.73;
      public static double kA =  0.01;
 //    TODO: We should check this
-     public static double kG = 0.57;
+     public static double kG = 0.25;//0.57;
   }
 }
