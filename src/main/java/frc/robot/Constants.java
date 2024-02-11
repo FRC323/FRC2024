@@ -25,7 +25,15 @@ public final class Constants {
 
   public static final class NeoMotor {
     public static final double FREE_SPEED_RPM = 5676;
+    public static final double STALL_TORQUE = 3.75; // Theoretical @ 150A
   }
+
+  public static final class UltraPlanetary {
+    public static final double REDUCTION_3_1 = 2.89;
+    public static final double REDUCTION_4_1 = 3.61;
+    public static final double REDUCTION_5_1 = 5.23;
+  }
+
 
   public static class DriverConstants {
     public static final int kDriveStickPort = 0;
@@ -221,9 +229,9 @@ public final class Constants {
     
     public static final double INTAKE_SPEED = 0.5;
 
-    public static double kV = 0.0;
-     public static double kA =  0.0;
+    public static double kV = 0.73;
+     public static double kA =  0.01;
 //    TODO: We should check this
-     public static double kG = Units.lbsToKilograms(5.5);
+     public static double kG = 0.57;
   }
 }

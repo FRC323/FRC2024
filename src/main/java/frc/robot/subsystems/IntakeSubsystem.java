@@ -15,8 +15,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Intake;
-import frc.robot.utils.NoRolloverEncoder;
 
+import frc.robot.utils.NoRolloverEncoder;
+import static frc.robot.Constants.NeoMotor;
 import static frc.robot.utils.SparkMaxUtils.check;
 import static frc.robot.utils.SparkMaxUtils.initWithRetry;
 
@@ -61,9 +62,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     commandedVoltage = wristController.calculate(getWristAngleRads());
     this.wristSpark.set(
-        commandedVoltage);
-            // + wristFeedForward.calculate(wristController.getSetpoint().velocity)
-            // + (Intake.kG * Math.cos(getWristAngleRads())));
+        commandedVoltage
+            + wristFeedForward.calculate(wristController.getSetpoint().velocity)
+            + (Intake.kG * Math.cos(getWristAngleRads())));
   }
 
   public void setIntakeSpeed(double vel) {
