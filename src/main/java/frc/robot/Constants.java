@@ -150,6 +150,7 @@ public final class Constants {
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
+    public static final int BEAM_BREAK_PORT = 2;
     public static final String OFFSET_KEY = "Arm_Offset";
     public static final double MAX_VELOCITY = Units.degreesToRadians(240);
     public static final double MAX_ACCELERATION = Units.degreesToRadians(1920);
@@ -180,10 +181,14 @@ public final class Constants {
       public static final double kP = 0.1;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
+
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.8;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
+
+    public static final double FEEDER_INTAKE_SPEED = -0.25;
+    public static final double FEED_SHOOT_SPEED = -1.0;
     
   }
 
@@ -213,6 +218,9 @@ public final class Constants {
 
     public static final double UNFOLDED_POSE = 3.0;
     public static final double FOLDED_POSE = 0.0; 
+    
+    public static final double INTAKE_SPEED = 0.5;
+
     public static double kV = 0.0;
      public static double kA =  0.0;
 //    TODO: We should check this

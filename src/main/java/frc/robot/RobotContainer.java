@@ -83,6 +83,10 @@ public class RobotContainer {
     //   new InstantCommand(() -> intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads()),intakeSubsystem)
     // );
 
+
+  }
+
+  public void addShuffleBoardData(){
     SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
     SmartDashboard.putData(new StoreArmOffset(armSubsystem));
     SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
@@ -94,8 +98,8 @@ public class RobotContainer {
     SmartDashboard.putData(
         "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
 
-    SmartDashboard.putData(
-        "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
+    // SmartDashboard.putData(
+        // "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
 
     SmartDashboard.putData(
       "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
@@ -114,10 +118,12 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
     SmartDashboard.putData("Shooter Slow", new SetShooterSpeed(armSubsystem, -.2));
     SmartDashboard.putData("Shooter Off", new SetShooterSpeed(armSubsystem, 0));
-    SmartDashboard.putData("Feeder On", new SetFeederSpeed(armSubsystem, -1));
+    SmartDashboard.putData("Feeder On", new SetFeederSpeed(armSubsystem, -1.0));
     SmartDashboard.putData("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
-    SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, -1));
+    SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
     SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
+
+    SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
   }
 
   /**

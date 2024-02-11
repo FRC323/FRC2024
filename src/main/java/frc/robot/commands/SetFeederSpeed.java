@@ -16,8 +16,8 @@ public class SetFeederSpeed extends Command {
     public void execute(){
         armSubsystem.setFeederSpeed(this.feederVel);
     }
-//    @Override
-//    public boolean isFinished() {
-//        return true;
-//    }
+   @Override
+   public boolean isFinished() {
+       return true;
+   }
 }

@@ -240,6 +240,9 @@ public class DriveSubsystem extends SubsystemBase {
     addChild("Rear Right", rearRight);
     addChild("Rear Left", rearLeft);
 
+    builder.addDoubleProperty("Target Velocity Y",() -> this.lastSetChassisSpeeds.vyMetersPerSecond, null);
+    builder.addDoubleProperty("Actual Velocity", () -> actualChassisSpeed.vyMetersPerSecond, null);
+
     builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
     builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
