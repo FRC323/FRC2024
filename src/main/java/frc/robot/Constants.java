@@ -169,7 +169,7 @@ public final class Constants {
     public static final int Arm_Actuation_R = 42;
 
     // Profiled PID Constants //TODO:Tune values
-    public static final double kP = 10.0;
+    public static final double kP = 11.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
