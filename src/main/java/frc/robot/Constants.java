@@ -227,7 +227,7 @@ public final class Constants {
     public static final int ACTUATION_ID = 31;
 
     // Profiled PID Constants //TODO:Tune values
-    public static final double kP = 2.0;
+    public static final double kP = 0.5;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 1;
@@ -251,9 +251,10 @@ public final class Constants {
     public static final double INTAKE_SPEED = 0.5;
     public static final double OUTTAKE_SPEED = -0.5;
 
-    public static double kV = 0.73;
+    public static final double kS = 0.0;
+    public static double kV = 0.0;//0.1;//0.73;
      public static double kA =  0.01;
 //    TODO: We should check this
-     public static double kG = 0.25;//0.57;
+     public static double kG = 0.03; //0.1 //0.57; //0.25
   }
 }

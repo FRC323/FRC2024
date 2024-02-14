@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -30,7 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private double armOffset;
 
   private ProfiledPIDController wristController;
-  private SimpleMotorFeedforward wristFeedForward;
+  private ArmFeedforward wristFeedForward;
 
   public IntakeSubsystem() {
     feederRoller =
@@ -42,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
     wristController =
         new ProfiledPIDController(Intake.kP, Intake.kI, Intake.kD, Intake.WRIST_CONSTRAINTS);
 
-    wristFeedForward = new SimpleMotorFeedforward(0, Constants.Intake.kV, Constants.Intake.kA);
+    wristFeedForward = new ArmFeedforward(Constants.Intake.kS, Constants.Intake.kG, Constants.Intake.kV);
 
     initWithRetry(this::initSparks, 5);
     wristController.setGoal(getWristAngleRads());
@@ -63,7 +64,7 @@ public class IntakeSubsystem extends SubsystemBase {
     commandedVoltage = wristController.calculate(getWristAngleRads());
     this.wristSpark.set(
         commandedVoltage
-            // + wristFeedForward.calculate(wristController.getSetpoint().velocity)
+            + wristFeedForward.calculate(getWristAngleRads(),wristController.getSetpoint().velocity)
             // + (Intake.kG * Math.cos(getWristAngleRads()))
             );
   }

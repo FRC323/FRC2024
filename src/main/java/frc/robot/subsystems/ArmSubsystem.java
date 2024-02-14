@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -22,7 +23,7 @@ import frc.robot.utils.NoRolloverEncoder;
 public class ArmSubsystem extends SubsystemBase {
   // Control
   private ProfiledPIDController armController;
-  private SimpleMotorFeedforward armFeedForward;
+  private ArmFeedforward armFeedForward;
 
   private ProfiledPIDController shooterController;
 
@@ -54,7 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
 
-    armFeedForward = new SimpleMotorFeedforward(0, Arm.kV, Arm.kA);
+    armFeedForward = new ArmFeedforward(0, Arm.kG, Arm.kV);
     armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);
     armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Arm.OFFSET_KEY, 0.0));
 
@@ -86,8 +87,8 @@ public class ArmSubsystem extends SubsystemBase {
     commandedVoltage = armController.calculate(getArmAngleRads())
     // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to
     // kp:0.1 and up slowly
-    //            + armFeedForward.calculate(armController.getSetpoint().velocity)
-    //            + (Arm.kG * Math.cos(getArmAngleRads()))
+               + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity)
+    //            + (Arm.kG * Math.cos(getArmAngleRads())
     ;
     leftSpark.setVoltage(commandedVoltage);
   }
