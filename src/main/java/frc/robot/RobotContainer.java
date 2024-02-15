@@ -138,28 +138,32 @@ public class RobotContainer {
     SmartDashboard.putData(new StoreArmOffset(armSubsystem));
     SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
 
-    SmartDashboard.putData(
-        "Arm to Down", new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE));
-    SmartDashboard.putData(
-        "Arm to Handoff", new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE));
-    SmartDashboard.putData(
-        "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
+    // SmartDashboard.putData(
+    //     "Arm to Down", new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE));
+    // SmartDashboard.putData(
+    //     "Arm to Handoff", new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE));
+    // SmartDashboard.putData(
+    //     "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
 
     // SmartDashboard.putData(
         // "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
 
-    SmartDashboard.putData(
-      "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
-    );
-    SmartDashboard.putData(
-      "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
-    );
+    // SmartDashboard.putData(
+    //   "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
+    // );
+    // SmartDashboard.putData(
+    //   "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
+    // );
 
     SmartDashboard.putData(
       "Folded Command", new SetIntakeFolded(intakeSubsystem,armSubsystem)
     );
     SmartDashboard.putData(
       "Unfolded Command", new SetIntakeUnfolded(intakeSubsystem,armSubsystem)
+    );
+
+    SmartDashboard.putData(
+      "Go 1 Meter", PathFollowerCommands.createDriveToRelativePositionCommand(driveSubsystem, 0, 1.0, 0)
     );
 
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
