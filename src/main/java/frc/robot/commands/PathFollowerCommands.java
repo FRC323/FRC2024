@@ -21,8 +21,8 @@ public class PathFollowerCommands extends Command {
   private static final HolonomicPathFollowerConfig holonomicPathFollowerConfig =
       new HolonomicPathFollowerConfig(
           // TODO: These constants are 100% wrong
-          new PIDConstants(5.0),
-          new PIDConstants(5.0),
+          Constants.PathFollowing.DRIVE_PID_CONSTANTS,
+          Constants.PathFollowing.STEER_PID_CONSTANTS,
           Constants.Swerve.MAX_SPEED_METERS_PER_SECOND,
           Constants.Swerve.WHEEL_BASE_METERS,
           new ReplanningConfig());
@@ -35,8 +35,8 @@ public class PathFollowerCommands extends Command {
     //    TODO: Check if the rotations on these are correct, it's possible we want to use heading
     List<Translation2d> points =
         PathPlannerPath.bezierFromPoses(
-            new Pose2d(x, 0, Rotation2d.fromDegrees(0)),
-            new Pose2d(x, y, Rotation2d.fromDegrees(0)));
+            new Pose2d(drive.getPose().getX(),drive.getPose().getY(),drive.getPose().getRotation()),
+            new Pose2d(x, y, Rotation2d.fromDegrees(heading)));
     PathPlannerPath path;
     path =
         new PathPlannerPath(
@@ -70,9 +70,14 @@ public class PathFollowerCommands extends Command {
             path,
             drive::getPose,
             drive::getChassisSpeed,
-            drive::setChassisSpeed,
+            drive::setPathFollowerSpeeds,
             holonomicPathFollowerConfig,
             () -> false,
             drive);
+  }
+
+  public static FollowPathHolonomic followPathFromFile(DriveSubsystem drive,String path){
+    PathPlannerPath pathPlannerPath = PathPlannerPath.fromPathFile(path);
+    return followPath(drive, pathPlannerPath);
   }
 }

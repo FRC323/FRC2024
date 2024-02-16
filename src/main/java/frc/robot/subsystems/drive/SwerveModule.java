@@ -1,6 +1,8 @@
 package frc.robot.subsystems.drive;
 
 import com.revrobotics.*;
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -119,6 +121,7 @@ public class SwerveModule implements Sendable {
             drivingSpark.setSmartCurrentLimit(
                 Constants.Swerve.Module.DRIVING_MOTOR_CURRENT_LIMIT_AMPS));
         drivingSpark.setInverted(isInverted);
+        drivingSpark.setIdleMode(IdleMode.kBrake);
 
                 return errors == 0;
   }
@@ -138,7 +141,7 @@ public class SwerveModule implements Sendable {
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        drivingEncoder.getPosition(), new Rotation2d(turningEncoder.getPosition() - moduleOffset));
+        -drivingEncoder.getPosition(), new Rotation2d(turningEncoder.getPosition() - moduleOffset));
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {

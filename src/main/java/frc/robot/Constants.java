@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.CANSparkBase;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -161,6 +162,11 @@ public final class Constants {
       public static boolean TURNING_ENCODER_INVERTED = true;
       public static double TURNING_ENCODER_POSITION_PID_MIN_INPUT_RADIANS = 0.0;
     }
+  }
+
+  public static class PathFollowing{
+    public static final PIDConstants DRIVE_PID_CONSTANTS = new PIDConstants(6.0,0.0,0.0); 
+    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(1.0,0.0,0.0);
   }
 
   public static class Arm {

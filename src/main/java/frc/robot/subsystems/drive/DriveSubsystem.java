@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -59,6 +60,7 @@ public class DriveSubsystem extends SubsystemBase {
     navx = new AHRS(SerialPort.Port.kMXP);
     actualChassisSpeed = new ChassisSpeeds(0,0,0);
     navx.reset();
+    //TODO: Make this in a different initilztion place
   }
 
   @Override
@@ -217,9 +219,13 @@ public class DriveSubsystem extends SubsystemBase {
     actualChassisSpeed = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(swerveModuleStates);
   }
 
-  public void setChassisSpeed(ChassisSpeeds speed) {
-    double maxSpeed = Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
-    double maxRotationalSpeed = Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
+  public void setPathFollowerSpeeds(ChassisSpeeds speeds){
+    setChassisSpeed(speeds,true);
+  }
+
+  public void setChassisSpeed(ChassisSpeeds speed,boolean inverted) {
+    double maxSpeed = (inverted ? -1 : 1) * Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
+    double maxRotationalSpeed = (inverted ? -1 : 1) * Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
     drive(speed.vxMetersPerSecond/maxSpeed, speed.vyMetersPerSecond/maxSpeed, speed.omegaRadiansPerSecond/maxRotationalSpeed, false);
   }
 

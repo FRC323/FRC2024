@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -163,7 +164,11 @@ public class RobotContainer {
     );
 
     SmartDashboard.putData(
-      "Go 1 Meter", PathFollowerCommands.createDriveToRelativePositionCommand(driveSubsystem, 0, 1.0, 0)
+      "Go 1 Meter", PathFollowerCommands.createDriveToAbsolutePositionCommand(driveSubsystem, 1, 0.00, 90.0)
+    );
+
+    SmartDashboard.putData(
+      "Follow Path", PathFollowerCommands.followPathFromFile(driveSubsystem, "Test Path")
     );
 
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
@@ -175,6 +180,8 @@ public class RobotContainer {
     SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
 
     SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
+
+    SmartDashboard.putData("ResetPose",new InstantCommand(()-> driveSubsystem.resetOdometry(new Pose2d()),driveSubsystem)); 
   }
 
   /**
