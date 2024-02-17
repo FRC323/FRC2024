@@ -10,6 +10,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -17,15 +18,6 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 import java.util.List;
 
 public class PathFollowerCommands extends Command {
-
-  private static final HolonomicPathFollowerConfig holonomicPathFollowerConfig =
-      new HolonomicPathFollowerConfig(
-          // TODO: These constants are 100% wrong
-          Constants.PathFollowing.DRIVE_PID_CONSTANTS,
-          Constants.PathFollowing.STEER_PID_CONSTANTS,
-          Constants.Swerve.MAX_SPEED_METERS_PER_SECOND,
-          Constants.Swerve.WHEEL_BASE_METERS,
-          new ReplanningConfig());
 
   /*
   Arguments to this are in absolute positions compared to the pose of the robot on field
@@ -48,7 +40,7 @@ public class PathFollowerCommands extends Command {
                 Constants.Swerve.MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2),
             new GoalEndState(0.0, Rotation2d.fromDegrees(heading)));
 
-    return followPath(drive, path);
+    return followPath(drive, path,false);
   }
 
   //  Allows easier creation of a drive to command from a relative position, takes into account the
@@ -65,19 +57,27 @@ public class PathFollowerCommands extends Command {
         targetHeading);
   }
 
-  public static FollowPathHolonomic followPath(DriveSubsystem drive, PathPlannerPath path) {
+  public static FollowPathHolonomic followPath(DriveSubsystem drive, PathPlannerPath path, boolean mirror) {
     return new FollowPathHolonomic(
             path,
             drive::getPose,
             drive::getChassisSpeed,
             drive::setPathFollowerSpeeds,
-            holonomicPathFollowerConfig,
-            () -> false,
+            Constants.PathFollowing.holonomicPathFollowerConfig,
+            () -> mirror,
             drive);
+  }
+
+  private static boolean mirrorForRedAlliance() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+        return alliance.get() == DriverStation.Alliance.Red;
+    }
+    return false;
   }
 
   public static FollowPathHolonomic followPathFromFile(DriveSubsystem drive,String path){
     PathPlannerPath pathPlannerPath = PathPlannerPath.fromPathFile(path);
-    return followPath(drive, pathPlannerPath);
+    return followPath(drive, pathPlannerPath,mirrorForRedAlliance());
   }
 }

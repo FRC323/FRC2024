@@ -1,6 +1,8 @@
 package frc.robot.subsystems.drive;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
 import java.util.Optional;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -61,7 +65,18 @@ public class DriveSubsystem extends SubsystemBase {
     actualChassisSpeed = new ChassisSpeeds(0,0,0);
     navx.reset();
     //TODO: Make this in a different initilztion place
-  }
+
+    AutoBuilder.configureHolonomic(
+      this::getPose,
+      this::resetOdometry,
+      this::getChassisSpeed,
+      this::setPathFollowerSpeeds,
+      Constants.PathFollowing.holonomicPathFollowerConfig,
+      this::mirrorForRedAlliance,
+      this
+      );
+
+}
 
   @Override
   public void periodic() {
@@ -108,6 +123,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Just update the translation, not the yaw
     Pose2d resetPose = new Pose2d(pose.getTranslation(), Rotation2d.fromDegrees(getGyroYaw()));
     odometry.resetPosition(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions(), resetPose);
+    System.out.println("Reset Odom");
   }
 
   public double getGyroYaw() {
@@ -236,6 +252,14 @@ public class DriveSubsystem extends SubsystemBase {
     frontRight.setDesiredState(desiredStates[1]);
     rearLeft.setDesiredState(desiredStates[2]);
     rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  private boolean mirrorForRedAlliance() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+        return alliance.get() == DriverStation.Alliance.Red;
+    }
+    return false;
   }
 
   @Override

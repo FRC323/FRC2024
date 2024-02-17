@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -166,7 +168,15 @@ public final class Constants {
 
   public static class PathFollowing{
     public static final PIDConstants DRIVE_PID_CONSTANTS = new PIDConstants(6.0,0.0,0.0); 
-    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(1.0,0.0,0.0);
+    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(8.0,0.0,0.0);
+
+    public static final HolonomicPathFollowerConfig holonomicPathFollowerConfig =
+      new HolonomicPathFollowerConfig(
+          Constants.PathFollowing.DRIVE_PID_CONSTANTS,
+          Constants.PathFollowing.STEER_PID_CONSTANTS,
+          Constants.Swerve.MAX_SPEED_METERS_PER_SECOND,
+          Constants.Swerve.WHEEL_BASE_METERS,
+          new ReplanningConfig());
   }
 
   public static class Arm {
@@ -215,12 +225,14 @@ public final class Constants {
       public static final double kD = 0.0;
 
       public static final double SPEAKER_SPEED = -1.0;
-
+      public static final double AMP_SPEED = -0.75;
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.8;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
     public static final double ARM_AMP_POSE = -2.0;
+    public static final double ARM_HUMAN_PLAYER_POSE =  -1.3;
+    public static final double ARM_FAR_SPEAKER = -0.6;
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
