@@ -203,7 +203,7 @@ public final class Constants {
     public static final double kA = 0.02; // Volts * s^2/rad
 
     // Motor Constants
-    public static final int CURRENT_LIMIT = 40;
+    public static final int CURRENT_LIMIT = 60;
 
     public static final double SOFT_LIMIT_MIN = -2.08;
     public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(0.0);

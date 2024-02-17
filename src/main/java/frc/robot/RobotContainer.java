@@ -84,7 +84,7 @@ public class RobotContainer {
                     m_driveJoystick.getY(),
                     m_driveJoystick.getX(),
                     Math.pow(m_steerJoystick.getX(),2) * Math.signum(m_steerJoystick.getX()),
-                    !m_steerJoystick.trigger().getAsBoolean()),
+                    true),// !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
     //Reset Gyro
