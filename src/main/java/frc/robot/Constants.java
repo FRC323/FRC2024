@@ -71,8 +71,8 @@ public final class Constants {
      * Driving Parameters - Note that these are not the maximum capable speeds of the robot, rather
      * the allowed maximum speeds
      */
-    public static final double MAX_SPEED_METERS_PER_SECOND = 22.3,
-        MAX_ANGULAR_SPEED_RAD_PER_SECONDS = 4 * 2 * Math.PI; // radians per second
+    public static final double MAX_SPEED_METERS_PER_SECOND = 4.7,
+        MAX_ANGULAR_SPEED_RAD_PER_SECONDS = 3 * 2 * Math.PI; // radians per second
 
     /** Distance between centers of right and left wheels on robot */
     public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(22.5);
@@ -133,7 +133,7 @@ public final class Constants {
           CANSparkBase.IdleMode.kCoast;
 
       /** Multiplier for wheel diameter based on empirical on-field measurement */
-      public static final double WHEEL_DIAMETER_FUDGE_FACTOR = 1.0;
+      public static final double WHEEL_DIAMETER_FUDGE_FACTOR = 0.978;
 
       public static final double WHEEL_DIAMETER_METERS =
           Units.inchesToMeters(3) * WHEEL_DIAMETER_FUDGE_FACTOR;
@@ -145,7 +145,8 @@ public final class Constants {
       public static final double DRIVING_ENCODER_POSITION_FACTOR_METERS =
           WHEEL_CIRCUMFERENCE_METERS / DRIVING_MOTOR_REDUCTION; // meters
       public static final double DRIVING_ENCODER_VELOCITY_FACTOR_METERS_PER_SECOND =
-          DRIVING_ENCODER_POSITION_FACTOR_METERS / 60.0; // meters per second
+        ((Units.inchesToMeters(3) * Math.PI) / 4.71) / 60.0;    
+      // DRIVING_ENCODER_POSITION_FACTOR_METERS / 60.0; // meters per second
       public static final double DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND =
           DRIVE_WHEEL_FREE_SPEED_FUDGE_FACTOR
               * ((DRIVING_MOTOR_FREE_SPEED_RPS * WHEEL_CIRCUMFERENCE_METERS)

@@ -141,7 +141,7 @@ public class SwerveModule implements Sendable {
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        -drivingEncoder.getPosition(), new Rotation2d(turningEncoder.getPosition() - moduleOffset));
+        drivingEncoder.getPosition(), new Rotation2d(turningEncoder.getPosition() - moduleOffset));
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
@@ -160,6 +160,14 @@ public class SwerveModule implements Sendable {
 
   public double getEncoderAbsPositionRad() {
     return turningEncoder.getPosition();
+  }
+
+  public double getModuleVelocity(){
+    return drivingEncoder.getVelocity();
+  }
+
+  public int getCountsPerRev(){
+    return drivingEncoder.getCountsPerRevolution();
   }
 
   public void periodic() {

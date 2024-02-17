@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import com.fasterxml.jackson.core.StreamReadConstraints.Builder;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -128,7 +129,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double getGyroYaw() {
     // TODO: Handle Gyro Reverse
-    return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ?  -1 : 1);
+    return (navx.getAngle() + 180.0) * (Constants.Swerve.GYRO_REVERSED ?  -1 : 1);
   }
 
   public void setGyroYaw(double yawDeg) {
@@ -271,7 +272,7 @@ public class DriveSubsystem extends SubsystemBase {
     addChild("Rear Left", rearLeft);
 
     builder.addDoubleProperty("Target Velocity Y",() -> this.lastSetChassisSpeeds.vyMetersPerSecond, null);
-    builder.addDoubleProperty("Actual Velocity", () -> actualChassisSpeed.vyMetersPerSecond, null);
+    builder.addDoubleProperty("Actual Velocity", () -> actualChassisSpeed.vxMetersPerSecond, null);
 
     builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
@@ -302,5 +303,7 @@ public class DriveSubsystem extends SubsystemBase {
             "Rear Left Distance (m)", () -> rearLeft.getPosition().distanceMeters, null);
     builder.addDoubleProperty(
             "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
+    builder.addDoubleProperty("Rear Right Velocity",rearRight::getModuleVelocity, null);
+    builder.addIntegerProperty("Rear Right Counts per revolution", rearRight::getCountsPerRev, null);
   }
 }
