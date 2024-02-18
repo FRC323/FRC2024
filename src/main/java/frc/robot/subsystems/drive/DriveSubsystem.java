@@ -143,7 +143,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double getGyroYaw() {
     // TODO: Handle Gyro Reverse
-    return (navx.getAngle() + 180.0) * (Constants.Swerve.GYRO_REVERSED ? -1 : 1);
+    return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ? -1 : 1);
   }
 
   public void setGyroYaw(double yawDeg) {
@@ -248,7 +248,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setPathFollowerSpeeds(ChassisSpeeds speeds) {
-    setChassisSpeed(speeds, true);
+    setChassisSpeed(speeds, false);
   }
 
   public void setChassisSpeed(ChassisSpeeds speed, boolean inverted) {

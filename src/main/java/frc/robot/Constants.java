@@ -93,26 +93,26 @@ public final class Constants {
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 11;
     public static int FRONT_LEFT_TURNING_CAN_ID = 21;
-    public static boolean FRONT_LEFT_IS_INVERTED = false;
+    public static boolean FRONT_LEFT_IS_INVERTED = true;
     public static double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
     public static String FRONT_LEFT_OFFSET_KEY = "FL_Offset";
 
     public static int FRONT_RIGHT_DRIVING_CAN_ID = 12;
     public static int FRONT_RIGHT_TURNING_CAN_ID = 22;
     public static double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
-    public static boolean FRONT_RIGHT_IS_INVERTED = true;
+    public static boolean FRONT_RIGHT_IS_INVERTED = false;
     public static String FRONT_RIGHT_OFFSET_KEY = "FR_Offset";
 
     public static int REAR_LEFT_DRIVING_CAN_ID = 14;
     public static int REAR_LEFT_TURNING_CAN_ID = 24;
     public static double REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
-    public static boolean REAR_LEFT_IS_INVERTED = false;
+    public static boolean REAR_LEFT_IS_INVERTED = true;
     public static String REAR_LEFT_OFFSET_KEY = "RL_Offset";
 
     public static int REAR_RIGHT_DRIVING_CAN_ID = 13;
     public static int REAR_RIGHT_TURNING_CAN_ID = 23;
     public static double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
-    public static boolean REAR_RIGHT_IS_INVERTED = true;
+    public static boolean REAR_RIGHT_IS_INVERTED = false;
     public static String REAR_RIGHT_OFFSET_KEY = "RR_Offset";
 
     public static class Module {
@@ -171,7 +171,7 @@ public final class Constants {
 
   public static class PathFollowing{
     public static final PIDConstants DRIVE_PID_CONSTANTS = new PIDConstants(6.0,0.0,0.0); 
-    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(8.0,0.0,0.0);
+    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(1.0,0.0,0.0);
 
     public static final HolonomicPathFollowerConfig holonomicPathFollowerConfig =
       new HolonomicPathFollowerConfig(
