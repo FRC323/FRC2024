@@ -236,6 +236,7 @@ public final class Constants {
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
+    public static final double FEEDER_REVERSE_SPEED = 0.2;
     
   }
 
