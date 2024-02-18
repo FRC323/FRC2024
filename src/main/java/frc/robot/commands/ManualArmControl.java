@@ -15,7 +15,7 @@ public class ManualArmControl extends Command{
 
     @Override
     public void execute(){
-        armSubsystem.setArmPower(direction ? 0.2 : -0.2);
+        armSubsystem.setArmPower(direction ? -0.2 : 0.2);
     }
 
     @Override
