@@ -97,12 +97,11 @@ public class RobotContainer {
 
     //Handoff Button
     m_driveJoystick.trigger().whileTrue(
-      new HandoffProc(intakeSubsystem, armSubsystem)
-    ).onFalse(
-      new ParallelCommandGroup(
-        new SetIntakeSpeed(intakeSubsystem, 0),
-        new SetFeederSpeed(armSubsystem, 0)
-        // new AdjustFeederNote(armSubsystem)
+      new HandoffProc(intakeSubsystem, armSubsystem).handleInterrupt(
+        ()->{
+          intakeSubsystem.setIntakeSpeed(0);
+          armSubsystem.setFeederSpeed(0);
+        }
       )
     );
 
@@ -113,14 +112,14 @@ public class RobotContainer {
       new SetIntakeSpeed(intakeSubsystem, 0)
     );
 
-    //Shoot 
-    m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).onTrue(
-        new ShootCommand(armSubsystem, Constants.Arm.Shooter.SPEAKER_SPEED)
-    ).onFalse(
-        new ParallelCommandGroup(
-          new SetShooterSpeed(armSubsystem, 0),
-          new SetFeederSpeed(armSubsystem, 0)
-        )
+    //Shoot
+    m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
+      new ShootCommand(armSubsystem,Constants.Arm.Shooter.SPEAKER_SPEED).handleInterrupt(
+        () -> {
+          armSubsystem.setFeederSpeed(0);
+          armSubsystem.setShooterSpeed(0);
+        }
+      )
     );
 
     //Folded (Must be Held)
