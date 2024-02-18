@@ -1,6 +1,8 @@
 package frc.robot.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -47,14 +49,16 @@ public class SwervePosePredictor {
   public Pose2d getPoseAtTime(double secondsInFuture) {
 
     //    Basically, we make some guesses out into the future
-    //    It'll cap out at 100 predictions (1 second/timed robot period)
+    //    It'll cap out at 50 predictions (1 second/timed robot period)
     long predictionSteps =
         Math.round(Math.max(secondsInFuture, MAX_SECONDS_PREDICTION) / TimedRobot.kDefaultPeriod);
     Mat pred = kalmanFilter.predict();
     for (int i = 1; i < predictionSteps; i++) {
       pred = kalmanFilter.predict(pred);
     }
-    return new Pose2d();
+    return new Pose2d(
+        new Translation2d(pred.get(0, 0)[0], pred.get(1, 0)[0]),
+        Rotation2d.fromRadians(pred.get(2, 0)[0]));
   }
 
   public void updatePose(Pose2d pose) {
