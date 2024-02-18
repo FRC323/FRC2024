@@ -21,7 +21,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double throttleMultiplier = 1.0;
 
   private ChassisSpeeds lastSetChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-  private SwervePosePredictor posePredictor = new SwervePosePredictor();
+  private SwervePosePredictor posePredictor = new SwervePosePredictor(new Pose2d());
   AHRS navx;
   public final SwerveModule frontLeft =
       new SwerveModule(

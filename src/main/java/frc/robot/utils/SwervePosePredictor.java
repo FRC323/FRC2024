@@ -22,7 +22,7 @@ public class SwervePosePredictor {
   private static final double MAX_SECONDS_PREDICTION = 1.0;
   KalmanFilter kalmanFilter;
 
-  public SwervePosePredictor() {
+  public SwervePosePredictor(Pose2d initialPose) {
     this.kalmanFilter = new KalmanFilter(6, 3);
     Mat transitionMatrix = new Mat(6, 6, CvType.CV_32F, new Scalar(0));
     //    This matrix maps the input states <x,y,theta> to the output states <x, x', y, y;, theta,
@@ -36,14 +36,19 @@ public class SwervePosePredictor {
       0, 0, 0, 0, 0, 1
     };
     transitionMatrix.put(0, 0, tM);
-    //    This just maps
+
+    kalmanFilter.set_transitionMatrix(transitionMatrix);
+    //    This just maps the outputs
     Mat measurementMatrix = new Mat(3, 6, CvType.CV_32F, new Scalar(0));
     measurementMatrix.put(0, 0, 1);
     measurementMatrix.put(1, 1, 1);
     measurementMatrix.put(2, 2, 1);
     kalmanFilter.set_measurementMatrix(measurementMatrix);
-
-    kalmanFilter.set_transitionMatrix(transitionMatrix);
+    Mat statePreMatrix = new Mat(6, 1, CvType.CV_32F);
+    statePreMatrix.put(0, 0, initialPose.getX());
+    statePreMatrix.put(1, 0, initialPose.getY());
+    statePreMatrix.put(2, 0, initialPose.getRotation().getRadians());
+    kalmanFilter.set_statePre(statePreMatrix);
   }
 
   public Pose2d getPoseAtTime(double secondsInFuture) {
