@@ -170,8 +170,8 @@ public final class Constants {
   }
 
   public static class PathFollowing{
-    public static final PIDConstants DRIVE_PID_CONSTANTS = new PIDConstants(6.0,0.0,0.0); 
-    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(1.0,0.0,0.0);
+    public static final PIDConstants DRIVE_PID_CONSTANTS = new PIDConstants(10.0,0.0,0.0); 
+    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(2.0,0.0,0.0);
 
     public static final HolonomicPathFollowerConfig holonomicPathFollowerConfig =
       new HolonomicPathFollowerConfig(
