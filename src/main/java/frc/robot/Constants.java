@@ -121,8 +121,7 @@ public final class Constants {
       public static final double DRIVING_K_P = 0.1;
       public static final double DRIVING_K_I = 0.0;
       public static final double DRIVING_K_D = 0.1;
-      public static final double DRIVING_K_FF =
-          0.95 / Constants.Swerve.Module.DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND;
+      
       public static final double DRIVING_MIN_OUTPUT = -1.0;
       public static final double DRIVING_MAX_OUTPUT = 1.0;
       public static final int DRIVING_MOTOR_CURRENT_LIMIT_AMPS = 40;
@@ -164,6 +163,9 @@ public final class Constants {
 
       public static boolean TURNING_ENCODER_INVERTED = true;
       public static double TURNING_ENCODER_POSITION_PID_MIN_INPUT_RADIANS = 0.0;
+      public static final double DRIVING_K_FF =
+          0.95 / Constants.Swerve.Module.DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND;
+      
     }
   }
 
