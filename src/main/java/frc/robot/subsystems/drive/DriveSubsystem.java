@@ -1,8 +1,12 @@
 package frc.robot.subsystems.drive;
 
+import com.fasterxml.jackson.core.StreamReadConstraints.Builder;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -11,40 +15,52 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
 import java.util.Optional;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
-  @SuppressWarnings({"FieldCanBeLocal","FieldMayBeFinal"})
+
+  @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
   private double throttleMultiplier = 1.0;
+
   private ChassisSpeeds lastSetChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   AHRS navx;
   public final SwerveModule frontLeft =
       new SwerveModule(
           Constants.Swerve.FRONT_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_LEFT_TURNING_CAN_ID,
-          Preferences.getDouble(Constants.Swerve.FRONT_LEFT_OFFSET_KEY,Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(
+              Constants.Swerve.FRONT_LEFT_OFFSET_KEY,
+              Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.FRONT_LEFT_IS_INVERTED);
 
   public final SwerveModule frontRight =
       new SwerveModule(
           Constants.Swerve.FRONT_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_RIGHT_TURNING_CAN_ID,
-          Preferences.getDouble(Constants.Swerve.FRONT_RIGHT_OFFSET_KEY,Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(
+              Constants.Swerve.FRONT_RIGHT_OFFSET_KEY,
+              Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.FRONT_RIGHT_IS_INVERTED);
 
   public final SwerveModule rearLeft =
       new SwerveModule(
           Constants.Swerve.REAR_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_LEFT_TURNING_CAN_ID,
-          Preferences.getDouble(Constants.Swerve.REAR_LEFT_OFFSET_KEY,Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(
+              Constants.Swerve.REAR_LEFT_OFFSET_KEY,
+              Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.REAR_LEFT_IS_INVERTED);
 
   public final SwerveModule rearRight =
       new SwerveModule(
           Constants.Swerve.REAR_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_RIGHT_TURNING_CAN_ID,
-          Preferences.getDouble(Constants.Swerve.REAR_RIGHT_OFFSET_KEY,Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
+          Preferences.getDouble(
+              Constants.Swerve.REAR_RIGHT_OFFSET_KEY,
+              Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.REAR_RIGHT_IS_INVERTED);
 
   private ChassisSpeeds lastSetChassisSpeed = new ChassisSpeeds(0, 0, 0);
@@ -57,8 +73,18 @@ public class DriveSubsystem extends SubsystemBase {
 
   public DriveSubsystem() {
     navx = new AHRS(SerialPort.Port.kMXP);
-    actualChassisSpeed = new ChassisSpeeds(0,0,0);
+    actualChassisSpeed = new ChassisSpeeds(0, 0, 0);
     navx.reset();
+    // TODO: Make this in a different initilztion place
+
+    AutoBuilder.configureHolonomic(
+        this::getPose,
+        this::resetOdometry,
+        this::getChassisSpeed,
+        this::setPathFollowerSpeeds,
+        Constants.PathFollowing.holonomicPathFollowerConfig,
+        this::mirrorForRedAlliance,
+        this);
   }
 
   @Override
@@ -69,6 +95,13 @@ public class DriveSubsystem extends SubsystemBase {
     rearLeft.periodic();
     rearRight.periodic();
     odometry.update(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions());
+    actualChassisSpeed = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
+  }
+
+  private SwerveModuleState[] getModuleStates() {
+    return new SwerveModuleState[] {
+      frontLeft.getState(), frontRight.getState(), rearLeft.getState(), rearRight.getState()
+    };
   }
 
   public SwerveModulePosition[] getModulePositions() {
@@ -91,13 +124,12 @@ public class DriveSubsystem extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
-
   public ChassisSpeeds getChassisSpeed() {
     return actualChassisSpeed;
   }
 
   // Useful for figuring out if we should go to X pose
-  public ChassisSpeeds getLastSetChassisSpeed(){
+  public ChassisSpeeds getLastSetChassisSpeed() {
     return lastSetChassisSpeeds;
   }
 
@@ -106,11 +138,12 @@ public class DriveSubsystem extends SubsystemBase {
     // Just update the translation, not the yaw
     Pose2d resetPose = new Pose2d(pose.getTranslation(), Rotation2d.fromDegrees(getGyroYaw()));
     odometry.resetPosition(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions(), resetPose);
+    System.out.println("Reset Odom");
   }
 
   public double getGyroYaw() {
     // TODO: Handle Gyro Reverse
-    return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ?  -1 : 1);
+    return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ? -1 : 1);
   }
 
   public void setGyroYaw(double yawDeg) {
@@ -135,12 +168,11 @@ public class DriveSubsystem extends SubsystemBase {
     resetYawToAngle(0.0);
   }
 
-  public void setWheelOffsets(){
+  public void setWheelOffsets() {
     double frontLeftOffset = frontLeft.getEncoderAbsPositionRad();
     double frontRightOffset = frontRight.getEncoderAbsPositionRad();
     double rearLeftOffset = rearLeft.getEncoderAbsPositionRad();
     double rearRightOffset = rearRight.getEncoderAbsPositionRad();
-     
 
     Preferences.setDouble(Constants.Swerve.FRONT_LEFT_OFFSET_KEY, frontLeftOffset);
     Preferences.setDouble(Constants.Swerve.FRONT_RIGHT_OFFSET_KEY, frontRightOffset);
@@ -201,7 +233,7 @@ public class DriveSubsystem extends SubsystemBase {
             : new ChassisSpeeds(xSpeed, ySpeed, rot);
 
     desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
-//    This is the last commanded chassis speed not the last actual chassis speed
+    //    This is the last commanded chassis speed not the last actual chassis speed
     this.lastSetChassisSpeeds = desiredChassisSpeeds;
 
     var swerveModuleStates =
@@ -213,23 +245,38 @@ public class DriveSubsystem extends SubsystemBase {
     frontRight.setDesiredState(swerveModuleStates[1]);
     rearLeft.setDesiredState(swerveModuleStates[2]);
     rearRight.setDesiredState(swerveModuleStates[3]);
-
-    actualChassisSpeed = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(swerveModuleStates);
   }
 
-  public void setChassisSpeed(ChassisSpeeds speed) {
-    double maxSpeed = Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
-    double maxRotationalSpeed = Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
-    drive(speed.vxMetersPerSecond/maxSpeed, speed.vyMetersPerSecond/maxSpeed, speed.omegaRadiansPerSecond/maxRotationalSpeed, false);
+  public void setPathFollowerSpeeds(ChassisSpeeds speeds) {
+    setChassisSpeed(speeds, false);
+  }
+
+  public void setChassisSpeed(ChassisSpeeds speed, boolean inverted) {
+    double maxSpeed = (inverted ? -1 : 1) * Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
+    double maxRotationalSpeed =
+        (inverted ? -1 : 1) * Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
+    drive(
+        speed.vxMetersPerSecond / maxSpeed,
+        speed.vyMetersPerSecond / maxSpeed,
+        speed.omegaRadiansPerSecond / maxRotationalSpeed,
+        false);
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
-            desiredStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
+        desiredStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
     frontLeft.setDesiredState(desiredStates[0]);
     frontRight.setDesiredState(desiredStates[1]);
     rearLeft.setDesiredState(desiredStates[2]);
     rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  private boolean mirrorForRedAlliance() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
+    }
+    return false;
   }
 
   @Override
@@ -240,37 +287,42 @@ public class DriveSubsystem extends SubsystemBase {
     addChild("Rear Right", rearRight);
     addChild("Rear Left", rearLeft);
 
-    builder.addDoubleProperty("Target Velocity Y",() -> this.lastSetChassisSpeeds.vyMetersPerSecond, null);
-    builder.addDoubleProperty("Actual Velocity", () -> actualChassisSpeed.vyMetersPerSecond, null);
+    builder.addDoubleProperty(
+        "Target Velocity X", () -> this.lastSetChassisSpeeds.vxMetersPerSecond, null);
+    builder.addDoubleProperty(
+            "Target Velocity Y", () -> this.lastSetChassisSpeeds.vyMetersPerSecond, null);
+    builder.addDoubleProperty("Actual Velocity X", () -> actualChassisSpeed.vxMetersPerSecond, null);
+    builder.addDoubleProperty("Actual Velocity Y", () -> actualChassisSpeed.vyMetersPerSecond, null);
 
     builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
     builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
     builder.addDoubleProperty(
-            "Odometry Yaw (deg)", () -> getPose().getRotation().getDegrees(), null);
+        "Odometry Yaw (deg)", () -> getPose().getRotation().getDegrees(), null);
     builder.addDoubleProperty(
-            "Front Left Abs Encoder (rad)", frontLeft::getEncoderAbsPositionRad, null);
+        "Front Left Abs Encoder (rad)", frontLeft::getEncoderAbsPositionRad, null);
     builder.addDoubleProperty(
-            "Front Right Abs Encoder (rad)", frontRight::getEncoderAbsPositionRad, null);
+        "Front Right Abs Encoder (rad)", frontRight::getEncoderAbsPositionRad, null);
     builder.addDoubleProperty(
-            "Rear Left Abs Encoder (rad)", rearLeft::getEncoderAbsPositionRad, null);
+        "Rear Left Abs Encoder (rad)", rearLeft::getEncoderAbsPositionRad, null);
     builder.addDoubleProperty(
-            "Rear Right Abs Encoder (rad)", rearRight::getEncoderAbsPositionRad, null);
+        "Rear Right Abs Encoder (rad)", rearRight::getEncoderAbsPositionRad, null);
     builder.addDoubleProperty(
-            "Front Left Module Pos (rad)", () -> frontLeft.getPosition().angle.getRadians(), null);
+        "Front Left Module Pos (rad)", () -> frontLeft.getPosition().angle.getRadians(), null);
     builder.addDoubleProperty(
-            "Front Right Module Pos (rad)", () -> frontRight.getPosition().angle.getRadians(), null);
+        "Front Right Module Pos (rad)", () -> frontRight.getPosition().angle.getRadians(), null);
     builder.addDoubleProperty(
-            "Rear Left Module Pos (rad)", () -> rearLeft.getPosition().angle.getRadians(), null);
+        "Rear Left Module Pos (rad)", () -> rearLeft.getPosition().angle.getRadians(), null);
     builder.addDoubleProperty(
-            "Rear Right Module Pos (rad)", () -> rearRight.getPosition().angle.getRadians(), null);
+        "Rear Right Module Pos (rad)", () -> rearRight.getPosition().angle.getRadians(), null);
     builder.addDoubleProperty(
-            "Front Left Distance (m)", () -> frontLeft.getPosition().distanceMeters, null);
+        "Front Left Distance (m)", () -> frontLeft.getPosition().distanceMeters, null);
     builder.addDoubleProperty(
-            "Front Right Distance (m)", () -> frontRight.getPosition().distanceMeters, null);
+        "Front Right Distance (m)", () -> frontRight.getPosition().distanceMeters, null);
     builder.addDoubleProperty(
-            "Rear Left Distance (m)", () -> rearLeft.getPosition().distanceMeters, null);
+        "Rear Left Distance (m)", () -> rearLeft.getPosition().distanceMeters, null);
     builder.addDoubleProperty(
-            "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
+        "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
+    builder.addDoubleProperty("Rear Right Velocity", rearRight::getModuleVelocity, null);
   }
 }

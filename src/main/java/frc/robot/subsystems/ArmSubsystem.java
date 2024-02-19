@@ -38,6 +38,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DutyCycleEncoder armAbsoluteEncoder;
   private DigitalInput beamBreakSensor;
   private double commandedVoltage = 0.0;
+  private boolean voltageOveride = false;
 
   //    private AbsoluteEncoderChecker encoderChecker;
 
@@ -84,17 +85,25 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    commandedVoltage = armController.calculate(getArmAngleRads())
-    // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to
-    // kp:0.1 and up slowly
-               + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity)
-    //            + (Arm.kG * Math.cos(getArmAngleRads())
-    ;
+    if(!voltageOveride){
+      commandedVoltage = armController.calculate(getArmAngleRads())
+      // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to
+      // kp:0.1 and up slowly
+                + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity)
+      //            + (Arm.kG * Math.cos(getArmAngleRads())
+      ;
+    }
     leftSpark.setVoltage(commandedVoltage);
   }
 
   public void setTargetRads(double rads) {
     this.armController.setGoal(MathUtil.clamp(rads, Arm.SOFT_LIMIT_MIN, Arm.SOFT_LIMIT_MAX));
+    voltageOveride = false;
+  }
+
+  public void setArmPower(double power){
+    voltageOveride = true;
+    leftSpark.set(power);
   }
 
   public boolean armIsAtTarget() {
@@ -134,8 +143,6 @@ public class ArmSubsystem extends SubsystemBase {
     return errors == 0;
 
   }
-
-  public void doNothing(){}
 
   @Override
   public void initSendable(SendableBuilder builder) {

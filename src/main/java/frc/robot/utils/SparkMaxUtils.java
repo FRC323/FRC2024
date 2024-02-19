@@ -67,6 +67,7 @@ public class SparkMaxUtils {
         while (!initFunction.getAsBoolean()) {
             numAttempts++;
             if (numAttempts > maxRetryAttempts) {
+                System.out.println("Failed Init of Function");
                 break;
             }
         }

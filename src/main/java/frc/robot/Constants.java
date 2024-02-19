@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -68,8 +71,8 @@ public final class Constants {
      * Driving Parameters - Note that these are not the maximum capable speeds of the robot, rather
      * the allowed maximum speeds
      */
-    public static final double MAX_SPEED_METERS_PER_SECOND = 22.3,
-        MAX_ANGULAR_SPEED_RAD_PER_SECONDS = 4 * 2 * Math.PI; // radians per second
+    public static final double MAX_SPEED_METERS_PER_SECOND = 4.7,
+        MAX_ANGULAR_SPEED_RAD_PER_SECONDS = 3 * 2 * Math.PI; // radians per second
 
     /** Distance between centers of right and left wheels on robot */
     public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(22.5);
@@ -90,26 +93,26 @@ public final class Constants {
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 11;
     public static int FRONT_LEFT_TURNING_CAN_ID = 21;
-    public static boolean FRONT_LEFT_IS_INVERTED = false;
+    public static boolean FRONT_LEFT_IS_INVERTED = true;
     public static double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
     public static String FRONT_LEFT_OFFSET_KEY = "FL_Offset";
 
     public static int FRONT_RIGHT_DRIVING_CAN_ID = 12;
     public static int FRONT_RIGHT_TURNING_CAN_ID = 22;
     public static double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
-    public static boolean FRONT_RIGHT_IS_INVERTED = true;
+    public static boolean FRONT_RIGHT_IS_INVERTED = false;
     public static String FRONT_RIGHT_OFFSET_KEY = "FR_Offset";
 
     public static int REAR_LEFT_DRIVING_CAN_ID = 14;
     public static int REAR_LEFT_TURNING_CAN_ID = 24;
     public static double REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
-    public static boolean REAR_LEFT_IS_INVERTED = false;
+    public static boolean REAR_LEFT_IS_INVERTED = true;
     public static String REAR_LEFT_OFFSET_KEY = "RL_Offset";
 
     public static int REAR_RIGHT_DRIVING_CAN_ID = 13;
     public static int REAR_RIGHT_TURNING_CAN_ID = 23;
     public static double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD = 0.0;
-    public static boolean REAR_RIGHT_IS_INVERTED = true;
+    public static boolean REAR_RIGHT_IS_INVERTED = false;
     public static String REAR_RIGHT_OFFSET_KEY = "RR_Offset";
 
     public static class Module {
@@ -118,8 +121,7 @@ public final class Constants {
       public static final double DRIVING_K_P = 0.1;
       public static final double DRIVING_K_I = 0.0;
       public static final double DRIVING_K_D = 0.1;
-      public static final double DRIVING_K_FF =
-          0.95 / Constants.Swerve.Module.DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND;
+      
       public static final double DRIVING_MIN_OUTPUT = -1.0;
       public static final double DRIVING_MAX_OUTPUT = 1.0;
       public static final int DRIVING_MOTOR_CURRENT_LIMIT_AMPS = 40;
@@ -130,7 +132,7 @@ public final class Constants {
           CANSparkBase.IdleMode.kCoast;
 
       /** Multiplier for wheel diameter based on empirical on-field measurement */
-      public static final double WHEEL_DIAMETER_FUDGE_FACTOR = 1.0;
+      public static final double WHEEL_DIAMETER_FUDGE_FACTOR = 0.978;
 
       public static final double WHEEL_DIAMETER_METERS =
           Units.inchesToMeters(3) * WHEEL_DIAMETER_FUDGE_FACTOR;
@@ -142,7 +144,8 @@ public final class Constants {
       public static final double DRIVING_ENCODER_POSITION_FACTOR_METERS =
           WHEEL_CIRCUMFERENCE_METERS / DRIVING_MOTOR_REDUCTION; // meters
       public static final double DRIVING_ENCODER_VELOCITY_FACTOR_METERS_PER_SECOND =
-          DRIVING_ENCODER_POSITION_FACTOR_METERS / 60.0; // meters per second
+        ((Units.inchesToMeters(3) * Math.PI) / 4.71) / 60.0;    
+      // DRIVING_ENCODER_POSITION_FACTOR_METERS / 60.0; // meters per second
       public static final double DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND =
           DRIVE_WHEEL_FREE_SPEED_FUDGE_FACTOR
               * ((DRIVING_MOTOR_FREE_SPEED_RPS * WHEEL_CIRCUMFERENCE_METERS)
@@ -160,7 +163,23 @@ public final class Constants {
 
       public static boolean TURNING_ENCODER_INVERTED = true;
       public static double TURNING_ENCODER_POSITION_PID_MIN_INPUT_RADIANS = 0.0;
+      public static final double DRIVING_K_FF =
+          0.95 / Constants.Swerve.Module.DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND;
+      
     }
+  }
+
+  public static class PathFollowing{
+    public static final PIDConstants DRIVE_PID_CONSTANTS = new PIDConstants(6.0,0.0,0.6); 
+    public static final PIDConstants STEER_PID_CONSTANTS = new PIDConstants(2.0,0.0,0.0);
+
+    public static final HolonomicPathFollowerConfig holonomicPathFollowerConfig =
+      new HolonomicPathFollowerConfig(
+          Constants.PathFollowing.DRIVE_PID_CONSTANTS,
+          Constants.PathFollowing.STEER_PID_CONSTANTS,
+          Constants.Swerve.MAX_SPEED_METERS_PER_SECOND,
+          Constants.Swerve.WHEEL_BASE_METERS,
+          new ReplanningConfig());
   }
 
   public static class Arm {
@@ -187,7 +206,7 @@ public final class Constants {
     public static final double kA = 0.02; // Volts * s^2/rad
 
     // Motor Constants
-    public static final int CURRENT_LIMIT = 40;
+    public static final int CURRENT_LIMIT = 60;
 
     public static final double SOFT_LIMIT_MIN = -2.08;
     public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(0.0);
@@ -209,15 +228,18 @@ public final class Constants {
       public static final double kD = 0.0;
 
       public static final double SPEAKER_SPEED = -1.0;
-
+      public static final double AMP_SPEED = -0.75;
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.8;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
     public static final double ARM_AMP_POSE = -2.0;
+    public static final double ARM_HUMAN_PLAYER_POSE =  -1.3;
+    public static final double ARM_FAR_SPEAKER = -0.6;
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
+    public static final double FEEDER_REVERSE_SPEED = 0.2;
     
   }
 

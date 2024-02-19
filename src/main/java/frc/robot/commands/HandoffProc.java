@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -15,10 +17,14 @@ public class HandoffProc extends SequentialCommandGroup{
     public HandoffProc(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem){
         addCommands(
             new SetIntakeUnfolded(intakeSubsystem,armSubsystem),
-            new ParallelCommandGroup(
-                new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_INTAKE_SPEED), 
-                new SetIntakeSpeed(intakeSubsystem, Constants.Intake.INTAKE_SPEED)
+            new ConditionalCommand(
+                new InstantCommand(),
+                new ParallelCommandGroup(
+                    new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_INTAKE_SPEED), 
+                    new SetIntakeSpeed(intakeSubsystem, Constants.Intake.INTAKE_SPEED)
                 ),
+                armSubsystem::isHoldingNote
+            ),
             new WaitUntilCommand(armSubsystem::isHoldingNote),
             new ParallelCommandGroup(
                 new SetFeederSpeed(armSubsystem, 0),

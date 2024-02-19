@@ -4,8 +4,13 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -43,14 +48,20 @@ public class RobotContainer {
   private final CommandJoystick m_driveJoystick = new CommandJoystick(Constants.DriverConstants.kDriveStickPort);
   private final CommandJoystick m_steerJoystick = new CommandJoystick(Constants.DriverConstants.kSteerStickPort);
 
+  private final SendableChooser<Command> autoChooser;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    addCommandsToAutoChooser();
+
     // Configure the trigger bindings
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
     Shuffleboard.getTab("Subsystems").add(armSubsystem.getName(), armSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
     SmartDashboard.putData(driveSubsystem);
+
+    autoChooser = AutoBuilder.buildAutoChooser();    
     addShuffleBoardData();
   }
 
@@ -70,10 +81,10 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 driveSubsystem.drive(
-                    m_driveJoystick.getY(),
-                    m_driveJoystick.getX(),
-                    Math.pow(m_steerJoystick.getX(),2) * Math.signum(m_steerJoystick.getX()),
-                    !m_steerJoystick.trigger().getAsBoolean()),
+                    -m_driveJoystick.getY(),
+                    -m_driveJoystick.getX(),
+                    Math.pow(m_steerJoystick.getX(),2) * Math.signum(-m_steerJoystick.getX()),
+                    true),// !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
     //Reset Gyro
@@ -122,44 +133,66 @@ public class RobotContainer {
     );
     
     //Arm Poses
-    m_steerJoystick.button(SteerStick.LEFT).onTrue(
-      new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE)
+    m_steerJoystick.button(SteerStick.LEFT).whileTrue(
+        new HumanPlayerPickup(intakeSubsystem,armSubsystem)
+    ).onFalse(
+      new SetFeederSpeed(armSubsystem, 0)
     );
 
     m_steerJoystick.button(SteerStick.MIDDLE).onTrue(
       new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE)
     );
 
+    m_steerJoystick.button(SteerStick.RIGHT).onTrue(
+      new SetArmTarget(armSubsystem,Constants.Arm.ARM_FAR_SPEAKER)
+    );
+
+    //Manual Arm
+    m_driveJoystick.button(DriveStick.UP_DIRECTIONAL).whileTrue(
+      new ManualArmControl(armSubsystem,true)
+    );
+    m_driveJoystick.button(DriveStick.DOWN_DIRECTIONAL).whileTrue(
+      new ManualArmControl(armSubsystem,false)
+    );
+
 
   }
 
-  public void addShuffleBoardData(){
+  private void addShuffleBoardData(){
     SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
     SmartDashboard.putData(new StoreArmOffset(armSubsystem));
     SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
 
-    SmartDashboard.putData(
-        "Arm to Down", new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE));
-    SmartDashboard.putData(
-        "Arm to Handoff", new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE));
-    SmartDashboard.putData(
-        "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
+    // SmartDashboard.putData(
+    //     "Arm to Down", new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE));
+    // SmartDashboard.putData(
+    //     "Arm to Handoff", new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE));
+    // SmartDashboard.putData(
+    //     "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
 
     // SmartDashboard.putData(
         // "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
 
-    SmartDashboard.putData(
-      "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
-    );
-    SmartDashboard.putData(
-      "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
-    );
+    // SmartDashboard.putData(
+    //   "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
+    // );
+    // SmartDashboard.putData(
+    //   "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
+    // );
 
     SmartDashboard.putData(
       "Folded Command", new SetIntakeFolded(intakeSubsystem,armSubsystem)
     );
     SmartDashboard.putData(
       "Unfolded Command", new SetIntakeUnfolded(intakeSubsystem,armSubsystem)
+    );
+
+    SmartDashboard.putData(
+      "Go 1 Meter", PathFollowerCommands.createDriveToAbsolutePositionCommand(driveSubsystem, 1, 0.00, 90.0)
+    );
+
+    SmartDashboard.putData(
+      "Follow Path", PathFollowerCommands.followPathFromFile(driveSubsystem, "Test Path")
     );
 
     SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
@@ -171,6 +204,19 @@ public class RobotContainer {
     SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
 
     SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
+
+    SmartDashboard.putData("ResetPose",new InstantCommand(()-> driveSubsystem.resetOdometry(new Pose2d()),driveSubsystem)); 
+  
+    SmartDashboard.putData("Auto Chooser",autoChooser);
+
+    SmartDashboard.putData("Pick Note",new FireNoteAuto(driveSubsystem, intakeSubsystem, armSubsystem));
+  }
+
+  private void addCommandsToAutoChooser(){
+  //   NamedCommands.registerCommand("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem));
+  //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
+  //   NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
+  //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem, armSubsystem));
   }
 
   /**
@@ -181,7 +227,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //    return Autos.exampleAuto(m_exampleSubsystem);
-    return new InstantCommand();
+    return autoChooser.getSelected();
   }
 
   public void simulationInit() {}
