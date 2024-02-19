@@ -208,6 +208,8 @@ public class RobotContainer {
     SmartDashboard.putData("ResetPose",new InstantCommand(()-> driveSubsystem.resetOdometry(new Pose2d()),driveSubsystem)); 
   
     SmartDashboard.putData("Auto Chooser",autoChooser);
+
+    SmartDashboard.putData("Pick Note",new FireNoteAuto(driveSubsystem, intakeSubsystem, armSubsystem));
   }
 
   private void addCommandsToAutoChooser(){
