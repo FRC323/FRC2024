@@ -8,7 +8,7 @@ public class ShootSpeaker extends SequentialCommandGroup{
     public ShootSpeaker(ArmSubsystem arm){
         addCommands(
             new SetArmTarget(arm, Constants.Arm.ARM_HANDOFF_POSE),
-            new ShootCommand(arm, Constants.Arm.Shooter.SPEAKER_SPEED)
+            new ShootCommand(arm, 0.1)//Constants.Arm.Shooter.SPEAKER_SPEED)
         );
     }
 }

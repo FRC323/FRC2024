@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -25,6 +26,7 @@ import frc.robot.Constants.DriverConstants.DriveStick;
 import frc.robot.Constants.DriverConstants.SteerStick;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.AutoCommands.StartShooterWheelSpeaker;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -95,7 +97,7 @@ public class RobotContainer {
             driveSubsystem));
 
     m_steerJoystick.trigger().whileTrue(
-      new AlignToTarget(
+      new AlignToTargetXOffset(
         visionSubsystem, driveSubsystem, m_driveJoystick, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
       );
     //Reset Gyro
@@ -225,7 +227,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
 
-    SmartDashboard.putData("ResetPose",new InstantCommand(()-> driveSubsystem.resetOdometry(new Pose2d()),driveSubsystem)); 
+    SmartDashboard.putData("ResetPose",new InstantCommand(()-> driveSubsystem.resetOdometry(new Pose2d(14.5,4.5,new Rotation2d(Units.degreesToRadians(-150.0)))),driveSubsystem)); 
   
     SmartDashboard.putData("Auto Chooser",autoChooser);
 
@@ -233,10 +235,16 @@ public class RobotContainer {
   }
 
   private void addCommandsToAutoChooser(){
-  //   NamedCommands.registerCommand("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem));
+    NamedCommands.registerCommand("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem));
   //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
-  //   NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
+    NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
   //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem, armSubsystem));
+  NamedCommands.registerCommand("StartShooterWheelSpeaker", new InstantCommand(()->{armSubsystem.setShooterSpeed(Constants.Arm.Shooter.SPEAKER_SPEED);},armSubsystem));
+  NamedCommands.registerCommand("UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
+  NamedCommands.registerCommand("RunIntake",
+    new InstantCommand(()->{intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);},intakeSubsystem));
+  NamedCommands.registerCommand("RunFeeder",
+    new InstantCommand(()->{armSubsystem.setFeederSpeed(Constants.Arm.FEEDER_INTAKE_SPEED);},armSubsystem));
   }
 
   /**
