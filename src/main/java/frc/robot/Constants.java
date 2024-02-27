@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -23,6 +24,39 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final class AprilTags {
+    public static final double APRILTAG_HEIGHT = 9.0;
+    public static final double APRILTAG_HEIGHT_HALF = APRILTAG_HEIGHT/2;
+
+    public static final class Speaker {
+      public static final int[] TAGS_CENTER = {4,7};
+      public static final int[] TAGS_SIDE = {3,8};
+      public static final double HEIGHT = 51.96 + APRILTAG_HEIGHT_HALF;
+    }
+
+    public static final class Amp {
+      public static final int[] TAGS = {5,6};
+      public static final double HEIGHT = 48.03 + APRILTAG_HEIGHT_HALF;
+    }
+
+    public static final class Source {
+      public static final int[] TAGS_LEFT = {2,10};
+      public static final int[] TAGS_RIGHT = {1,9};
+      public static final double HEIGHT = 48.03 + APRILTAG_HEIGHT_HALF;
+    }
+
+    public static final class Stage {
+      public static final int[] TAGS = {11,12,13,14,15,16};
+      public static final double HEIGHT = 47.63 + APRILTAG_HEIGHT_HALF;
+    }
+  }
+
+  public static class Vision {
+    public static final int APRIL_TAG_PIPELINE = 0;
+    public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
+    public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
+  }
 
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;
 

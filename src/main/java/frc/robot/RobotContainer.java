@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -27,6 +28,8 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,6 +43,8 @@ public class RobotContainer {
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  private final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_operatorController =
@@ -59,6 +64,8 @@ public class RobotContainer {
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
     Shuffleboard.getTab("Subsystems").add(armSubsystem.getName(), armSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
+    Shuffleboard.getTab("Subsystems").add(visionSubsystem.getName(), visionSubsystem);
+    Shuffleboard.getTab("Subsystems").add(poseEstimatorSubsystem.getName(),poseEstimatorSubsystem);
     SmartDashboard.putData(driveSubsystem);
 
     autoChooser = AutoBuilder.buildAutoChooser();    
@@ -87,6 +94,10 @@ public class RobotContainer {
                     true),// !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
+    m_steerJoystick.trigger().whileTrue(
+      new AlignToTarget(
+        visionSubsystem, driveSubsystem, m_driveJoystick, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
+      );
     //Reset Gyro
     m_driveJoystick.button(DriveStick.RIGHT_SIDE_BUTTON).onTrue(
       new InstantCommand(
@@ -178,6 +189,15 @@ public class RobotContainer {
     // );
     // SmartDashboard.putData(
     //   "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
+    // );
+    
+    //april tag testing
+    // SmartDashboard.putData(
+    //   "Align to Speaker", new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
+    // );
+
+    // SmartDashboard.putData(
+    //   "Align to Amp", new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.Amp.HEIGHT, Constants.AprilTags.Amp.TAGS)
     // );
 
     SmartDashboard.putData(

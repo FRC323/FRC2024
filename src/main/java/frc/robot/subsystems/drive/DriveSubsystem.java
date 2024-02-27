@@ -138,14 +138,17 @@ public class DriveSubsystem extends SubsystemBase {
     // Just update the translation, not the yaw
     Pose2d resetPose = new Pose2d(pose.getTranslation(), Rotation2d.fromDegrees(getGyroYaw()));
     odometry.resetPosition(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions(), resetPose);
-    System.out.println("Reset Odom");
+  }
+
+  public Pose2d getRobotPose2d(){
+    return odometry.getPoseMeters();
   }
 
   public double getGyroYaw() {
     // TODO: Handle Gyro Reverse
     return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ? -1 : 1);
   }
-
+  
   public void setGyroYaw(double yawDeg) {
     // I'm not 100% sure on this to be honest
     // Reset it to 0, then add an offset negative what you want.
