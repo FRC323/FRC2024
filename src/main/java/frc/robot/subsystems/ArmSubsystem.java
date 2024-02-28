@@ -138,8 +138,8 @@ public class ArmSubsystem extends SubsystemBase {
     leftSpark.setInverted(true); //TODO: Add to constants
     errors += check(rightShooterSpark.follow(leftShooterSpark,false));
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
-    errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
-    errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
+    // errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
+    // errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
 
     
 
