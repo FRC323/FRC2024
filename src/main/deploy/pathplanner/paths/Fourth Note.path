@@ -20,12 +20,12 @@
         "y": 6.852774503269805
       },
       "prevControl": {
-        "x": 14.17580453394525,
-        "y": 6.326537553360009
+        "x": 14.17584631635827,
+        "y": 6.326553339722663
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "End Fourth"
     }
   ],
   "rotationTargets": [

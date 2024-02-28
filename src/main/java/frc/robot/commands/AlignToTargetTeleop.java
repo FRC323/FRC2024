@@ -13,7 +13,7 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.utils.Functions;
 
-public class AlignToTarget extends Command {
+public class AlignToTargetTeleop extends Command {
     private VisionSubsystem _visionSubsystem;
     private DriveSubsystem _driveSubsystem;
     private CommandJoystick driveStick;
@@ -24,8 +24,9 @@ public class AlignToTarget extends Command {
     private PIDController rotController = new PIDController(ROTATION_kP, ROTATION_kI, ROTATION_kD);
     private int[] _requestedAprilTagIds;
 
-    public AlignToTarget(VisionSubsystem visionSubsystem, 
+    public AlignToTargetTeleop(VisionSubsystem visionSubsystem, 
         DriveSubsystem driveSubsystem,
+        CommandJoystick driveStick,
         double targetHeight,
         int[] requestedAprilTagIds) {
 
