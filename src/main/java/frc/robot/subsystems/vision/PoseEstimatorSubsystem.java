@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.subsystems.vision.Limelight.LimelightCaptureDetail;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
     private final DriveSubsystem _driveSubsystem;
@@ -19,6 +20,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
+
+    private LimelightCaptureDetail limelightCapture = null;
 
     public PoseEstimatorSubsystem(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem) {
         this._driveSubsystem = driveSubsystem;
@@ -39,12 +42,19 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        var limelightCapture = _visionSubsystem.getLimelightCapture();
+        limelightCapture = _visionSubsystem.getLimelightCapture();
         double currentTimestamp = getTimestampSeconds(limelightCapture.latency());
        _poseEstimator.addVisionMeasurement(limelightCapture.botpose_alliance(), currentTimestamp);
-    
+
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
 
+        // if(limelightCapture.hasTarget()){
+        //     _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+        // }
+    }
+
+    public void updateOdometry(){
+        if(limelightCapture == null) return;
         if(limelightCapture.hasTarget()){
             _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
         }
