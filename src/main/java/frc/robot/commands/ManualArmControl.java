@@ -7,6 +7,7 @@ public class ManualArmControl extends Command{
 
     private ArmSubsystem armSubsystem;
     private boolean direction;
+    private double angle = 0.0;
 
     public ManualArmControl(ArmSubsystem armSubsystem,boolean direction){
         this.armSubsystem = armSubsystem;
@@ -15,12 +16,10 @@ public class ManualArmControl extends Command{
 
     @Override
     public void execute(){
-        armSubsystem.setArmPower(direction ? -0.2 : 0.2);
+        armSubsystem.setTargetRads(
+            armSubsystem.getArmAngleRads() + (direction ? -0.1 : 0.1)
+        );
+        
     }
 
-    @Override
-    public void end(boolean interupted){
-        armSubsystem.setArmPower(0.0);
-        armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
-    }
 }

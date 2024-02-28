@@ -148,13 +148,13 @@ public class RobotContainer {
     );
     
     //Arm Poses
-    m_steerJoystick.button(SteerStick.LEFT).whileTrue(
+    m_steerJoystick.button(SteerStick.MIDDLE).whileTrue(
         new HumanPlayerPickup(intakeSubsystem,armSubsystem)
     ).onFalse(
       new SetFeederSpeed(armSubsystem, 0)
     );
 
-    m_steerJoystick.button(SteerStick.MIDDLE).onTrue(
+    m_steerJoystick.button(SteerStick.LEFT).onTrue(
       new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE)
     );
 

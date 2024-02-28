@@ -4,6 +4,7 @@ import static frc.robot.utils.SparkMaxUtils.check;
 import static frc.robot.utils.SparkMaxUtils.initWithRetry;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
@@ -137,6 +138,8 @@ public class ArmSubsystem extends SubsystemBase {
     leftSpark.setInverted(true); //TODO: Add to constants
     errors += check(rightShooterSpark.follow(leftShooterSpark,false));
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
+    errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
+    errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
 
     
 
