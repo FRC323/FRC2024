@@ -83,7 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
         this::getChassisSpeed,
         this::setPathFollowerSpeeds,
         Constants.PathFollowing.holonomicPathFollowerConfig,
-        this::mirrorForRedAlliance,
+        this::mirrorForBlueAlliance,
         this);
   }
 
@@ -155,9 +155,11 @@ public class DriveSubsystem extends SubsystemBase {
     // TODO: Handle Gyro Reverse
     navx.reset();
     navx.setAngleAdjustment(-yawDeg);
+    System.out.println("Nax Offset: " + (-yawDeg));
   }
 
   public void resetYawToAngle(double yawDeg) {
+    System.out.println("Gyro Reset To: "+ yawDeg);
     double curYawDeg = getGyroYaw();
     double offsetToTargetDeg = targetHeadingDegrees - curYawDeg;
     setGyroYaw(yawDeg);
@@ -274,10 +276,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.setDesiredState(desiredStates[3]);
   }
 
-  private boolean mirrorForRedAlliance() {
+  private boolean mirrorForBlueAlliance() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
-      return alliance.get() == DriverStation.Alliance.Red;
+      return alliance.get() == DriverStation.Alliance.Blue;
     }
     return false;
   }

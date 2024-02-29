@@ -29,6 +29,7 @@ import frc.robot.Constants.DriverConstants.DriveStick;
 import frc.robot.Constants.DriverConstants.SteerStick;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.AutoCommands.ResetOdomFromLimelight;
 import frc.robot.commands.AutoCommands.ShootAuto;
 import frc.robot.commands.AutoCommands.StartShooterWheelSpeaker;
 import frc.robot.subsystems.ArmSubsystem;
@@ -275,8 +276,9 @@ public class RobotContainer {
     // An example command will be run in autonomous
     //    return Autos.exampleAuto(m_exampleSubsystem);
     return new SequentialCommandGroup(
-      new InstantCommand(()->{poseEstimatorSubsystem.updateOdometry();},poseEstimatorSubsystem),
-      autoChooser.getSelected());
+      new ResetOdomFromLimelight(poseEstimatorSubsystem),
+      autoChooser.getSelected()
+    );
       
   }
 

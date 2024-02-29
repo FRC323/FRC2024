@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -40,6 +41,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         return Timer.getFPGATimestamp() - (latencyMillis / 1000d);
     }
 
+    public Pose2d getEstimatedPosition(){
+        return _poseEstimator.getEstimatedPosition();
+    }
+
     @Override
     public void periodic() {
         limelightCapture = _visionSubsystem.getLimelightCapture();
@@ -58,6 +63,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         if(limelightCapture == null) return;
         if(limelightCapture.hasTarget()){
             _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+            _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians() + Math.PI);
+            _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians());
         }
     }
 

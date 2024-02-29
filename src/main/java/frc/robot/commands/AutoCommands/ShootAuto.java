@@ -16,10 +16,10 @@ public class ShootAuto extends SequentialCommandGroup{
     public ShootAuto(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, VisionSubsystem visionSubsystem){
         addCommands(
             new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SPEAKER_SPEED),
-            new ParallelCommandGroup(
-                new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.APRILTAG_HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER),
-                new AdjustRobotForShot(driveSubsystem, armSubsystem, visionSubsystem)
-            ),
+            // new ParallelCommandGroup(
+            //     new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.APRILTAG_HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER),
+            //     new AdjustRobotForShot(driveSubsystem, armSubsystem, visionSubsystem)
+            // ),
             new SetFeederSpeed(armSubsystem, Constants.Arm.FEED_SHOOT_SPEED),
             new WaitCommand(0.25)
         );
