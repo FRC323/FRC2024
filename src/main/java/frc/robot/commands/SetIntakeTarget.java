@@ -26,7 +26,7 @@ public class SetIntakeTarget extends Command {
 
     @Override
     public boolean isFinished() {
-        return intake.wristIsAtTarget();
+        return true;
     }
 }
 

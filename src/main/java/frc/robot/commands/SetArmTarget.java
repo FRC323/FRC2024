@@ -25,7 +25,8 @@ public class SetArmTarget extends Command {
     }
 
     @Override
-    public boolean isFinished() {
-        return arm.armIsAtTarget();
-    }
+    public boolean isFinished(){
+        return true;
+    }    
+
 }

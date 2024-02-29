@@ -14,7 +14,7 @@ public class AdjustFeederNote extends SequentialCommandGroup{
             new WaitUntilCommand(() -> !armSubsystem.isHoldingNote()),
             new SetFeederSpeed(armSubsystem, -Constants.Arm.FEEDER_REVERSE_SPEED),
             new WaitUntilCommand(armSubsystem::isHoldingNote),
-            new WaitCommand(0.05),
+            // new WaitCommand(0.05),
             new SetFeederSpeed(armSubsystem, 0)
         );
     }

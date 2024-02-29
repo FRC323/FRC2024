@@ -2,20 +2,30 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.Arm;
+import frc.robot.Constants.Intake;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class SetIntakeFolded extends SequentialCommandGroup{
-    public SetIntakeFolded(IntakeSubsystem intake,ArmSubsystem armSubsystem){
+    public SetIntakeFolded(IntakeSubsystem intakeSubsystem,ArmSubsystem armSubsystem){
         addCommands(
-            // new ConditionalCommand(
-                // new InstantCommand(),  
-                new SetArmTarget(armSubsystem,Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
-                // () -> intakeSubsystem.getWristAngleRads() < (Constants.Intake.FOLDED_POSE + 0.5)
-            // ),
-            new SetIntakeTarget(intake,Constants.Intake.FOLDED_POSE),
+            new SetIntakeSpeed(intakeSubsystem, 0),
+            new SetFeederSpeed(armSubsystem, 0),
+            new ConditionalCommand(
+                new InstantCommand(),
+                new SequentialCommandGroup(
+                    new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
+                    new WaitUntilCommand(()-> armSubsystem.getArmAngleRads() <= Arm.ARM_INTAKE_UNFOLDING_POSE + 0.1),
+                    new SetIntakeTarget(intakeSubsystem,Constants.Intake.FOLDED_POSE), 
+                    new WaitUntilCommand(()->intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE + 0.2)
+                ),
+                () -> intakeSubsystem.getWristAngleRads() < (Constants.Intake.FOLDED_POSE + 0.5)
+            ),
             new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE)
         );
     }

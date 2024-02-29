@@ -44,8 +44,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     public void periodic() {
         limelightCapture = _visionSubsystem.getLimelightCapture();
         double currentTimestamp = getTimestampSeconds(limelightCapture.latency());
-       _poseEstimator.addVisionMeasurement(limelightCapture.botpose_alliance(), currentTimestamp);
-
+        if(limelightCapture != null){
+            _poseEstimator.addVisionMeasurement(limelightCapture.botpose_alliance(), currentTimestamp);
+        }
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
 
         // if(limelightCapture.hasTarget()){

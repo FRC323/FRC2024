@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.Arm;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -17,17 +18,17 @@ public class HandoffProc extends SequentialCommandGroup{
     public HandoffProc(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem){
         addCommands(
             new SetIntakeUnfolded(intakeSubsystem,armSubsystem),
-            new ConditionalCommand(
-                new InstantCommand(),
-                new ParallelCommandGroup(
-                    new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_INTAKE_SPEED), 
-                    new SetIntakeSpeed(intakeSubsystem, Constants.Intake.INTAKE_SPEED)
-                ),
-                armSubsystem::isHoldingNote
+            new SetArmTarget(armSubsystem, Arm.ARM_HANDOFF_POSE),
+            // new WaitUntilCommand(armSubsystem.armIsAtTarget),
+            new ParallelCommandGroup(
+                new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_INTAKE_SPEED), 
+                new SetIntakeSpeed(intakeSubsystem, Constants.Intake.INTAKE_SPEED)
             ),
             new WaitUntilCommand(armSubsystem::isHoldingNote),
-            new AdjustFeederNote(armSubsystem),
-            new SetIntakeSpeed(intakeSubsystem, -Constants.Intake.INTAKE_SPEED),
+            new ParallelCommandGroup(
+                new AdjustFeederNote(armSubsystem),
+                new SetIntakeSpeed(intakeSubsystem, -Constants.Intake.INTAKE_SPEED)
+            ),
             new WaitCommand(0.2),
             new ParallelCommandGroup(
                 new SetFeederSpeed(armSubsystem, 0),

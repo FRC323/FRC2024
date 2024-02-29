@@ -15,10 +15,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -122,9 +124,23 @@ public class RobotContainer {
 
     //Outtake
     m_driveJoystick.button(DriveStick.TOP_BIG_BUTTON).whileTrue(
-      new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED)
+      new SequentialCommandGroup(
+        new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
+        new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED),
+        new ConditionalCommand(
+          new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_REVERSE_SPEED),
+          new InstantCommand(),
+          ()->armSubsystem.getArmAngleRads() <= Constants.Arm.ARM_HANDOFF_POSE
+        ),
+        new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_REVERSE_SPEED),
+        new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.REVERSE_SPEED)
+      )
     ).onFalse(
-      new SetIntakeSpeed(intakeSubsystem, 0)
+        new ParallelCommandGroup(
+          new SetIntakeSpeed(intakeSubsystem, 0),
+          new SetFeederSpeed(armSubsystem, 0),
+          new SetShooterSpeed(armSubsystem, 0)
+        )
     );
 
     //Shoot
