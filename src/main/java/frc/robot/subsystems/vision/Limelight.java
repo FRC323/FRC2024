@@ -36,7 +36,6 @@ public class Limelight {
                 LimelightHelpers.getBotPose2d_wpiRed(this._name);
         }
         //remove botpose cuz not sure if causing issues
-        System.out.println("No alliance info available for botpose");
         throw new RuntimeException("No alliance info available for botpose");
     }
 
