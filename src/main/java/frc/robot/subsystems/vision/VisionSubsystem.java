@@ -16,8 +16,9 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         try {
             _limelightCapture = _limelight.capture();
-        }catch(RuntimeException e){    
-            System.out.println("No alliance info available for botpose");
+        }catch(Exception e){    
+            System.out.println("Limelight Exception: " + e.toString());
+            // System.out.println("No alliance info available for botpose");
         }
     }
 
