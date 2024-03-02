@@ -15,7 +15,7 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 public class ShootAuto extends SequentialCommandGroup{
     public ShootAuto(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, VisionSubsystem visionSubsystem){
         addCommands(
-            new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SPEAKER_SPEED),
+            new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
             // new ParallelCommandGroup(
             //     new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.APRILTAG_HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER),
             //     new AdjustRobotForShot(driveSubsystem, armSubsystem, visionSubsystem)

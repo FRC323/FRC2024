@@ -148,7 +148,7 @@ public class ArmSubsystem extends SubsystemBase {
     errors += check(rightShooterSpark.restoreFactoryDefaults());
     errors += check(feederSpark.restoreFactoryDefaults());
     errors += check(rightSpark.follow(leftSpark, true));
-    leftSpark.setInverted(true); //TODO: Add to constants
+    leftSpark.setInverted(true); //TODO: Add to constant
     // errors += check(rightShooterSpark.follow(leftShooterSpark,false));
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
     // errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
@@ -164,8 +164,21 @@ public class ArmSubsystem extends SubsystemBase {
     errors += check(leftShooterController.setI(Shooter.kI));
     errors += check(leftShooterController.setD(Shooter.kD));
 
+    leftShooterSpark.setInverted(true);
+    rightShooterSpark.setInverted(true);
+
     return errors == 0;
 
+  }
+
+  public void enableCoast(){
+    leftSpark.setIdleMode(IdleMode.kCoast);
+    rightSpark.setIdleMode(IdleMode.kCoast);
+  }
+
+  public void enableBrake(){
+    leftSpark.setIdleMode(IdleMode.kBrake);
+    rightSpark.setIdleMode(IdleMode.kBrake);
   }
 
   @Override

@@ -47,11 +47,11 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-  private final ArmSubsystem armSubsystem = new ArmSubsystem();
-  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
-  private final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
+  public final DriveSubsystem driveSubsystem = new DriveSubsystem();
+  public final ArmSubsystem armSubsystem = new ArmSubsystem();
+  public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_operatorController =

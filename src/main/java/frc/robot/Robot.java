@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -18,6 +19,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  private Timer disableTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -48,10 +51,19 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    disableTimer.reset();
+    disableTimer.start();
+    m_robotContainer.armSubsystem.enableBrake();
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if(disableTimer.get() > 6.0){
+      m_robotContainer.intakeSubsystem.enableCoast();
+      m_robotContainer.armSubsystem.enableCoast();
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -77,6 +89,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    m_robotContainer.armSubsystem.enableCoast();
   }
 
   /** This function is called periodically during operator control. */

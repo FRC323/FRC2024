@@ -92,6 +92,10 @@ public class IntakeSubsystem extends SubsystemBase {
     feederRoller.burnFlash();
   }
 
+  public void enableCoast(){
+    wristSpark.setIdleMode(IdleMode.kCoast);
+  }
+
   public boolean initSparks() {
     int errors = 0;
 
