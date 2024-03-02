@@ -32,7 +32,9 @@ public class AdjustRobotForShot extends Command{
 
     @Override
     public void execute(){
-        var _limelightcapture = visionSubsystem.getLimelightCapture();
+        var optionalCapture = visionSubsystem.getLimelightCapture();
+        if(!optionalCapture.isPresent()) return;
+        var _limelightcapture = optionalCapture.get();
         if(_limelightcapture.hasTarget()){
             armSubsystem.setTargetRads(getArmAngle(_limelightcapture.robotpose_targetspace()[5]));
         }

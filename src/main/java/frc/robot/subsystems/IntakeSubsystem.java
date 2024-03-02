@@ -101,7 +101,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     errors += check(feederRoller.restoreFactoryDefaults());
     errors += check(wristSpark.restoreFactoryDefaults());
-    errors += check(wristSpark.setSmartCurrentLimit(Intake.CURRENT_LIMIT));
+    errors += check(wristSpark.setSmartCurrentLimit(Intake.WRIST_CURRENT_LIMIT));
+    errors += check(feederRoller.setSmartCurrentLimit(Intake.ROLLER_CURRENT_LIMIT));
     // wristAbsoluteEncoder.setDutyCycleRange(errors, errors);
     // wristAbsoluteEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
     wristSpark.setInverted(true);
@@ -131,6 +132,7 @@ public class IntakeSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Commanded Voltage", () -> commandedVoltage, null);
     builder.addDoubleProperty("Current", wristSpark::getOutputCurrent, null);
     // builder.addBooleanProperty("Arm Encoder Plugged In", wristAbsoluteEncoder::isConnected,
+    builder.addDoubleProperty("Roller Current",feederRoller::getOutputCurrent, null);
     // null);
   }
 }

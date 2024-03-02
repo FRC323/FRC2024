@@ -36,7 +36,9 @@ public class AlignToTargetXOffset extends Command {
 
     @Override
     public void execute() {
-        var limelightCapture = _visionSubsystem.getLimelightCapture();
+        var optionalCapture = _visionSubsystem.getLimelightCapture();
+        if(!optionalCapture.isPresent()) return;
+        var limelightCapture = optionalCapture.get();
 
         if (limelightCapture.hasTarget() && Functions.contains(this._requestedAprilTagIds, (int)limelightCapture.aprilTagId()))
         {   

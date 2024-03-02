@@ -1,5 +1,7 @@
 package frc.robot.subsystems.vision;
 
+import java.util.Optional;
+
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.Limelight.LimelightCaptureDetail;
@@ -8,8 +10,9 @@ public class VisionSubsystem extends SubsystemBase {
     private final Limelight _limelight = new Limelight();
     private LimelightCaptureDetail _limelightCapture;
 
-    public LimelightCaptureDetail getLimelightCapture() {
-        return _limelightCapture;
+    public Optional<LimelightCaptureDetail> getLimelightCapture() {
+        //TODO: Find a way to handle null limelight captures throughout the whol program
+        return Optional.of(_limelightCapture);
     }
 
     @Override

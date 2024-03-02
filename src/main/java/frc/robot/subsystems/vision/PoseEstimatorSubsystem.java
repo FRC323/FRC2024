@@ -1,5 +1,7 @@
 package frc.robot.subsystems.vision;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -22,7 +24,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
-    private LimelightCaptureDetail limelightCapture = null;
+    private Optional<LimelightCaptureDetail> limelightCapture = Optional.empty();
 
     public PoseEstimatorSubsystem(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem) {
         this._driveSubsystem = driveSubsystem;
@@ -47,11 +49,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if(!limelightCapture.isPresent()) return;
+        var capture =  limelightCapture.get();
         limelightCapture = _visionSubsystem.getLimelightCapture();
-        double currentTimestamp = getTimestampSeconds(limelightCapture.latency());
-        if(limelightCapture != null){
-            _poseEstimator.addVisionMeasurement(limelightCapture.botpose_alliance(), currentTimestamp);
-        }
+        double currentTimestamp = getTimestampSeconds(capture.latency());
+        _poseEstimator.addVisionMeasurement(capture.botpose_alliance(), currentTimestamp);
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
 
         // if(limelightCapture.hasTarget()){
@@ -60,8 +62,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     }
 
     public void updateOdometry(){
-        if(limelightCapture == null) return;
-        if(limelightCapture.hasTarget()){
+        if(!limelightCapture.isPresent()) return;
+        var capture = limelightCapture.get();
+        if(capture.hasTarget()){
             // _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
             // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians() + Math.PI);
             // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians());
