@@ -10,7 +10,7 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 public class FireNoteAuto extends SequentialCommandGroup{
     public FireNoteAuto(DriveSubsystem driveSubsystem,IntakeSubsystem intake, ArmSubsystem armSubsystem){
         addCommands(
-            new ShootSpeaker(armSubsystem),
+            new ShootSpeaker(armSubsystem,intake),
             new ParallelCommandGroup(
                 new HandoffProc(intake, armSubsystem),
                 new SequentialCommandGroup(
@@ -18,7 +18,7 @@ public class FireNoteAuto extends SequentialCommandGroup{
                     PathFollowerCommands.followPathFromFile(driveSubsystem, "Pick Note")
                 )
             ),
-            new ShootSpeaker(armSubsystem),
+            new ShootSpeaker(armSubsystem,intake),
             new SetIntakeFoldedInternal(intake, armSubsystem)
         );
     }

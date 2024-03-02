@@ -126,6 +126,7 @@ public class RobotContainer {
     //Outtake
     m_driveJoystick.button(DriveStick.TOP_BIG_BUTTON).whileTrue(
       new SequentialCommandGroup(
+        new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
         new SetArmTarget(armSubsystem, Constants.Arm.ARM_OUTAKE_POSE),
         new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED),
         new ConditionalCommand(
@@ -146,7 +147,7 @@ public class RobotContainer {
 
     //Shoot
     m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
-      new ShootCommand(armSubsystem,Constants.Arm.Shooter.SPEAKER_SPEED).handleInterrupt(
+      new ShootCommand(armSubsystem,intakeSubsystem,Constants.Arm.Shooter.SPEAKER_SPEED).handleInterrupt(
         () -> {
           armSubsystem.setFeederSpeed(0);
           armSubsystem.setShooterSpeed(0);
@@ -155,7 +156,7 @@ public class RobotContainer {
     );
 
     //Folded (Must be Held)
-    m_driveJoystick.button(DriveStick.BACK_SIDE_BUTTON).whileTrue(
+    m_driveJoystick.trigger().whileFalse(
       new SetIntakeFolded(intakeSubsystem,armSubsystem).handleInterrupt(
         () -> {
           armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
@@ -172,11 +173,17 @@ public class RobotContainer {
     );
 
     m_steerJoystick.button(SteerStick.LEFT).onTrue(
-      new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE)
+      new SequentialCommandGroup(
+        new SetIntakeUnfolded(intakeSubsystem, armSubsystem),  
+        new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE)
+      )
     );
 
     m_steerJoystick.button(SteerStick.RIGHT).onTrue(
-      new SetArmTarget(armSubsystem,Constants.Arm.ARM_FAR_SPEAKER)
+      new SequentialCommandGroup(
+        new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
+        new SetArmTarget(armSubsystem,Constants.Arm.ARM_FAR_SPEAKER)
+      )
     );
 
     //Manual Arm

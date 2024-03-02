@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -100,6 +101,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // wristAbsoluteEncoder.setDutyCycleRange(errors, errors);
     // wristAbsoluteEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
     wristSpark.setInverted(true);
+    wristSpark.setIdleMode(IdleMode.kBrake);
     return errors == 0;
   }
 

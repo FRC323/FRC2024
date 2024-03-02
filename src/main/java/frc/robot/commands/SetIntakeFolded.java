@@ -16,6 +16,11 @@ public class SetIntakeFolded extends SequentialCommandGroup{
         addCommands(
             new SetIntakeSpeed(intakeSubsystem, 0),
             new SetFeederSpeed(armSubsystem, 0),
+            new ConditionalCommand(
+                new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
+                new InstantCommand(),
+                () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE
+            ),
             // new ConditionalCommand(
                 // new InstantCommand(),
                 new ParallelCommandGroup(

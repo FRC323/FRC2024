@@ -9,8 +9,9 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class ShootCommand extends SequentialCommandGroup{
-    public ShootCommand(ArmSubsystem armSubsystem, double shooterSpeed){
+    public ShootCommand(ArmSubsystem armSubsystem,IntakeSubsystem intakeSubsystem,  double shooterSpeed){
         addCommands(
+            new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
             new SetShooterSpeed(armSubsystem, -1.0),
             new WaitCommand(1.0),
             new SetFeederSpeed(armSubsystem, Constants.Arm.FEED_SHOOT_SPEED),

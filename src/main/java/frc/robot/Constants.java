@@ -268,7 +268,7 @@ public final class Constants {
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.9;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
-    public static final double ARM_OUTAKE_POSE = -0.14;
+    public static final double ARM_OUTAKE_POSE = -0.41;
     public static final double ARM_AMP_POSE = -2.0;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
     public static final double ARM_FAR_SPEAKER = -0.6;
@@ -276,7 +276,7 @@ public final class Constants {
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
     public static final double FEEDER_REVERSE_SPEED = 0.75;
-    public static final double FEEDER_ADJUST_SPEED = 0.2;
+    public static final double FEEDER_ADJUST_SPEED = 0.3;
     
   }
 
