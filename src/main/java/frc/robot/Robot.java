@@ -55,6 +55,8 @@ public class Robot extends TimedRobot {
     disableTimer.reset();
     disableTimer.start();
     m_robotContainer.armSubsystem.enableBrake();
+    m_robotContainer.armSubsystem.setTargetRads(m_robotContainer.armSubsystem.getArmAngleRads());
+    m_robotContainer.intakeSubsystem.setTargetRads(m_robotContainer.intakeSubsystem.getWristAngleRads());
   }
 
   @Override
