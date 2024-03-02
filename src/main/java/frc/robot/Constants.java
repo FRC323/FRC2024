@@ -222,14 +222,14 @@ public final class Constants {
     public static final int Arm_Actuation_R = 42;
 
     // Profiled PID Constants //TODO:Tune values
-    public static final double kP = 11.0;
+    public static final double kP = 22.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
     public static final int BEAM_BREAK_PORT = 2;
     public static final String OFFSET_KEY = "Arm_Offset";
-    public static final double MAX_VELOCITY = Units.degreesToRadians(240);
-    public static final double MAX_ACCELERATION = Units.degreesToRadians(1920);
+    public static final double MAX_VELOCITY = Units.degreesToRadians(2048);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(4096);
 
     public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS =
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
@@ -289,8 +289,8 @@ public final class Constants {
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 1;
     public static final String OFFSET_KEY = "Wrist_Offset";
-    public static final double MAX_VELOCITY = Units.degreesToRadians(360.0);
-    public static final double MAX_ACCELERATION = Units.degreesToRadians(4096);
+    public static final double MAX_VELOCITY = Units.degreesToRadians(2048.0);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(8096);
 
     public static final TrapezoidProfile.Constraints WRIST_CONSTRAINTS =
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
