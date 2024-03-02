@@ -105,7 +105,7 @@ public final class Constants {
      * Driving Parameters - Note that these are not the maximum capable speeds of the robot, rather
      * the allowed maximum speeds
      */
-    public static final double MAX_SPEED_METERS_PER_SECOND = 4.7,
+    public static final double MAX_SPEED_METERS_PER_SECOND = 5.66,//4.7,
         MAX_ANGULAR_SPEED_RAD_PER_SECONDS = 3 * 2 * Math.PI; // radians per second
 
     /** Distance between centers of right and left wheels on robot */
@@ -174,12 +174,12 @@ public final class Constants {
       //      12T	 5.50:1
       //      13T	 5.08:1
       //      14T	 4.71:1
-      private static final double DRIVING_MOTOR_REDUCTION = 4.71;
+      private static final double DRIVING_MOTOR_REDUCTION = 4.00;//4.71;
       public static final double DRIVING_ENCODER_POSITION_FACTOR_METERS =
           WHEEL_CIRCUMFERENCE_METERS / DRIVING_MOTOR_REDUCTION; // meters
       public static final double DRIVING_ENCODER_VELOCITY_FACTOR_METERS_PER_SECOND =
-        ((Units.inchesToMeters(3) * Math.PI) / 4.71) / 60.0;    
-      // DRIVING_ENCODER_POSITION_FACTOR_METERS / 60.0; // meters per second
+        // ((Units.inchesToMeters(3) * Math.PI) / 4.71) / 60.0;    
+      DRIVING_ENCODER_POSITION_FACTOR_METERS / 60.0; // meters per second
       public static final double DRIVE_WHEEL_FREE_SPEED_METERS_PER_SECOND =
           DRIVE_WHEEL_FREE_SPEED_FUDGE_FACTOR
               * ((DRIVING_MOTOR_FREE_SPEED_RPS * WHEEL_CIRCUMFERENCE_METERS)

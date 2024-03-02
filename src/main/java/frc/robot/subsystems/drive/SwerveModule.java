@@ -166,6 +166,10 @@ public class SwerveModule implements Sendable {
     return drivingEncoder.getVelocity();
   }
 
+  public double getCurrent(){
+    return drivingSpark.getOutputCurrent();
+  }
+
   public void periodic() {
     turningAbsoluteEncoderChecker.addReading(turningEncoder.getPosition());
   }

@@ -329,5 +329,6 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty(
         "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
     builder.addDoubleProperty("Rear Right Velocity", rearRight::getModuleVelocity, null);
+    builder.addDoubleProperty("RR Current",rearRight::getCurrent, null);
   }
 }
