@@ -10,9 +10,9 @@ import frc.robot.subsystems.ArmSubsystem;
 public class AdjustFeederNote extends SequentialCommandGroup{
     public AdjustFeederNote(ArmSubsystem armSubsystem){
         addCommands(
-            new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_REVERSE_SPEED),
+            new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(() -> !armSubsystem.isHoldingNote()),
-            new SetFeederSpeed(armSubsystem, -Constants.Arm.FEEDER_REVERSE_SPEED),
+            new SetFeederSpeed(armSubsystem, -Constants.Arm.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(armSubsystem::isHoldingNote),
             // new WaitCommand(0.05),
             new SetFeederSpeed(armSubsystem, 0)

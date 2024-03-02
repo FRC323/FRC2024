@@ -19,7 +19,7 @@ public class FireNoteAuto extends SequentialCommandGroup{
                 )
             ),
             new ShootSpeaker(armSubsystem),
-            new SetIntakeFolded(intake, armSubsystem)
+            new SetIntakeFoldedInternal(intake, armSubsystem)
         );
     }
 }

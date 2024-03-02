@@ -223,13 +223,13 @@ public final class Constants {
 
     // Profiled PID Constants //TODO:Tune values
     public static final double kP = 22.0;
-    public static final double kI = 0.0;
+    public static final double kI = 8.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
     public static final int BEAM_BREAK_PORT = 2;
     public static final String OFFSET_KEY = "Arm_Offset";
     public static final double MAX_VELOCITY = Units.degreesToRadians(2048);
-    public static final double MAX_ACCELERATION = Units.degreesToRadians(4096);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(18096);
 
     public static final TrapezoidProfile.Constraints ARM_CONSTRAINTS =
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
@@ -268,13 +268,15 @@ public final class Constants {
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.9;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
+    public static final double ARM_OUTAKE_POSE = -0.14;
     public static final double ARM_AMP_POSE = -2.0;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
     public static final double ARM_FAR_SPEAKER = -0.6;
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
-    public static final double FEEDER_REVERSE_SPEED = 0.4;
+    public static final double FEEDER_REVERSE_SPEED = 0.75;
+    public static final double FEEDER_ADJUST_SPEED = 0.2;
     
   }
 
@@ -303,7 +305,8 @@ public final class Constants {
     public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(180);
 
     public static final double UNFOLDED_POSE = 3.1;
-    public static final double FOLDED_POSE = 0.1; 
+    public static final double FOLDED_POSE_INTERNAL = 0.1; 
+    public static final double FOLDED_POSE = 1.0;
     
     public static final double INTAKE_SPEED = 0.5;
     public static final double OUTTAKE_SPEED = -0.5;

@@ -56,6 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
             Arm.Shooter.kP, Arm.Shooter.kI, Arm.Shooter.kD, Arm.Shooter.CONSTRAINTS);
 
     armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
+    armController.setTolerance(0.20);
 
     armFeedForward = new ArmFeedforward(0, Arm.kG, Arm.kV);
     armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);

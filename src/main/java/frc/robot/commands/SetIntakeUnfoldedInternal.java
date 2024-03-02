@@ -11,16 +11,20 @@ import frc.robot.Constants.Intake;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class SetIntakeUnfolded extends SequentialCommandGroup{
-    public SetIntakeUnfolded(IntakeSubsystem intakeSubsystem,ArmSubsystem armSubsystem){
+public class SetIntakeUnfoldedInternal extends SequentialCommandGroup{
+    public SetIntakeUnfoldedInternal(IntakeSubsystem intakeSubsystem,ArmSubsystem armSubsystem){
         addCommands(
+            //It is possible to speed this up by running the intake and arm movement in parralell, but that makes things complicated
             new ConditionalCommand(
-                new SetIntakeUnfoldedInternal(intakeSubsystem, armSubsystem),
-                new ParallelCommandGroup(
+                new InstantCommand(),
+                new SequentialCommandGroup(
+                    new SetArmTarget(armSubsystem,Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
+                    new WaitUntilCommand(()-> armSubsystem.armIsAtTarget()),
                     new SetIntakeTarget(intakeSubsystem,Constants.Intake.UNFOLDED_POSE),
+                    new WaitUntilCommand(()-> intakeSubsystem.wristIsAtTarget()),
                     new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE)
                 ),
-                () -> intakeSubsystem.getWristAngleRads() < (Constants.Intake.FOLDED_POSE_INTERNAL + 0.2)
+                () -> intakeSubsystem.getWristAngleRads() > (Constants.Intake.UNFOLDED_POSE - 0.05)
             )
         );
     }

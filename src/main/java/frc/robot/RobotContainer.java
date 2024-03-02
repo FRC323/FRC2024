@@ -126,12 +126,12 @@ public class RobotContainer {
     //Outtake
     m_driveJoystick.button(DriveStick.TOP_BIG_BUTTON).whileTrue(
       new SequentialCommandGroup(
-        new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
+        new SetArmTarget(armSubsystem, Constants.Arm.ARM_OUTAKE_POSE),
         new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED),
         new ConditionalCommand(
           new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_REVERSE_SPEED),
           new InstantCommand(),
-          ()->armSubsystem.getArmAngleRads() <= Constants.Arm.ARM_HANDOFF_POSE
+          ()->armSubsystem.getArmAngleRads() <= Constants.Arm.ARM_OUTAKE_POSE
         ),
         new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_REVERSE_SPEED),
         new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.REVERSE_SPEED)
@@ -222,10 +222,10 @@ public class RobotContainer {
     // );
 
     SmartDashboard.putData(
-      "Folded Command", new SetIntakeFolded(intakeSubsystem,armSubsystem)
+      "Folded Command", new SetIntakeFoldedInternal(intakeSubsystem,armSubsystem)
     );
     SmartDashboard.putData(
-      "Unfolded Command", new SetIntakeUnfolded(intakeSubsystem,armSubsystem)
+      "Unfolded Command", new SetIntakeUnfoldedInternal(intakeSubsystem,armSubsystem)
     );
 
     SmartDashboard.putData(

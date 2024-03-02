@@ -16,17 +16,17 @@ public class SetIntakeFolded extends SequentialCommandGroup{
         addCommands(
             new SetIntakeSpeed(intakeSubsystem, 0),
             new SetFeederSpeed(armSubsystem, 0),
-            new ConditionalCommand(
-                new InstantCommand(),
-                new SequentialCommandGroup(
-                    new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
-                    new WaitUntilCommand(()-> armSubsystem.getArmAngleRads() <= Arm.ARM_INTAKE_UNFOLDING_POSE + 0.1),
-                    new SetIntakeTarget(intakeSubsystem,Constants.Intake.FOLDED_POSE), 
-                    new WaitUntilCommand(()->intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE + 0.2)
-                ),
-                () -> intakeSubsystem.getWristAngleRads() < (Constants.Intake.FOLDED_POSE + 0.5)
-            ),
-            new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE)
+            // new ConditionalCommand(
+                // new InstantCommand(),
+                new ParallelCommandGroup(
+                    new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE),
+                    new SequentialCommandGroup(
+                        new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() >= Arm.ARM_HANDOFF_POSE),
+                        new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
+                    )
+                )
+                // () ->intakeSubsystem.getWristAngleRads() <= Intake.FOLDED_POSE - 0.05
+            // )
         );
     }
 }
