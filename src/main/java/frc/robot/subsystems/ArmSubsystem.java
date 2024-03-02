@@ -4,6 +4,11 @@ import static frc.robot.utils.SparkMaxUtils.check;
 import static frc.robot.utils.SparkMaxUtils.initWithRetry;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -19,6 +24,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
+import frc.robot.Constants.Arm.Shooter;
 import frc.robot.utils.NoRolloverEncoder;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -26,7 +32,10 @@ public class ArmSubsystem extends SubsystemBase {
   private ProfiledPIDController armController;
   private ArmFeedforward armFeedForward;
 
-  private ProfiledPIDController shooterController;
+  private SparkPIDController leftShooterController;
+  private SparkPIDController rightShooterController;
+  private RelativeEncoder leftShooterEncoder;
+  private RelativeEncoder rightShooterEncoder;
 
   // Hardware
   private CANSparkMax leftSpark;
@@ -51,9 +60,11 @@ public class ArmSubsystem extends SubsystemBase {
     //Todo Add Right shooter spark
     feederSpark = new CANSparkMax(Arm.Shooter.Feeder_CAN_Id, MotorType.kBrushless);
 
-    shooterController =
-        new ProfiledPIDController(
-            Arm.Shooter.kP, Arm.Shooter.kI, Arm.Shooter.kD, Arm.Shooter.CONSTRAINTS);
+    leftShooterController = leftShooterSpark.getPIDController();
+    rightShooterController = rightShooterSpark.getPIDController();
+
+    leftShooterEncoder = leftShooterSpark.getEncoder ();
+    rightShooterEncoder = rightShooterSpark.getEncoder();
 
     armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
     armController.setTolerance(0.20);
@@ -78,7 +89,8 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setShooterSpeed(double vel) {
-    leftShooterSpark.set(vel);
+    leftShooterController.setReference(vel,ControlType.kVelocity);
+    rightShooterController.setReference(vel,ControlType.kVelocity);
   }
 
   public double getArmAngleRads() {
@@ -113,7 +125,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean atShootSpeed(){
-    return shooterController.atGoal();
+    return false;
   }
 
   public boolean isHoldingNote(){
@@ -137,12 +149,20 @@ public class ArmSubsystem extends SubsystemBase {
     errors += check(feederSpark.restoreFactoryDefaults());
     errors += check(rightSpark.follow(leftSpark, true));
     leftSpark.setInverted(true); //TODO: Add to constants
-    errors += check(rightShooterSpark.follow(leftShooterSpark,false));
+    // errors += check(rightShooterSpark.follow(leftShooterSpark,false));
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
     // errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
     // errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
 
-    
+    errors += check(rightShooterController.setFF(Shooter.kF));
+    errors += check(rightShooterController.setP(Shooter.kP));   
+    errors += check(rightShooterController.setI(Shooter.kI));
+    errors += check(rightShooterController.setD(Shooter.kD));
+
+    errors += check(leftShooterController.setFF(Shooter.kF));
+    errors += check(leftShooterController.setP(Shooter.kP));   
+    errors += check(leftShooterController.setI(Shooter.kI));
+    errors += check(leftShooterController.setD(Shooter.kD));
 
     return errors == 0;
 
@@ -178,6 +198,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     builder.addBooleanProperty("Beam Blocked", ()-> beamBreakSensor.get(), null);
     builder.addBooleanProperty("Is Holding Note", this::isHoldingNote, null);
-
+    builder.addDoubleProperty("ShooterVelocity L",leftShooterEncoder::getVelocity, null);
+    builder.addDoubleProperty("ShooterVelocity R",rightShooterEncoder::getVelocity, null);
   }
 }

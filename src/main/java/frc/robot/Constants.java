@@ -251,18 +251,14 @@ public final class Constants {
 
       public static final int Feeder_CAN_Id = 51;
 
-      public static final double MAX_SHOOTER_VELOCITY = 100024;
-      public static final double MAX_SHOOTER_ACCELERATION = 6012;
-
-      public static final TrapezoidProfile.Constraints CONSTRAINTS =
-          new Constraints(MAX_SHOOTER_VELOCITY, MAX_SHOOTER_ACCELERATION);
-
-      public static final double kP = 0.1;
+      public static final double kF = 0.95 * Constants.NeoMotor.FREE_SPEED_RPM;
+      public static final double kP = 0.0;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
 
       public static final double SPEAKER_SPEED = -1.0;
       public static final double AMP_SPEED = -0.75;
+      public static final double SHOOTER_SPEED = 7800;
       public static final double REVERSE_SPEED = 0.2;
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.9;

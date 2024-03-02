@@ -12,7 +12,7 @@ public class ShootCommand extends SequentialCommandGroup{
     public ShootCommand(ArmSubsystem armSubsystem,IntakeSubsystem intakeSubsystem,  double shooterSpeed){
         addCommands(
             new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
-            new SetShooterSpeed(armSubsystem, -1.0),
+            new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
             new WaitCommand(1.0),
             new SetFeederSpeed(armSubsystem, Constants.Arm.FEED_SHOOT_SPEED),
             new WaitUntilCommand(()->!armSubsystem.isHoldingNote()),
