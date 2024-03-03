@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.97700390842377,
-        "y": 4.712744240303296
+        "x": 14.25766361504233,
+        "y": 4.689355931418416
       },
       "isLocked": false,
       "linkedName": "Second Note"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 13.97700390842377,
-        "y": 5.695053213468251
+        "y": 5.615860732909115
       },
       "prevControl": {
-        "x": 14.000392217308649,
-        "y": 5.168816263558454
+        "x": 14.117333761733049,
+        "y": 5.136400400769078
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 169.56252464888175,
+    "rotation": 177.67793359925003,
     "rotateFast": false
   },
   "reversed": false,

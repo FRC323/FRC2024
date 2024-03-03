@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,13 +18,18 @@ public class AlignWhileDriving extends Command{
     private VisionSubsystem visionSubsystem;
     private CommandJoystick driveStick;
 
+    private DoubleSupplier vx,vy;
+
     private ShotState shotState;
     
-    public AlignWhileDriving(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, VisionSubsystem visionSubsystem, CommandJoystick driveStick){
+    public AlignWhileDriving(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, VisionSubsystem visionSubsystem, DoubleSupplier vx, DoubleSupplier vy){
         this.driveSubsystem = driveSubsystem;
         this.armSubsystem = armSubsystem;
         this.visionSubsystem = visionSubsystem;
         this.driveStick = driveStick;
+
+        this.vx = vx;
+        this.vy = vy;
         
     }
 
@@ -36,8 +43,8 @@ public class AlignWhileDriving extends Command{
 
         //Todo: Follow Heading
         driveSubsystem.drive(
-            -driveStick.getY(),
-            -driveStick.getX(),
+            vx.getAsDouble(),
+            vy.getAsDouble(),
             0.0,
             true
         );
@@ -49,7 +56,7 @@ public class AlignWhileDriving extends Command{
 
 
         armSubsystem.setShooterSpeed(
-            shotState.get_shooterSpeed()
+            Constants.Arm.Shooter.SHOOTER_SPEED
         );
 
         

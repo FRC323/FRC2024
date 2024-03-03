@@ -292,13 +292,15 @@ public class RobotContainer {
   //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
     // NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
   //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem, armSubsystem));
+  NamedCommands.registerCommand("Align To Shoot", new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> driveSubsystem.getChassisSpeed().vxMetersPerSecond, () -> driveSubsystem.getChassisSpeed().vyMetersPerSecond));
+  NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem)); 
   NamedCommands.registerCommand("StartShooterWheelSpeaker", new InstantCommand(()->{armSubsystem.setShooterSpeed(Constants.Arm.Shooter.SHOOTER_SPEED);},armSubsystem));
   NamedCommands.registerCommand("UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
   NamedCommands.registerCommand("RunIntake",
     new InstantCommand(()->{intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);},intakeSubsystem));
   NamedCommands.registerCommand("RunFeeder",
     new InstantCommand(()->{armSubsystem.setFeederSpeed(Constants.Arm.FEEDER_INTAKE_SPEED);},armSubsystem));
-  NamedCommands.registerCommand("ShootSpeaker", new ShootAuto(driveSubsystem, armSubsystem, visionSubsystem));
+  NamedCommands.registerCommand("ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, visionSubsystem));
   }
 
   /**
@@ -309,10 +311,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //    return Autos.exampleAuto(m_exampleSubsystem);
-    return new SequentialCommandGroup(
-      new ResetOdomFromLimelight(poseEstimatorSubsystem),
-      autoChooser.getSelected()
-    );
+    // return new SequentialCommandGroup(
+      // new ResetOdomFromLimelight(poseEstimatorSubsystem),
+      return autoChooser.getSelected();
+    // );
       
   }
 

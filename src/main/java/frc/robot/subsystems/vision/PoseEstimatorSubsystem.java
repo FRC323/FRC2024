@@ -65,7 +65,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         if(!limelightCapture.isPresent()) return;
         var capture = limelightCapture.get();
         if(capture.hasTarget()){
-            // _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+            _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
             // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians() + Math.PI);
             // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians());
         }

@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 13.97700390842377,
-        "y": 5.695053213468251
+        "y": 5.615860732909115
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.187498688387691,
-        "y": 5.84707722121997
+        "x": 14.363855426048145,
+        "y": 6.083849127318207
       },
       "isLocked": false,
       "linkedName": "End Third"
     },
     {
       "anchor": {
-        "x": 13.97700390842377,
-        "y": 6.852774503269805
+        "x": 13.74312081957497,
+        "y": 6.864468657712245
       },
       "prevControl": {
-        "x": 14.17584631635827,
-        "y": 6.326553339722663
+        "x": 14.164110379502809,
+        "y": 6.653973877748326
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": 133.38024250274484,
+      "rotationDegrees": 120.77614823231642,
       "rotateFast": false
     }
   ],
@@ -45,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 149.03624346792637,
+    "rotation": 154.0934920004856,
     "rotateFast": false
   },
   "reversed": false,

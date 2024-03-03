@@ -19,14 +19,12 @@ public class ShootWhileDriving extends SequentialCommandGroup{
             // new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
             new SetIntakeUnfolded(intakeSubsystem, armSubsystem), 
             new ParallelRaceGroup(
-                new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, driveStick),
+                new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> -driveStick.getY(),() -> -driveStick.getX()),
                 new SequentialCommandGroup(
                     new WaitCommand(0.1),
-                    new PrintCommand("Finished Time"),
                     new WaitUntilCommand(
                         () -> armSubsystem.armIsAtTarget() && armSubsystem.atShootSpeed()
                     ),
-                    new PrintCommand("Finished Wait"),
                     new SetFeederSpeed(armSubsystem, Constants.Arm.FEED_SHOOT_SPEED),
                     new WaitUntilCommand(()->!armSubsystem.isHoldingNote())
                 )
