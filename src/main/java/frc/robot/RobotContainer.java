@@ -21,13 +21,16 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.DriverConstants.DriveStick;
 import frc.robot.Constants.DriverConstants.SteerStick;
+import frc.robot.Constants.Arm;
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.Intake;
 import frc.robot.commands.*;
 import frc.robot.commands.AutoCommands.ResetOdomFromLimelight;
 import frc.robot.commands.AutoCommands.ShootAuto;
@@ -121,6 +124,13 @@ public class RobotContainer {
           armSubsystem.setFeederSpeed(0);
         }
       )
+    ).whileFalse(
+      new SetIntakeFolded(intakeSubsystem,armSubsystem).handleInterrupt(
+        () -> {
+          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
+          intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
+        }
+      )
     );
 
     //Outtake
@@ -147,7 +157,7 @@ public class RobotContainer {
 
     //Shoot
     m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
-      new ShootCommand(armSubsystem,intakeSubsystem,Constants.Arm.Shooter.SPEAKER_SPEED).handleInterrupt(
+      new ShootCommand(armSubsystem,intakeSubsystem,Constants.Arm.Shooter.SHOOTER_SPEED).handleInterrupt(
         () -> {
           armSubsystem.setFeederSpeed(0);
           armSubsystem.setShooterSpeed(0);
@@ -156,8 +166,8 @@ public class RobotContainer {
     );
 
     //Folded (Must be Held)
-    m_driveJoystick.trigger().whileFalse(
-      new SetIntakeFolded(intakeSubsystem,armSubsystem).handleInterrupt(
+    m_driveJoystick.button(Constants.DriverConstants.DriveStick.BACK_SIDE_BUTTON).onTrue(
+      new SetIntakeFoldedInternal(intakeSubsystem,armSubsystem).handleInterrupt(
         () -> {
           armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
           intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
@@ -181,17 +191,38 @@ public class RobotContainer {
 
     m_steerJoystick.button(SteerStick.RIGHT).onTrue(
       new SequentialCommandGroup(
-        new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
-        new SetArmTarget(armSubsystem,Constants.Arm.ARM_FAR_SPEAKER)
+        new SetIntakeFolded(intakeSubsystem, armSubsystem),
+        new SetArmTarget(armSubsystem,Constants.Arm.ARM_FAR_SPEAKER),
+        new WaitUntilCommand(()-> armSubsystem.getArmAngleRads() <= Arm.ARM_HUMAN_PLAYER_POSE),
+        new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
+      ).handleInterrupt(
+        ()-> {
+          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
+          intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
+        }
       )
     );
 
     //Manual Arm
     m_driveJoystick.button(DriveStick.UP_DIRECTIONAL).whileTrue(
-      new ManualArmControl(armSubsystem,true)
+      new SequentialCommandGroup(
+        new ConditionalCommand(
+          new InstantCommand(),
+          new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+          () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+        ),
+        new ManualArmControl(armSubsystem,true)
+      )
     );
     m_driveJoystick.button(DriveStick.DOWN_DIRECTIONAL).whileTrue(
-      new ManualArmControl(armSubsystem,false)
+      new SequentialCommandGroup(
+        new ConditionalCommand(
+          new InstantCommand(),
+          new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+          () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+        ),
+        new ManualArmControl(armSubsystem,false)
+      )  
     );
 
 
@@ -257,7 +288,7 @@ public class RobotContainer {
   
     SmartDashboard.putData("Auto Chooser",autoChooser);
 
-    SmartDashboard.putData("Pick Note",new FireNoteAuto(driveSubsystem, intakeSubsystem, armSubsystem));
+    // SmartDashboard.putData("Pick Note",new FireNoteAuto(driveSubsystem, intakeSubsystem, armSubsystem));
   }
 
   private void addCommandsToAutoChooser(){
@@ -265,7 +296,7 @@ public class RobotContainer {
   //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
     // NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
   //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem, armSubsystem));
-  NamedCommands.registerCommand("StartShooterWheelSpeaker", new InstantCommand(()->{armSubsystem.setShooterSpeed(Constants.Arm.Shooter.SPEAKER_SPEED);},armSubsystem));
+  NamedCommands.registerCommand("StartShooterWheelSpeaker", new InstantCommand(()->{armSubsystem.setShooterSpeed(Constants.Arm.Shooter.SHOOTER_SPEED);},armSubsystem));
   NamedCommands.registerCommand("UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
   NamedCommands.registerCommand("RunIntake",
     new InstantCommand(()->{intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);},intakeSubsystem));

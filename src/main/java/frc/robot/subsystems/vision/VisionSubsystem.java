@@ -1,6 +1,7 @@
 package frc.robot.subsystems.vision;
 
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,11 +9,20 @@ import frc.robot.subsystems.vision.Limelight.LimelightCaptureDetail;
 
 public class VisionSubsystem extends SubsystemBase {
     private final Limelight _limelight = new Limelight();
-    private LimelightCaptureDetail _limelightCapture;
+    private static LimelightCaptureDetail _limelightCapture;
 
     public Optional<LimelightCaptureDetail> getLimelightCapture() {
         //TODO: Find a way to handle null limelight captures throughout the whol program
+        if(_limelightCapture == null) return Optional.empty();
         return Optional.of(_limelightCapture);
+    }
+    
+    public static OptionalDouble getTargetDistance(){
+        if(_limelightCapture == null) return OptionalDouble.empty();
+        return OptionalDouble.of(Math.sqrt(
+            Math.pow(_limelightCapture.robotpose_targetspace()[0],2)
+            + Math.pow(_limelightCapture.robotpose_targetspace()[1],2) 
+        ));
     }
 
     @Override
@@ -39,5 +49,6 @@ public class VisionSubsystem extends SubsystemBase {
         builder.addDoubleArrayProperty("LL CameraPose TargetSpace",  () -> _limelightCapture.camerapose_targetspace(), null);
         builder.addDoubleArrayProperty("LL TargetPose RobotSpace",  () -> _limelightCapture.targetpose_robotspace(), null);
         builder.addDoubleArrayProperty("LL TargetPose CameraSpace",  () -> _limelightCapture.targetpose_cameraspace(), null);
+        builder.addDoubleProperty("Target Distance", () -> VisionSubsystem.getTargetDistance().orElse(-1.0),null);
     }
 }

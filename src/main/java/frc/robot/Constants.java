@@ -256,10 +256,8 @@ public final class Constants {
       public static final double kI = 0.0;
       public static final double kD = 0.0;
 
-      public static final double SPEAKER_SPEED = -1.0;
-      public static final double AMP_SPEED = -0.75;
-      public static final double SHOOTER_SPEED = 7800;
-      public static final double REVERSE_SPEED = 0.2;
+      public static final double SHOOTER_SPEED = 4000;
+      public static final double REVERSE_SPEED = -0.2;
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.9;
     public static final double ARM_DOWN_POSE = 0;

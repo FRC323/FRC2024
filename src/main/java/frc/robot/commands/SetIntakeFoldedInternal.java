@@ -19,12 +19,14 @@ public class SetIntakeFoldedInternal extends SequentialCommandGroup{
             new ConditionalCommand(
                 new InstantCommand(),
                 new SequentialCommandGroup(
+                    new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
+                    new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
                     new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
                     new WaitUntilCommand(()-> armSubsystem.armIsAtTarget()),
                     new SetIntakeTarget(intakeSubsystem,Constants.Intake.FOLDED_POSE_INTERNAL), 
                     new WaitUntilCommand(()->intakeSubsystem.wristIsAtTarget())
                 ),
-                () -> intakeSubsystem.getWristAngleRads() <= (Constants.Intake.FOLDED_POSE_INTERNAL-0.05)
+                () -> intakeSubsystem.getWristAngleRads() <= (Constants.Intake.FOLDED_POSE_INTERNAL + 0.2)
             ),
             new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE)
         );
