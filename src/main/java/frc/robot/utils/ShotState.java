@@ -12,7 +12,7 @@ public class ShotState {
   private final Rotation2d _armAngle;
   private final double _shooterSpeed;
   private static final InterpolatingDoubleTreeMap armAngleInterpolation =
-      new InterpolatingDoubleTreeMap();
+      initializeInterpolator();
 
   public ShotState(Rotation2d heading, Rotation2d armAngle, double shooterSpeed) {
     _heading = heading;
@@ -62,7 +62,8 @@ public class ShotState {
         Constants.Arm.Shooter.SHOOTER_SPEED);
   }
 
-  private void initializeInterpolator() {
+  private static InterpolatingDoubleTreeMap initializeInterpolator() {
+    var armAngleInterpolation = new InterpolatingDoubleTreeMap();
     armAngleInterpolation.put(0.0, 0.0);
     armAngleInterpolation.put(45.0, -0.232);
     armAngleInterpolation.put(81.5, -0.47);
@@ -71,5 +72,6 @@ public class ShotState {
     armAngleInterpolation.put(174.0, -0.66);
     armAngleInterpolation.put(203.0, -0.67);
     armAngleInterpolation.put(235.0, -0.68);
+    return armAngleInterpolation;
   }
 }

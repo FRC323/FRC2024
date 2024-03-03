@@ -158,15 +158,7 @@ public class RobotContainer {
 
     //Shoot
     m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
-      new ParallelRaceGroup(
-        new ShootCommand(armSubsystem,intakeSubsystem,visionSubsystem,Constants.Arm.Shooter.SHOOTER_SPEED).handleInterrupt(
-          () -> {
-            armSubsystem.setFeederSpeed(0);
-            armSubsystem.setShooterSpeed(0);
-          }
-        ),
-        new AlignToTargetTeleop(visionSubsystem, driveSubsystem,m_driveJoystick, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
-      )
+        new ShootWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, m_driveJoystick)
     );
 
     //Folded (Must be Held)
