@@ -18,7 +18,7 @@ public class ShootAuto extends SequentialCommandGroup{
             new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
             // new ParallelCommandGroup(
             //     new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.APRILTAG_HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER),
-            //     new AdjustRobotForShot(driveSubsystem, armSubsystem, visionSubsystem)
+            new AdjustArmForShot(armSubsystem, visionSubsystem),
             // ),
             new SetFeederSpeed(armSubsystem, Constants.Arm.FEED_SHOOT_SPEED),
             new WaitCommand(0.25)

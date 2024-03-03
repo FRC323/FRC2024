@@ -20,7 +20,10 @@ public class SetIntakeUnfolded extends SequentialCommandGroup{
                     new SetIntakeTarget(intakeSubsystem,Constants.Intake.UNFOLDED_POSE),
                     new ConditionalCommand(
                         new InstantCommand(),
-                        new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE),
+                        new SequentialCommandGroup(
+                            new WaitUntilCommand(()-> intakeSubsystem.getWristAngleRads() >= Constants.Intake.FOLDED_POSE + 0.5),
+                            new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE)
+                        ),
                         () -> armSubsystem.getArmAngleRads() < Arm.ARM_HANDOFF_POSE
                     )
                 ),

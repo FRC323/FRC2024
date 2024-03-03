@@ -226,7 +226,7 @@ public final class Constants {
     public static final double kI = 8.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
-    public static final int BEAM_BREAK_PORT = 2;
+    public static final int BEAM_BREAK_PORT = 8;
     public static final String OFFSET_KEY = "Arm_Offset";
     public static final double MAX_VELOCITY = Units.degreesToRadians(2048);
     public static final double MAX_ACCELERATION = Units.degreesToRadians(18096);
