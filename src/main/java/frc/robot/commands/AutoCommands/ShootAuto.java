@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
-import frc.robot.commands.AdjustRobotForShot;
+import frc.robot.commands.AdjustArmForShot;
 import frc.robot.commands.AlignToTarget;
 import frc.robot.commands.SetFeederSpeed;
 import frc.robot.commands.SetShooterSpeed;

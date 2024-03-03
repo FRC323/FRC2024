@@ -12,14 +12,14 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.utils.LinearInterpolator;
 
 
-public class AdjustRobotForShot extends Command{
+public class AdjustArmForShot extends Command{
     private DriveSubsystem driveSubsystem;
     private ArmSubsystem armSubsystem;
     private VisionSubsystem visionSubsystem;
 
     private static final InterpolatingDoubleTreeMap armAngleInterpolation = new InterpolatingDoubleTreeMap();
 
-    public AdjustRobotForShot(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, VisionSubsystem visionSubsystem){
+    public AdjustArmForShot(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, VisionSubsystem visionSubsystem){
         this.driveSubsystem = driveSubsystem;
         this.armSubsystem = armSubsystem;
         this.visionSubsystem = visionSubsystem;
@@ -52,6 +52,8 @@ public class AdjustRobotForShot extends Command{
     }
 
     private void initializeInterpolator(){
-        armAngleInterpolation.put(0.0,0.0);
+        // armAngleInterpolation.put(0.0,0.0);
+        // armAngleInterpolation.put(1.47,-0.232);
+        // armAngleInterpolation.put( , );
     }   
 }

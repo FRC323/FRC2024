@@ -3,8 +3,10 @@ package frc.robot.subsystems.vision;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.vision.Limelight.LimelightCaptureDetail;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -19,10 +21,11 @@ public class VisionSubsystem extends SubsystemBase {
     
     public static OptionalDouble getTargetDistance(){
         if(_limelightCapture == null) return OptionalDouble.empty();
-        return OptionalDouble.of(Math.sqrt(
-            Math.pow(_limelightCapture.robotpose_targetspace()[0],2)
-            + Math.pow(_limelightCapture.robotpose_targetspace()[1],2) 
-        ));
+        double tagHeight = Constants.AprilTags.Speaker.HEIGHT;
+        double lensHeight = Constants.Vision.LIMELIGHT_LENS_HEIGHT_INCHES;
+        double goalAngleRads = Units.degreesToRadians(Constants.Vision.LIMELIGHT_MOUNT_ANGLE_DEGREES + _limelightCapture.yOffset());
+        return OptionalDouble.of((tagHeight - lensHeight) / Math.tan(goalAngleRads));
+
     }
 
     @Override

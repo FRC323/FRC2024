@@ -49,6 +49,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DigitalInput beamBreakSensor;
   private double commandedVoltage = 0.0;
   private boolean voltageOveride = false;
+  private double targetShooterVelocity = 0.0;
 
   //    private AbsoluteEncoderChecker encoderChecker;
 
@@ -91,6 +92,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void setShooterSpeed(double vel) {
     leftShooterController.setReference(vel,ControlType.kVelocity);
     rightShooterController.setReference(vel,ControlType.kVelocity);
+    targetShooterVelocity = vel;
   }
 
   public double getArmAngleRads() {
@@ -125,7 +127,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean atShootSpeed(){
-    return false;
+    return leftShooterEncoder.getVelocity() >= targetShooterVelocity;
   }
 
   public boolean isHoldingNote(){
