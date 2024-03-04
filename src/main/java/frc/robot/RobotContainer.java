@@ -158,7 +158,16 @@ public class RobotContainer {
 
     //Shoot
     m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
-        new ShootWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, m_driveJoystick)
+      new ConditionalCommand(
+        new ShootAmp(armSubsystem).handleInterrupt(
+          ()-> {
+            armSubsystem.setShooterSpeed(0);
+            armSubsystem.setFeederSpeed(0);
+          }
+        ),
+        new ShootWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, m_driveJoystick),
+        () -> armSubsystem.getArmTarget() == Arm.ARM_AMP_POSE
+      )
     );
 
     //Folded (Must be Held)
@@ -178,10 +187,13 @@ public class RobotContainer {
       new SetFeederSpeed(armSubsystem, 0)
     );
 
-    m_steerJoystick.button(SteerStick.LEFT).onTrue(
-      new SequentialCommandGroup(
-        new SetIntakeUnfolded(intakeSubsystem, armSubsystem),  
-        new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE)
+    m_steerJoystick.button(SteerStick.LEFT).whileTrue(
+      new GotoAmpPose(armSubsystem, intakeSubsystem).handleInterrupt(
+        () -> {
+          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
+          armSubsystem.setShooterSpeed(0);
+          intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
+        }
       )
     );
 
@@ -202,21 +214,21 @@ public class RobotContainer {
     //Manual Arm
     m_driveJoystick.button(DriveStick.UP_DIRECTIONAL).whileTrue(
       new SequentialCommandGroup(
-        new ConditionalCommand(
-          new InstantCommand(),
-          new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-          () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-        ),
+        // new ConditionalCommand(
+          // new InstantCommand(),
+          // new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+          // () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+        // ),
         new ManualArmControl(armSubsystem,true)
       )
     );
     m_driveJoystick.button(DriveStick.DOWN_DIRECTIONAL).whileTrue(
       new SequentialCommandGroup(
-        new ConditionalCommand(
-          new InstantCommand(),
-          new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-          () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-        ),
+        // new ConditionalCommand(
+        //   new InstantCommand(),
+        //   new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+        //   () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+        // ),
         new ManualArmControl(armSubsystem,false)
       )  
     );
