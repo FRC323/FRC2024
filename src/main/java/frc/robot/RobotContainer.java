@@ -39,6 +39,7 @@ import frc.robot.commands.AutoCommands.StartShooterWheelSpeaker;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.subsystems.led.LedSubsystem;
 import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
@@ -56,6 +57,7 @@ public class RobotContainer {
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final VisionSubsystem visionSubsystem = new VisionSubsystem();
   public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
+  private final LedSubsystem ledSubsystem = new LedSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_operatorController =
