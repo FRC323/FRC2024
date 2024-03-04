@@ -9,6 +9,7 @@ public class ResetOdomFromLimelight extends Command{
 
     public ResetOdomFromLimelight(PoseEstimatorSubsystem poseEstimatorSubsystem){
         this.poseEstimatorSubsystem = poseEstimatorSubsystem;
+        addRequirements(poseEstimatorSubsystem);
     }
 
     @Override

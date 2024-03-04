@@ -49,9 +49,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        limelightCapture = _visionSubsystem.getLimelightCapture();
         if(!limelightCapture.isPresent()) return;
         var capture =  limelightCapture.get();
-        limelightCapture = _visionSubsystem.getLimelightCapture();
         double currentTimestamp = getTimestampSeconds(capture.latency());
         _poseEstimator.addVisionMeasurement(capture.botpose_alliance(), currentTimestamp);
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
@@ -62,13 +62,18 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     }
 
     public void updateOdometry(){
+        System.out.println("updating odometry");
         if(!limelightCapture.isPresent()) return;
         var capture = limelightCapture.get();
-        if(capture.hasTarget()){
-            _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+        System.out.println("Has Capture");
+        // if(capture.aprilTagId() == 4.0){
+            // System.out.println("Has Target");
+
             // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians() + Math.PI);
-            // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians());
-        }
+            _driveSubsystem.resetYawToAngle(capture.botpose_alliance().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+            _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+            System.out.println("Updated Odometry From Limelight");
+        // }
     }
 
     @Override

@@ -154,8 +154,8 @@ public class DriveSubsystem extends SubsystemBase {
     // Reset it to 0, then add an offset negative what you want.
     // TODO: Handle Gyro Reverse
     navx.reset();
-    navx.setAngleAdjustment(-yawDeg);
-    System.out.println("Nax Offset: " + (-yawDeg));
+    navx.setAngleAdjustment(yawDeg);
+    System.out.println("Nax Offset: " + (yawDeg));
   }
 
   public void resetYawToAngle(double yawDeg) {

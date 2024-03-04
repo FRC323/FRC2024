@@ -222,6 +222,11 @@ public class RobotContainer {
     );
 
 
+    m_driveJoystick.button(DriveStick.SMALL_TOP_BUTTON).onTrue(
+      new ResetOdomFromLimelight(poseEstimatorSubsystem)
+    );
+
+
   }
 
   private void addShuffleBoardData(){
@@ -280,7 +285,11 @@ public class RobotContainer {
 
     SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
 
-    SmartDashboard.putData("ResetPose",new InstantCommand(()-> driveSubsystem.resetOdometry(new Pose2d(14.5,4.5,new Rotation2d(Units.degreesToRadians(-150.0)))),driveSubsystem)); 
+    SmartDashboard.putData("ResetPose",new ResetOdomFromLimelight(poseEstimatorSubsystem));
+
+    SmartDashboard.putData("90 degrees", new InstantCommand(
+      () -> driveSubsystem.setGyroYaw(-90), driveSubsystem
+    ));
   
     SmartDashboard.putData("Auto Chooser",autoChooser);
 
