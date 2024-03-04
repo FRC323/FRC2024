@@ -83,7 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
         this::getChassisSpeed,
         this::setPathFollowerSpeeds,
         Constants.PathFollowing.holonomicPathFollowerConfig,
-        this::mirrorForBlueAlliance,
+        this::mirrorForRedAlliance,
         this);
   }
 
@@ -276,10 +276,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.setDesiredState(desiredStates[3]);
   }
 
-  private boolean mirrorForBlueAlliance() {
+  private boolean mirrorForRedAlliance() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
-      return alliance.get() == DriverStation.Alliance.Blue;
+      return alliance.get() == DriverStation.Alliance.Red;
     }
     return false;
   }
