@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
@@ -83,7 +84,8 @@ public class DriveSubsystem extends SubsystemBase {
         this::getChassisSpeed,
         this::setPathFollowerSpeeds,
         Constants.PathFollowing.holonomicPathFollowerConfig,
-        this::mirrorForRedAlliance,
+        // this::mirrorForRedAlliance,
+        ()->false,
         this);
   }
 
