@@ -56,7 +56,7 @@ public class ShotState {
     // Now we need to offset the target point by that
     // Note, minus is correct, we want to lead the shot so we figure out where the robot will be in
     // the future and place the target accordingly (I think)
-    Translation2d futureShotTarget = shotTarget.minus(offset);
+    Translation2d futureShotTarget = shotTarget.plus(offset);
     // Then we extract the robot translation
     Translation2d robotPosition = robotPose.getTranslation();
     // Then build the triangle

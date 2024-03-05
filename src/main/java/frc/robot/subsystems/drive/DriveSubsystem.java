@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.PathFollowing;
 import frc.robot.utils.GeometryUtils;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -70,7 +71,7 @@ public class DriveSubsystem extends SubsystemBase {
   private Optional<Pose2d> targetPose = Optional.empty();
 
   private PIDController rotController = new PIDController(
-        0.2,
+        8.0,
         0.0,
         0.0
     );
@@ -86,7 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
     navx.reset();
     // TODO: Make this in a different initilztion place
 
-    rotController.setIntegratorRange(0.0, Math.PI * 2);
+    rotController.enableContinuousInput(0.0, Math.PI * 2);
 
     AutoBuilder.configureHolonomic(
         this::getPose,
@@ -272,19 +273,19 @@ public class DriveSubsystem extends SubsystemBase {
       ySpeed,
       rotController.calculate(
         this.getRobotPose2d().getRotation().getRadians()
-      ),
+      ) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
       fieldRelative
     );
   }
 
   public void setPathFollowerSpeeds(ChassisSpeeds speeds) {
-    setChassisSpeed(speeds, false);
+    setChassisSpeed(speeds);
   }
 
-  public void setChassisSpeed(ChassisSpeeds speed, boolean inverted) {
-    double maxSpeed = (inverted ? -1 : 1) * Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
+  public void setChassisSpeed(ChassisSpeeds speed) {
+    double maxSpeed = Constants.Swerve.MAX_SPEED_METERS_PER_SECOND;
     double maxRotationalSpeed =
-        (inverted ? -1 : 1) * Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
+        Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS;
     drive(
         speed.vxMetersPerSecond / maxSpeed,
         speed.vyMetersPerSecond / maxSpeed,
@@ -355,5 +356,6 @@ public class DriveSubsystem extends SubsystemBase {
         "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
     builder.addDoubleProperty("Rear Right Velocity", rearRight::getModuleVelocity, null);
     builder.addDoubleProperty("RR Current",rearRight::getCurrent, null);
+    builder.addDoubleProperty("Rot Error", () -> rotController.getPositionError() , null);
   }
 }

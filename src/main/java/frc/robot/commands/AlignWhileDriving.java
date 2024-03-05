@@ -29,25 +29,16 @@ public class AlignWhileDriving extends SequentialCommandGroup{
         DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vTheta
     ){
         addCommands(
-            new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE - 0.5),
+            // new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
             new ConditionalCommand(
-                new ScheduleCommand(
-                    new RunCommand( () ->
-                        driveSubsystem.drive(
-                            vx.getAsDouble(),
-                            vy.getAsDouble(),
-                            vTheta.getAsDouble(),
-                            true
-                        )
-                    )
-                ),
+                new InstantCommand(), 
                 new ParallelCommandGroup(
-                    new SetShooterSpeed(armSubsystem, VisionSubsystem.getShotState().get().get_shooterSpeed()),
-                    new SequentialCommandGroup(
-                        new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
-                        new SetArmTarget(armSubsystem, VisionSubsystem.getShotState().get().get_armAngle().getRadians())
-                    ),
-                    new ScheduleCommand(
+                    // new SetShooterSpeed(armSubsystem, () -> VisionSubsystem.getShotState().get().get_shooterSpeed()),
+                    // new SequentialCommandGroup(
+                    //     new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
+                    //     new SetArmTarget(armSubsystem,() -> VisionSubsystem.getShotState().get().get_armAngle().getRadians())
+                    // ),
+                    // new ScheduleCommand(
                         new RunCommand( () ->
                             driveSubsystem.driveWithHeading(
                                 vx.getAsDouble(),
@@ -56,12 +47,12 @@ public class AlignWhileDriving extends SequentialCommandGroup{
                                 true
                             )
                         )
-                    )
+                    // )
                 ),
-                () -> VisionSubsystem.getShotState().isPresent()
+                () -> VisionSubsystem.getShotState().isEmpty()
             ),
-            new SetShooterSpeed(armSubsystem, 0),
-            new SetFeederSpeed(armSubsystem, 0)
+            new SetShooterSpeed(armSubsystem,()-> 0),
+            new SetFeederSpeed(armSubsystem,()-> 0)
         );
     }
 }

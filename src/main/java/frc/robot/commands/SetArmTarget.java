@@ -1,12 +1,20 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class SetArmTarget extends Command {
-    double target;
+    DoubleSupplier target;
     ArmSubsystem arm;
     public SetArmTarget(ArmSubsystem arm, double radTarget) {
+        addRequirements(arm);
+        this.arm = arm;
+        target = () -> radTarget;
+    }
+
+    public SetArmTarget(ArmSubsystem arm, DoubleSupplier radTarget) {
         addRequirements(arm);
         this.arm = arm;
         target = radTarget;
@@ -14,7 +22,7 @@ public class SetArmTarget extends Command {
 
     @Override
     public void execute() {
-        arm.setTargetRads(target);
+        arm.setTargetRads(target.getAsDouble());
     }
 
     @Override

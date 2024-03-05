@@ -7,10 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.estimator.PoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,10 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -30,12 +24,10 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.DriverConstants.DriveStick;
 import frc.robot.Constants.DriverConstants.SteerStick;
 import frc.robot.Constants.Arm;
-import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.*;
 import frc.robot.commands.AutoCommands.ResetOdomFromLimelight;
 import frc.robot.commands.AutoCommands.ShootAuto;
-import frc.robot.commands.AutoCommands.StartShooterWheelSpeaker;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -58,8 +50,8 @@ public class RobotContainer {
   public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_operatorController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  // private final CommandXboxController m_operatorController =
+  //     new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   private final CommandJoystick m_driveJoystick = new CommandJoystick(Constants.DriverConstants.kDriveStickPort);
   private final CommandJoystick m_steerJoystick = new CommandJoystick(Constants.DriverConstants.kSteerStickPort);
@@ -84,7 +76,6 @@ public class RobotContainer {
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
     Shuffleboard.getTab("Subsystems").add(visionSubsystem.getName(), visionSubsystem);
     Shuffleboard.getTab("Subsystems").add(poseEstimatorSubsystem.getName(),poseEstimatorSubsystem);
-    SmartDashboard.putData(driveSubsystem);
 
     autoChooser = AutoBuilder.buildAutoChooser();    
     addShuffleBoardData();
@@ -112,10 +103,10 @@ public class RobotContainer {
                     true),// !m_steerJoystick.trigger().getAsBoolean()),
             driveSubsystem));
 
-    m_steerJoystick.trigger().whileTrue(
-      new AlignToTargetXOffset(
-        visionSubsystem, driveSubsystem, m_driveJoystick, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
-      );
+    // m_steerJoystick.trigger().whileTrue(
+    //   new AlignToTargetXOffset(
+    //     visionSubsystem, driveSubsystem, m_driveJoystick, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
+    //   );
     //Reset Gyro
     m_driveJoystick.button(DriveStick.RIGHT_SIDE_BUTTON).onTrue(
       new InstantCommand(
@@ -254,69 +245,32 @@ public class RobotContainer {
   }
 
   private void addShuffleBoardData(){
-    SmartDashboard.putData(new StoredDrivetrainOffsets(driveSubsystem));
-    SmartDashboard.putData(new StoreArmOffset(armSubsystem));
-    SmartDashboard.putData(new StoreIntakeOffset(intakeSubsystem));
+    Shuffleboard.getTab("Buttons").add(new StoredDrivetrainOffsets(driveSubsystem));
+    Shuffleboard.getTab("Buttons").add(new StoreArmOffset(armSubsystem));
+    Shuffleboard.getTab("Buttons").add(new StoreIntakeOffset(intakeSubsystem));
 
-    // SmartDashboard.putData(
-    //     "Arm to Down", new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE));
-    // SmartDashboard.putData(
-    //     "Arm to Handoff", new SetArmTarget(armSubsystem, Constants.Arm.ARM_HANDOFF_POSE));
-    // SmartDashboard.putData(
-    //     "Arm to Min Unfolded", new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE));
-
-    // SmartDashboard.putData(
-        // "Arm to Amp", new SetArmTarget(armSubsystem, Units.degreesToRadians(105)));
-
-    // SmartDashboard.putData(
-    //   "Intake to Unfolded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.UNFOLDED_POSE)
-    // );
-    // SmartDashboard.putData(
-    //   "Intake to Folded", new SetIntakeTarget(intakeSubsystem, Constants.Intake.FOLDED_POSE)
-    // );
-    
-    //april tag testing
-    // SmartDashboard.putData(
-    //   "Align to Speaker", new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
-    // );
-
-    // SmartDashboard.putData(
-    //   "Align to Amp", new AlignToTarget(visionSubsystem, driveSubsystem, Constants.AprilTags.Amp.HEIGHT, Constants.AprilTags.Amp.TAGS)
-    // );
-
-    SmartDashboard.putData(
-      "Folded Command", new SetIntakeFoldedInternal(intakeSubsystem,armSubsystem)
-    );
-    SmartDashboard.putData(
-      "Unfolded Command", new SetIntakeUnfoldedInternal(intakeSubsystem,armSubsystem)
-    );
-
-    SmartDashboard.putData(
+    Shuffleboard.getTab("Buttons").add(
       "Go 1 Meter", PathFollowerCommands.createDriveToAbsolutePositionCommand(driveSubsystem, 1, 0.00, 90.0)
     );
 
-    SmartDashboard.putData(
+    Shuffleboard.getTab("Buttons").add(
       "Follow Path", PathFollowerCommands.followPathFromFile(driveSubsystem, "Test Path")
     );
 
-    SmartDashboard.putData("Shooter On", new SetShooterSpeed(armSubsystem, -1));
-    SmartDashboard.putData("Shooter Slow", new SetShooterSpeed(armSubsystem, -.2));
-    SmartDashboard.putData("Shooter Off", new SetShooterSpeed(armSubsystem, 0));
-    SmartDashboard.putData("Feeder On", new SetFeederSpeed(armSubsystem, -1.0));
-    SmartDashboard.putData("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
-    SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
-    SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
-    SmartDashboard.putData("Align While Driving", alignWhileDriving);
+    Shuffleboard.getTab("Buttons").add("Shooter Slow", new SetShooterSpeed(armSubsystem, -.2));
+    Shuffleboard.getTab("Buttons").add("Shooter On", new SetShooterSpeed(armSubsystem, -1));
+    Shuffleboard.getTab("Buttons").add("Shooter Off", new SetShooterSpeed(armSubsystem, 0));
+    Shuffleboard.getTab("Buttons").add("Feeder On", new SetFeederSpeed(armSubsystem, -1.0));
+    Shuffleboard.getTab("Buttons").add("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
+    Shuffleboard.getTab("Buttons").add("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
+    Shuffleboard.getTab("Buttons").add("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
+    Shuffleboard.getTab("Buttons").add("Align While Driving", alignWhileDriving);
 
-    SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
+    Shuffleboard.getTab("Buttons").add("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
 
-    SmartDashboard.putData("ResetPose",new ResetOdomFromLimelight(poseEstimatorSubsystem));
+    Shuffleboard.getTab("Buttons").add("ResetPose",new ResetOdomFromLimelight(poseEstimatorSubsystem));
 
-    SmartDashboard.putData("90 degrees", new InstantCommand(
-      () -> driveSubsystem.setGyroYaw(-90), driveSubsystem
-    ));
-  
-    SmartDashboard.putData("Auto Chooser",autoChooser);
+    Shuffleboard.getTab("Buttons").add("Auto Chooser",autoChooser);
 
     // SmartDashboard.putData("Pick Note",new FireNoteAuto(driveSubsystem, intakeSubsystem, armSubsystem));
   }

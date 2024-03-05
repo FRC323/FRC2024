@@ -63,6 +63,7 @@ public class VisionSubsystem extends SubsystemBase {
         //Shot Target
         if(DriverStation.getAlliance().isEmpty()){
             shotState = Optional.empty();
+            return;
         } 
         var shotTarget = DriverStation.getAlliance().get() == Alliance.Red ? Vision.RED_SHOT_TARGET : Vision.BLUE_SHOT_TARGET;
     
@@ -70,6 +71,7 @@ public class VisionSubsystem extends SubsystemBase {
         var optionalRange = VisionSubsystem.getTargetDistance();
         if(optionalRange.isEmpty()){
             shotState = Optional.empty();
+            return;
         } 
         var rangeToTarget = optionalRange.getAsDouble();
 
@@ -80,7 +82,7 @@ public class VisionSubsystem extends SubsystemBase {
         var robotVelocity = this.driveSubsystem.getChassisSpeed();
 
         //dt (Todo: find actual dt)
-        var dt = 0.2;
+        var dt = 0.3;
 
         this.shotState =  Optional.of(ShotState.computedFromPose(
             shotTarget,
@@ -104,5 +106,6 @@ public class VisionSubsystem extends SubsystemBase {
         builder.addDoubleArrayProperty("LL TargetPose RobotSpace",  () -> _limelightCapture.targetpose_robotspace(), null);
         builder.addDoubleArrayProperty("LL TargetPose CameraSpace",  () -> _limelightCapture.targetpose_cameraspace(), null);
         builder.addDoubleProperty("Target Distance", () -> VisionSubsystem.getTargetDistance().orElse(-1.0),null);
+        builder.addDoubleProperty("ShotState Heading", () -> shotState.isPresent() ? shotState.get().get_heading().getDegrees() : Double.NaN, null);
     }
 }
