@@ -25,7 +25,7 @@ public class HandoffProc extends SequentialCommandGroup{
                 new SetIntakeSpeed(intakeSubsystem, Constants.Intake.INTAKE_SPEED)
             ),
             new WaitUntilCommand(armSubsystem::isHoldingNote),
-            // new ParallelCommandGroup(
+                        // new ParallelCommandGroup(
             new AdjustFeederNote(armSubsystem),
             //     new SetIntakeSpeed(intakeSubsystem, -Constants.Intake.INTAKE_SPEED)
             // ),

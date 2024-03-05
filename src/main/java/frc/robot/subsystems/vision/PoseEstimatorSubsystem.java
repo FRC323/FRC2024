@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +27,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
     private Optional<LimelightCaptureDetail> limelightCapture = Optional.empty();
+
+    StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+    .getStructTopic("MyPose", Pose2d.struct).publish();
 
     public PoseEstimatorSubsystem(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem) {
         this._driveSubsystem = driveSubsystem;
@@ -49,26 +54,38 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        limelightCapture = _visionSubsystem.getLimelightCapture();
         if(!limelightCapture.isPresent()) return;
         var capture =  limelightCapture.get();
-        limelightCapture = _visionSubsystem.getLimelightCapture();
         double currentTimestamp = getTimestampSeconds(capture.latency());
-        _poseEstimator.addVisionMeasurement(capture.botpose_alliance(), currentTimestamp);
+        // Actually do we only want to do this if we have multiple targets?
+        if (capture.hasTarget()) {
+          // Should this subtract the LL latency from the  timestamp?
+          _poseEstimator.addVisionMeasurement(capture.botpose_blue(), currentTimestamp);
+        }
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
 
-        // if(limelightCapture.hasTarget()){
-        //     _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
-        // }
+        if(capture.hasTarget()){
+            _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+            // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+        }
+
+        // publisher.set(capture.botpose());
     }
 
     public void updateOdometry(){
+        System.out.println("updating odometry");
         if(!limelightCapture.isPresent()) return;
         var capture = limelightCapture.get();
-        if(capture.hasTarget()){
-            // _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+        System.out.println("Has Capture");
+        // if(capture.aprilTagId() == 4.0){
+            // System.out.println("Has Target");
+
             // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians() + Math.PI);
-            // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians());
-        }
+            _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+            _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+            System.out.println("Updated Odometry From Limelight");
+        // }
     }
 
     @Override

@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
@@ -83,7 +84,8 @@ public class DriveSubsystem extends SubsystemBase {
         this::getChassisSpeed,
         this::setPathFollowerSpeeds,
         Constants.PathFollowing.holonomicPathFollowerConfig,
-        this::mirrorForBlueAlliance,
+        // this::mirrorForRedAlliance,
+        ()->false,
         this);
   }
 
@@ -154,8 +156,8 @@ public class DriveSubsystem extends SubsystemBase {
     // Reset it to 0, then add an offset negative what you want.
     // TODO: Handle Gyro Reverse
     navx.reset();
-    navx.setAngleAdjustment(-yawDeg);
-    System.out.println("Nax Offset: " + (-yawDeg));
+    navx.setAngleAdjustment(yawDeg);
+    System.out.println("Nax Offset: " + (yawDeg));
   }
 
   public void resetYawToAngle(double yawDeg) {
@@ -276,10 +278,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.setDesiredState(desiredStates[3]);
   }
 
-  private boolean mirrorForBlueAlliance() {
+  private boolean mirrorForRedAlliance() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
-      return alliance.get() == DriverStation.Alliance.Blue;
+      return alliance.get() == DriverStation.Alliance.Red;
     }
     return false;
   }

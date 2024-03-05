@@ -9,14 +9,15 @@ public class ResetOdomFromLimelight extends Command{
 
     public ResetOdomFromLimelight(PoseEstimatorSubsystem poseEstimatorSubsystem){
         this.poseEstimatorSubsystem = poseEstimatorSubsystem;
+        addRequirements(poseEstimatorSubsystem);
     }
 
     @Override
     public void execute(){
-        if(poseEstimatorSubsystem.getEstimatedPosition().getRotation().getRadians() != 0.0){
+        // if(poseEstimatorSubsystem.getEstimatedPosition().getRotation().getRadians() != 0.0){
             poseEstimatorSubsystem.updateOdometry();
             finished = true;
-        }
+        // }
     }
 
     @Override

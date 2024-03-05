@@ -226,7 +226,7 @@ public final class Constants {
     public static final double kI = 8.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
-    public static final int BEAM_BREAK_PORT = 2;
+    public static final int BEAM_BREAK_PORT = 8;
     public static final String OFFSET_KEY = "Arm_Offset";
     public static final double MAX_VELOCITY = Units.degreesToRadians(2048);
     public static final double MAX_ACCELERATION = Units.degreesToRadians(18096);
@@ -257,13 +257,14 @@ public final class Constants {
       public static final double kD = 0.0;
 
       public static final double SHOOTER_SPEED = 4000;
+      public static final double AMP_SPEED = SHOOTER_SPEED * 0.3;
       public static final double REVERSE_SPEED = -0.2;
     }
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.9;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
     public static final double ARM_OUTAKE_POSE = -0.41;
-    public static final double ARM_AMP_POSE = -2.0;
+    public static final double ARM_AMP_POSE = -1.9;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
     public static final double ARM_FAR_SPEAKER = -0.6;
 

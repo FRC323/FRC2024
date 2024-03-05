@@ -122,6 +122,10 @@ public class ArmSubsystem extends SubsystemBase {
     leftSpark.set(power);
   }
 
+  public double getArmTarget(){
+    return armController.getGoal().position;
+  }
+  
   public boolean armIsAtTarget() {
     return armController.atGoal();
   }

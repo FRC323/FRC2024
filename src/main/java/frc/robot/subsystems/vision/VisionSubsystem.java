@@ -36,6 +36,8 @@ public class VisionSubsystem extends SubsystemBase {
             System.out.println("Limelight Exception: " + e.toString());
             // System.out.println("No alliance info available for botpose");
         }
+
+        
     }
 
     @Override

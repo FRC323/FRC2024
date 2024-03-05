@@ -66,6 +66,13 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
+  private AlignWhileDriving alignWhileDriving = 
+    new AlignWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, poseEstimatorSubsystem,
+        ()-> -m_driveJoystick.getY(), 
+        ()-> -m_driveJoystick.getX(), 
+        ()-> Math.pow(m_steerJoystick.getX(),2) * Math.signum(-m_steerJoystick.getX())
+      );
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     addCommandsToAutoChooser();
@@ -117,6 +124,11 @@ public class RobotContainer {
         , driveSubsystem)
     );
 
+    //Align While Driving
+    m_steerJoystick.trigger().whileTrue(
+      alignWhileDriving
+    );
+
     //Handoff Button
     m_driveJoystick.trigger().whileTrue(
       new HandoffProc(intakeSubsystem, armSubsystem).handleInterrupt(
@@ -158,14 +170,15 @@ public class RobotContainer {
 
     //Shoot
     m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
-      new ParallelRaceGroup(
-        new ShootCommand(armSubsystem,intakeSubsystem,visionSubsystem,Constants.Arm.Shooter.SHOOTER_SPEED).handleInterrupt(
-          () -> {
-            armSubsystem.setFeederSpeed(0);
+      new ConditionalCommand(
+        new ShootAmp(armSubsystem).handleInterrupt(
+          ()-> {
             armSubsystem.setShooterSpeed(0);
+            armSubsystem.setFeederSpeed(0);
           }
         ),
-        new AlignToTargetTeleop(visionSubsystem, driveSubsystem,m_driveJoystick, Constants.AprilTags.Speaker.HEIGHT, Constants.AprilTags.Speaker.TAGS_CENTER)
+        new ShootWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, m_driveJoystick),
+        () -> armSubsystem.getArmTarget() == Arm.ARM_AMP_POSE
       )
     );
 
@@ -186,10 +199,13 @@ public class RobotContainer {
       new SetFeederSpeed(armSubsystem, 0)
     );
 
-    m_steerJoystick.button(SteerStick.LEFT).onTrue(
-      new SequentialCommandGroup(
-        new SetIntakeUnfolded(intakeSubsystem, armSubsystem),  
-        new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE)
+    m_steerJoystick.button(SteerStick.LEFT).whileTrue(
+      new GotoAmpPose(armSubsystem, intakeSubsystem).handleInterrupt(
+        () -> {
+          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
+          armSubsystem.setShooterSpeed(0);
+          intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
+        }
       )
     );
 
@@ -210,23 +226,28 @@ public class RobotContainer {
     //Manual Arm
     m_driveJoystick.button(DriveStick.UP_DIRECTIONAL).whileTrue(
       new SequentialCommandGroup(
-        new ConditionalCommand(
-          new InstantCommand(),
-          new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-          () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-        ),
+        // new ConditionalCommand(
+          // new InstantCommand(),
+          // new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+          // () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+        // ),
         new ManualArmControl(armSubsystem,true)
       )
     );
     m_driveJoystick.button(DriveStick.DOWN_DIRECTIONAL).whileTrue(
       new SequentialCommandGroup(
-        new ConditionalCommand(
-          new InstantCommand(),
-          new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-          () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-        ),
+        // new ConditionalCommand(
+        //   new InstantCommand(),
+        //   new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+        //   () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+        // ),
         new ManualArmControl(armSubsystem,false)
       )  
+    );
+
+
+    m_driveJoystick.button(DriveStick.SMALL_TOP_BUTTON).onTrue(
+      new ResetOdomFromLimelight(poseEstimatorSubsystem)
     );
 
 
@@ -285,10 +306,15 @@ public class RobotContainer {
     SmartDashboard.putData("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
     SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
     SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
+    SmartDashboard.putData("Align While Driving", alignWhileDriving);
 
     SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
 
-    SmartDashboard.putData("ResetPose",new InstantCommand(()-> driveSubsystem.resetOdometry(new Pose2d(14.5,4.5,new Rotation2d(Units.degreesToRadians(-150.0)))),driveSubsystem)); 
+    SmartDashboard.putData("ResetPose",new ResetOdomFromLimelight(poseEstimatorSubsystem));
+
+    SmartDashboard.putData("90 degrees", new InstantCommand(
+      () -> driveSubsystem.setGyroYaw(-90), driveSubsystem
+    ));
   
     SmartDashboard.putData("Auto Chooser",autoChooser);
 
@@ -300,13 +326,15 @@ public class RobotContainer {
   //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
     // NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
   //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem, armSubsystem));
+  // NamedCommands.registerCommand("Align To Shoot", new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> driveSubsystem.getChassisSpeed().vxMetersPerSecond, () -> driveSubsystem.getChassisSpeed().vyMetersPerSecond));
+  NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem)); 
   NamedCommands.registerCommand("StartShooterWheelSpeaker", new InstantCommand(()->{armSubsystem.setShooterSpeed(Constants.Arm.Shooter.SHOOTER_SPEED);},armSubsystem));
   NamedCommands.registerCommand("UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
   NamedCommands.registerCommand("RunIntake",
     new InstantCommand(()->{intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);},intakeSubsystem));
   NamedCommands.registerCommand("RunFeeder",
     new InstantCommand(()->{armSubsystem.setFeederSpeed(Constants.Arm.FEEDER_INTAKE_SPEED);},armSubsystem));
-  NamedCommands.registerCommand("ShootSpeaker", new ShootAuto(driveSubsystem, armSubsystem, visionSubsystem));
+  NamedCommands.registerCommand("ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, visionSubsystem));
   }
 
   /**
@@ -317,10 +345,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //    return Autos.exampleAuto(m_exampleSubsystem);
-    return new SequentialCommandGroup(
-      new ResetOdomFromLimelight(poseEstimatorSubsystem),
-      autoChooser.getSelected()
-    );
+    // return new SequentialCommandGroup(
+      // new ResetOdomFromLimelight(poseEstimatorSubsystem),
+      return autoChooser.getSelected();
+    // );
       
   }
 
