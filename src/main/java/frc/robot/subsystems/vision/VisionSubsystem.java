@@ -5,13 +5,26 @@ import java.util.OptionalDouble;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Vision;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.vision.Limelight.LimelightCaptureDetail;
+import frc.robot.utils.ShotState;
 
 public class VisionSubsystem extends SubsystemBase {
     private final Limelight _limelight = new Limelight();
     private static LimelightCaptureDetail _limelightCapture;
+
+    private static Optional<ShotState> shotState = Optional.empty();
+
+    private DriveSubsystem driveSubsystem;
+
+    public VisionSubsystem(DriveSubsystem driveSubsystem){
+        this.driveSubsystem = driveSubsystem;
+    }
 
     public Optional<LimelightCaptureDetail> getLimelightCapture() {
         //TODO: Find a way to handle null limelight captures throughout the whol program
@@ -28,6 +41,10 @@ public class VisionSubsystem extends SubsystemBase {
 
     }
 
+    public static Optional<ShotState> getShotState(){
+        return shotState;
+    }
+
     @Override
     public void periodic() {
         try {
@@ -37,7 +54,41 @@ public class VisionSubsystem extends SubsystemBase {
             // System.out.println("No alliance info available for botpose");
         }
 
+        computeShotState(driveSubsystem);
+
         
+    }
+
+    public void computeShotState(DriveSubsystem driveSubsystem){
+        //Shot Target
+        if(DriverStation.getAlliance().isEmpty()){
+            shotState = Optional.empty();
+        } 
+        var shotTarget = DriverStation.getAlliance().get() == Alliance.Red ? Vision.RED_SHOT_TARGET : Vision.BLUE_SHOT_TARGET;
+    
+        //Range To Target
+        var optionalRange = VisionSubsystem.getTargetDistance();
+        if(optionalRange.isEmpty()){
+            shotState = Optional.empty();
+        } 
+        var rangeToTarget = optionalRange.getAsDouble();
+
+        //Robot Pose
+        var robotPose =  this.driveSubsystem.getRobotPose2d();
+
+        //Robot Velocity
+        var robotVelocity = this.driveSubsystem.getChassisSpeed();
+
+        //dt (Todo: find actual dt)
+        var dt = 0.2;
+
+        this.shotState =  Optional.of(ShotState.computedFromPose(
+            shotTarget,
+            rangeToTarget,
+            robotPose,
+            robotVelocity,
+            dt
+        ));
     }
 
     @Override
@@ -48,8 +99,6 @@ public class VisionSubsystem extends SubsystemBase {
         builder.addBooleanProperty("LL Found Target", () -> _limelightCapture.hasTarget(), null);
         builder.addDoubleProperty("LL Target xOffset", () -> _limelightCapture.xOffset(), null);
         builder.addDoubleProperty("LL Target yOffset",  () -> _limelightCapture.yOffset(), null);
-        builder.addDoubleProperty("LL Alliance Bot Pose X",  () -> _limelightCapture.botpose_alliance().getX(), null);
-        builder.addDoubleProperty("LL Alliance Bot Pose Y",  () -> _limelightCapture.botpose_alliance().getY(), null);
         builder.addDoubleArrayProperty("LL BotPose TargetSpace",  () -> _limelightCapture.robotpose_targetspace(), null);
         builder.addDoubleArrayProperty("LL CameraPose TargetSpace",  () -> _limelightCapture.camerapose_targetspace(), null);
         builder.addDoubleArrayProperty("LL TargetPose RobotSpace",  () -> _limelightCapture.targetpose_robotspace(), null);

@@ -23,6 +23,8 @@ import static frc.robot.Constants.NeoMotor;
 import static frc.robot.utils.SparkMaxUtils.check;
 import static frc.robot.utils.SparkMaxUtils.initWithRetry;
 
+import java.util.function.BooleanSupplier;
+
 public class IntakeSubsystem extends SubsystemBase {
   private CANSparkMax feederRoller;
   private CANSparkMax wristSpark;

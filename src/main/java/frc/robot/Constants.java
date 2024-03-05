@@ -56,6 +56,8 @@ public final class Constants {
     public static final int APRIL_TAG_PIPELINE = 0;
     public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
     public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
+    public static final Translation2d RED_SHOT_TARGET =  new Translation2d(15.57,5.43);
+    public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.54,5.43);
   }
 
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;

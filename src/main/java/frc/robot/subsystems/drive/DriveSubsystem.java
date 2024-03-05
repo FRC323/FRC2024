@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.StreamReadConstraints.Builder;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.GeometryUtils;
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
@@ -67,6 +69,12 @@ public class DriveSubsystem extends SubsystemBase {
   private ChassisSpeeds lastSetChassisSpeed = new ChassisSpeeds(0, 0, 0);
   private Optional<Pose2d> targetPose = Optional.empty();
 
+  private PIDController rotController = new PIDController(
+        0.2,
+        0.0,
+        0.0
+    );
+
   SwerveDriveOdometry odometry =
       new SwerveDriveOdometry(
           Constants.Swerve.DRIVE_KINEMATICS, Rotation2d.fromDegrees(0.0), getModulePositions());
@@ -77,6 +85,8 @@ public class DriveSubsystem extends SubsystemBase {
     actualChassisSpeed = new ChassisSpeeds(0, 0, 0);
     navx.reset();
     // TODO: Make this in a different initilztion place
+
+    rotController.setIntegratorRange(0.0, Math.PI * 2);
 
     AutoBuilder.configureHolonomic(
         this::getPose,
@@ -252,6 +262,19 @@ public class DriveSubsystem extends SubsystemBase {
     frontRight.setDesiredState(swerveModuleStates[1]);
     rearLeft.setDesiredState(swerveModuleStates[2]);
     rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads,boolean fieldRelative){
+    rotController.setSetpoint(targetHeadingRads.getRadians());
+
+    drive(
+      xSpeed,
+      ySpeed,
+      rotController.calculate(
+        this.getRobotPose2d().getRotation().getRadians()
+      ),
+      fieldRelative
+    );
   }
 
   public void setPathFollowerSpeeds(ChassisSpeeds speeds) {

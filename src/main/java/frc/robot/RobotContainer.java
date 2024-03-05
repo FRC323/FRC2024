@@ -54,7 +54,7 @@ public class RobotContainer {
   public final DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final ArmSubsystem armSubsystem = new ArmSubsystem();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  public final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
   public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed

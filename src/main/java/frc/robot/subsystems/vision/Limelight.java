@@ -20,7 +20,6 @@ public class Limelight {
             LimelightHelpers.getTX(this._name), 
             LimelightHelpers.getTY(this._name),
             LimelightHelpers.getLatency_Capture(this._name),
-            getBotPoseFromAlliance(),
             LimelightHelpers.getBotPose2d(this._name),
             LimelightHelpers.getBotPose2d_wpiBlue(this._name),
             LimelightHelpers.getBotPose2d_wpiRed(this._name),
@@ -30,16 +29,16 @@ public class Limelight {
             LimelightHelpers.getTargetPose_CameraSpace(this._name));
     }
     
-    public Pose2d getBotPoseFromAlliance() {
-        if (DriverStation.getAlliance().isPresent()) {
-            var alliance = DriverStation.getAlliance().get();
-            return alliance == Alliance.Blue ? 
-                LimelightHelpers.getBotPose2d_wpiBlue(this._name) : 
-                LimelightHelpers.getBotPose2d_wpiRed(this._name);
-        }
-        //remove botpose cuz not sure if causing issues
-        throw new RuntimeException("No alliance info available for botpose");
-    }
+    // public Pose2d getBotPoseFromAlliance() {
+    //     if (DriverStation.getAlliance().isPresent()) {
+    //         var alliance = DriverStation.getAlliance().get();
+    //         return alliance == Alliance.Blue ? 
+    //             LimelightHelpers.getBotPose2d_wpiBlue(this._name) : 
+    //             LimelightHelpers.getBotPose2d_wpiRed(this._name);
+    //     }
+    //     //remove botpose cuz not sure if causing issues
+    //     throw new RuntimeException("No alliance info available for botpose");
+    // }
 
     public void setCameraMode(LimelightOptions.VisionMode camMode) {
         if (camMode == VisionMode.DriverCamera)
@@ -55,7 +54,6 @@ public class Limelight {
         double xOffset,
         double yOffset,
         double latency,
-        Pose2d botpose_alliance,
         Pose2d botpose,
         Pose2d botpose_blue,
         Pose2d botpose_red,
