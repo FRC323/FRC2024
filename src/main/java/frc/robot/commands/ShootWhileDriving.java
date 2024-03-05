@@ -19,7 +19,7 @@ public class ShootWhileDriving extends SequentialCommandGroup{
             // new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
             new SetIntakeUnfolded(intakeSubsystem, armSubsystem), 
             new ParallelRaceGroup(
-                new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> -driveStick.getY(),() -> -driveStick.getX()),
+                // new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> -driveStick.getY(),() -> -driveStick.getX(), rotStick.getX()),
                 new SequentialCommandGroup(
                     new WaitCommand(0.1),
                     new WaitUntilCommand(

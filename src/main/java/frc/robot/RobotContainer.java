@@ -66,6 +66,13 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
+  private AlignWhileDriving alignWhileDriving = 
+    new AlignWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, poseEstimatorSubsystem,
+        ()-> -m_driveJoystick.getY(), 
+        ()-> -m_driveJoystick.getX(), 
+        ()-> Math.pow(m_steerJoystick.getX(),2) * Math.signum(-m_steerJoystick.getX())
+      );
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     addCommandsToAutoChooser();
@@ -115,6 +122,11 @@ public class RobotContainer {
         () ->
           driveSubsystem.resetYaw()
         , driveSubsystem)
+    );
+
+    //Align While Driving
+    m_steerJoystick.trigger().whileTrue(
+      alignWhileDriving
     );
 
     //Handoff Button
@@ -294,6 +306,7 @@ public class RobotContainer {
     SmartDashboard.putData("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
     SmartDashboard.putData("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
     SmartDashboard.putData("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
+    SmartDashboard.putData("Align While Driving", alignWhileDriving);
 
     SmartDashboard.putData("HandoffProc",new HandoffProc(intakeSubsystem, armSubsystem));
 
@@ -313,7 +326,7 @@ public class RobotContainer {
   //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
     // NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
   //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem, armSubsystem));
-  NamedCommands.registerCommand("Align To Shoot", new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> driveSubsystem.getChassisSpeed().vxMetersPerSecond, () -> driveSubsystem.getChassisSpeed().vyMetersPerSecond));
+  // NamedCommands.registerCommand("Align To Shoot", new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> driveSubsystem.getChassisSpeed().vxMetersPerSecond, () -> driveSubsystem.getChassisSpeed().vyMetersPerSecond));
   NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem)); 
   NamedCommands.registerCommand("StartShooterWheelSpeaker", new InstantCommand(()->{armSubsystem.setShooterSpeed(Constants.Arm.Shooter.SHOOTER_SPEED);},armSubsystem));
   NamedCommands.registerCommand("UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));

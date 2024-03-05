@@ -61,9 +61,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         _poseEstimator.addVisionMeasurement(capture.botpose_blue(), currentTimestamp);
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
 
-        // if(limelightCapture.hasTarget()){
-        //     _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
-        // }
+        if(capture.hasTarget()){
+            _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
+            // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+        }
 
         // publisher.set(capture.botpose());
     }

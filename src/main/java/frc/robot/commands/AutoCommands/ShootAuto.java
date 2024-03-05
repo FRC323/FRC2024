@@ -20,7 +20,7 @@ public class ShootAuto extends SequentialCommandGroup{
         addCommands(
             new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
             new ParallelRaceGroup(
-                new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> 0.0,() -> 0.0), 
+                // new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> 0.0,() -> 0.0), 
                 new SequentialCommandGroup(
                     new WaitCommand(0.1),
                     new WaitUntilCommand(
