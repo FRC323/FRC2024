@@ -58,7 +58,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         if(!limelightCapture.isPresent()) return;
         var capture =  limelightCapture.get();
         double currentTimestamp = getTimestampSeconds(capture.latency());
-        _poseEstimator.addVisionMeasurement(capture.botpose_blue(), currentTimestamp);
+        // Actually do we only want to do this if we have multiple targets?
+        if (capture.hasTarget()) {
+          // Should this subtract the LL latency from the  timestamp?
+          _poseEstimator.addVisionMeasurement(capture.botpose_blue(), currentTimestamp);
+        }
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
 
         if(capture.hasTarget()){
