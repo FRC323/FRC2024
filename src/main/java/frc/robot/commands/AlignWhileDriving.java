@@ -31,7 +31,7 @@ public class AlignWhileDriving extends Command{
     private ShotState shotState;
     
     private PIDController rotController = new PIDController(
-        0.05,
+        0.2,
         0.0,
         0.0
     );
@@ -117,7 +117,7 @@ public class AlignWhileDriving extends Command{
         var robotVelocity = driveSubsystem.getChassisSpeed();
 
         //dt (Todo: find actual dt)
-        var dt = 0.0;
+        var dt = 0.2;
 
         this.shotState = ShotState.computedFromPose(
             shotTarget,
