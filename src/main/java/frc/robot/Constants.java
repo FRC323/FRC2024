@@ -302,9 +302,9 @@ public final class Constants {
     public static final double SOFT_LIMIT_MIN = Units.degreesToRadians(0.0);
     public static final double SOFT_LIMIT_MAX = Units.degreesToRadians(180);
 
-    public static final double UNFOLDED_POSE = 3.1;
-    public static final double FOLDED_POSE_INTERNAL = 0.1; 
-    public static final double FOLDED_POSE = 1.1;
+    public static final double UNFOLDED_POSE = 2.9;
+    public static final double FOLDED_POSE_INTERNAL = 0.02; 
+    public static final double FOLDED_POSE = 0.95;
     
     public static final double INTAKE_SPEED = 0.5;
     public static final double OUTTAKE_SPEED = -0.5;
