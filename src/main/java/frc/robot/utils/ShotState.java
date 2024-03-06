@@ -65,6 +65,7 @@ public class ShotState {
     // Then use the hypotenuse to compute the angle
     // The angle is the arctan of the opposite over adjacent
     Rotation2d chassisAngle = new Rotation2d(triangle.getX(), triangle.getY());
+    chassisAngle = chassisAngle.rotateBy(Rotation2d.fromRadians(Math.PI));
 
     var rangeToTarget = futureShotTarget.getDistance(robotPosition);
     // Now build a new ShotState object
