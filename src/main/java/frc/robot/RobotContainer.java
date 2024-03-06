@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+import java.util.function.IntSupplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,10 +62,12 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
+  private IntSupplier invertedDriveStick = () -> DriverStation.getAlliance().get() == Alliance.Red ? 1 : -1;
+
   private AlignWhileDriving alignWhileDriving = 
     new AlignWhileDriving(driveSubsystem, visionSubsystem, 
-        ()-> -m_driveJoystick.getY(), 
-        ()-> -m_driveJoystick.getX(), 
+        ()-> invertedDriveStick.getAsInt() * m_driveJoystick.getY(), 
+        ()-> invertedDriveStick.getAsInt() * m_driveJoystick.getX(), 
         ()-> Math.pow(m_steerJoystick.getX(),2) * Math.signum(-m_steerJoystick.getX())
       );
 
@@ -95,12 +101,13 @@ public class RobotContainer {
     //Drive Stick
     driveSubsystem.setDefaultCommand(
         new RunCommand(
-            () ->
+            () -> 
                 driveSubsystem.drive(
-                    -m_driveJoystick.getY(),
-                    -m_driveJoystick.getX(),
+                    invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
+                    invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
                     Math.pow(m_steerJoystick.getX(),2) * Math.signum(-m_steerJoystick.getX()),
-                    true),// !m_steerJoystick.trigger().getAsBoolean()),
+                    true)// !m_steerJoystick.trigger().getAsBoolean())
+            ,
             driveSubsystem));
 
     // m_steerJoystick.trigger().whileTrue(
@@ -111,7 +118,11 @@ public class RobotContainer {
     m_driveJoystick.button(DriveStick.RIGHT_SIDE_BUTTON).onTrue(
       new InstantCommand(
         () ->
-          driveSubsystem.resetYaw()
+          driveSubsystem.resetYawToAngle(
+            invertedDriveStick.getAsInt() == 1 ?
+            180.0
+            : 0.0
+          )
         , driveSubsystem)
     );
 
