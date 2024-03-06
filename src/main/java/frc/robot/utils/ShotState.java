@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,7 +45,7 @@ public class ShotState {
 
   public static ShotState computedFromPose(
       Translation2d shotTarget,
-      double rangeToTarget,
+      // double rangeToTarget,
       Pose2d robotPose,
       ChassisSpeeds robotVel,
       double dt) {
@@ -65,10 +66,11 @@ public class ShotState {
     // The angle is the arctan of the opposite over adjacent
     Rotation2d chassisAngle = new Rotation2d(triangle.getX(), triangle.getY());
 
+    var rangeToTarget = futureShotTarget.getDistance(robotPosition);
     // Now build a new ShotState object
     return new ShotState(
         chassisAngle,
-        Rotation2d.fromRadians(armAngleInterpolation.get(rangeToTarget)),
+        Rotation2d.fromRadians(armAngleInterpolation.get(Units.metersToInches(rangeToTarget))),
         Constants.Arm.Shooter.SHOOTER_SPEED);
   }
 

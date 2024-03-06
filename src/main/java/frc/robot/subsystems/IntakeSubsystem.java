@@ -46,7 +46,7 @@ public class IntakeSubsystem extends SubsystemBase {
     wristController =
         new ProfiledPIDController(Intake.kP, Intake.kI, Intake.kD, Intake.WRIST_CONSTRAINTS);
 
-    // wristController.setTolerance(0.05);
+    wristController.setTolerance(0.1);
 
     wristFeedForward = new ArmFeedforward(Constants.Intake.kS, Constants.Intake.kG, Constants.Intake.kV);
 
