@@ -12,6 +12,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -65,7 +66,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         }
        _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
 
-        if(capture.hasTarget()){
+        if(capture.hasTarget() && !DriverStation.isAutonomous()){
             _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
             // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
         }
