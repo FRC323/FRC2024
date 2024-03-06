@@ -20,7 +20,7 @@ public class VisionSubsystem extends SubsystemBase {
     private final Limelight _limelight = new Limelight();
     private static LimelightCaptureDetail _limelightCapture;
     
-    private SlewRateLimiter headingLimiter = new SlewRateLimiter(1.0);
+    private SlewRateLimiter headingLimiter = new SlewRateLimiter(4.0 * Math.PI);
     private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(4.0 * Math.PI);
     private SlewRateLimiter shooterSpeedLimiter = new SlewRateLimiter(1.0);
 

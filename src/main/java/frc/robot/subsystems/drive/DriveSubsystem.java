@@ -71,9 +71,9 @@ public class DriveSubsystem extends SubsystemBase {
   private Optional<Pose2d> targetPose = Optional.empty();
 
   private PIDController rotController = new PIDController(
-        8.0,
-        0.0,
-        0.0
+        6.0,
+        0.1,
+        0.1
     );
 
   SwerveDriveOdometry odometry =
