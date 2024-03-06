@@ -19,7 +19,8 @@ public class HandoffProc extends SequentialCommandGroup{
         addCommands(
             new SetIntakeUnfolded(intakeSubsystem,armSubsystem),
             new SetArmTarget(armSubsystem, Arm.ARM_HANDOFF_POSE),
-            // new WaitUntilCommand(armSubsystem.armIsAtTarget),
+            new WaitUntilCommand(armSubsystem::armIsAtTarget),
+            new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
             new ParallelCommandGroup(
                 new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_INTAKE_SPEED), 
                 new SetIntakeSpeed(intakeSubsystem, Constants.Intake.INTAKE_SPEED)
