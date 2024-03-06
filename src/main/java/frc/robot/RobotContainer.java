@@ -59,7 +59,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   private AlignWhileDriving alignWhileDriving = 
-    new AlignWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, poseEstimatorSubsystem,
+    new AlignWhileDriving(driveSubsystem, visionSubsystem, 
         ()-> -m_driveJoystick.getY(), 
         ()-> -m_driveJoystick.getX(), 
         ()-> Math.pow(m_steerJoystick.getX(),2) * Math.signum(-m_steerJoystick.getX())
@@ -117,9 +117,35 @@ public class RobotContainer {
 
     //Align While Driving
     m_steerJoystick.trigger().whileTrue(
-      alignWhileDriving
+      new ParallelCommandGroup(
+        alignWhileDriving,
+        new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem)
+      )
     );
 
+    //Shoot
+    m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
+      new SequentialCommandGroup(
+        new ConditionalCommand(
+          new InstantCommand(),
+          new AlignArmForShot(
+            armSubsystem,
+            intakeSubsystem,
+            visionSubsystem
+            ),
+          () -> alignWhileDriving.isScheduled()
+        ),
+        new InstantCommand(()-> armSubsystem.setFeederSpeed(Constants.Arm.FEED_SHOOT_SPEED)),
+        new WaitUntilCommand(() -> !armSubsystem.isHoldingNote()),
+        new InstantCommand(()->armSubsystem.setFeederSpeed(0)),
+        new SetShooterSpeed(armSubsystem, 0)
+      ).finallyDo(
+        ()-> {
+          armSubsystem.setFeederSpeed(0);
+          armSubsystem.setShooterSpeed(0);
+        }
+      )
+    );
     //Handoff Button
     m_driveJoystick.trigger().whileTrue(
       new HandoffProc(intakeSubsystem, armSubsystem).handleInterrupt(
@@ -159,19 +185,7 @@ public class RobotContainer {
         )
     );
 
-    //Shoot
-    m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
-      new ConditionalCommand(
-        new ShootAmp(armSubsystem).handleInterrupt(
-          ()-> {
-            armSubsystem.setShooterSpeed(0);
-            armSubsystem.setFeederSpeed(0);
-          }
-        ),
-        new ShootWhileDriving(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem, m_driveJoystick),
-        () -> armSubsystem.getArmTarget() == Arm.ARM_AMP_POSE
-      )
-    );
+    
 
     //Folded (Must be Held)
     m_driveJoystick.button(Constants.DriverConstants.DriveStick.BACK_SIDE_BUTTON).onTrue(

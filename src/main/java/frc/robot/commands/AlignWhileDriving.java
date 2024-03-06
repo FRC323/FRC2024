@@ -22,37 +22,23 @@ import frc.robot.utils.ShotState;
 public class AlignWhileDriving extends SequentialCommandGroup{
     public AlignWhileDriving(
         DriveSubsystem driveSubsystem,
-        ArmSubsystem armSubsystem,
-        IntakeSubsystem intakeSubsystem,
         VisionSubsystem visionSubsystem,
-        PoseEstimatorSubsystem poseEstimatorSubsystem,
         DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vTheta
     ){
         addCommands(
             // new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
             new ConditionalCommand(
                 new InstantCommand(), 
-                new ParallelCommandGroup(
-                    // new SetShooterSpeed(armSubsystem, () -> VisionSubsystem.getShotState().get().get_shooterSpeed()),
-                    // new SequentialCommandGroup(
-                    //     new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
-                    //     new SetArmTarget(armSubsystem,() -> VisionSubsystem.getShotState().get().get_armAngle().getRadians())
-                    // ),
-                    // new ScheduleCommand(
-                        new RunCommand( () ->
-                            driveSubsystem.driveWithHeading(
-                                vx.getAsDouble(),
-                                vy.getAsDouble(),
-                                VisionSubsystem.getShotState().get().get_heading(),
-                                true
-                            )
-                        )
-                    // )
+                new RunCommand( () ->
+                    driveSubsystem.driveWithHeading(
+                        vx.getAsDouble(),
+                        vy.getAsDouble(),
+                        VisionSubsystem.getShotState().get().get_heading(),
+                        true
+                    )
                 ),
                 () -> VisionSubsystem.getShotState().isEmpty()
-            ),
-            new SetShooterSpeed(armSubsystem,()-> 0),
-            new SetFeederSpeed(armSubsystem,()-> 0)
+            )
         );
     }
 }
