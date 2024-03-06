@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -131,30 +132,34 @@ public class RobotContainer {
       new ParallelCommandGroup(
         alignWhileDriving,
         new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem)
+      ).finallyDo(
+        () -> armSubsystem.setShooterSpeed(0)
       )
     );
 
     //Shoot
-    m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).whileTrue(
-      new SequentialCommandGroup(
+    m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).onTrue(
+      new ParallelCommandGroup(
         new ConditionalCommand(
           new InstantCommand(),
-          new AlignArmForShot(
-            armSubsystem,
-            intakeSubsystem,
-            visionSubsystem
-            ),
+          new ScheduleCommand(
+            new AlignArmForShot(
+              armSubsystem,
+              intakeSubsystem,
+              visionSubsystem
+              )
+          ),
           () -> alignWhileDriving.isScheduled()
         ),
-        new InstantCommand(()-> armSubsystem.setFeederSpeed(Constants.Arm.FEED_SHOOT_SPEED)),
-        new WaitUntilCommand(() -> !armSubsystem.isHoldingNote()),
-        new InstantCommand(()->armSubsystem.setFeederSpeed(0)),
-        new SetShooterSpeed(armSubsystem, 0)
-      ).finallyDo(
-        ()-> {
-          armSubsystem.setFeederSpeed(0);
-          armSubsystem.setShooterSpeed(0);
-        }
+        new SequentialCommandGroup(
+          new WaitUntilCommand(armSubsystem::atShootSpeed),
+          new InstantCommand(()-> armSubsystem.setFeederSpeed(Constants.Arm.FEED_SHOOT_SPEED))
+        )
+      )
+    ).onFalse(
+      new ParallelCommandGroup(
+        new SetShooterSpeed(armSubsystem, 0.0),
+        new SetFeederSpeed(armSubsystem, 0.0)
       )
     );
     //Handoff Button

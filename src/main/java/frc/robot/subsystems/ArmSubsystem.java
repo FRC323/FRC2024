@@ -160,6 +160,9 @@ public class ArmSubsystem extends SubsystemBase {
     // errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
     // errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
 
+    errors += check(rightShooterSpark.setSmartCurrentLimit(60));
+    errors += check(leftShooterSpark.setSmartCurrentLimit(60));
+
     errors += check(rightShooterController.setFF(Shooter.kF));
     errors += check(rightShooterController.setP(Shooter.kP));   
     errors += check(rightShooterController.setI(Shooter.kI));
@@ -219,5 +222,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addBooleanProperty("Is Holding Note", this::isHoldingNote, null);
     builder.addDoubleProperty("ShooterVelocity L",leftShooterEncoder::getVelocity, null);
     builder.addDoubleProperty("ShooterVelocity R",rightShooterEncoder::getVelocity, null);
+    builder.addDoubleProperty("Shooter Current L", leftShooterSpark::getOutputCurrent,null);
+    builder.addDoubleProperty("Shooter Current R", rightShooterSpark::getOutputCurrent, null);
   }
 }
