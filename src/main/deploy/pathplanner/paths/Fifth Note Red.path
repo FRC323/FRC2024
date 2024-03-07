@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 8.165009150531121,
-        "y": 7.297152372082522
+        "x": 8.632775328228718,
+        "y": 7.203599136543003
       },
       "prevControl": {
-        "x": 7.552316189752521,
-        "y": 7.6602296821735445
+        "x": 8.773105181537996,
+        "y": 7.7298360864528
       },
       "nextControl": {
-        "x": 8.796493490422879,
-        "y": 6.922939429924443
+        "x": 8.443641851444971,
+        "y": 6.494348598603952
       },
       "isLocked": false,
       "linkedName": null
@@ -46,8 +46,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.75,
-      "rotationDegrees": -174.72512539485058,
+      "waypointRelativePos": 0.85,
+      "rotationDegrees": -168.90356171411017,
       "rotateFast": false
     }
   ],
@@ -65,7 +65,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "New Folder",
+  "folder": "Red 5 Note Paths",
   "previewStartingState": {
     "rotation": 148.6269948598916,
     "velocity": 0

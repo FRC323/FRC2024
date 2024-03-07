@@ -320,7 +320,7 @@ public class RobotContainer {
     new InstantCommand(()->{intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);},intakeSubsystem));
   NamedCommands.registerCommand("RunFeeder",
     new InstantCommand(()->{armSubsystem.setFeederSpeed(Constants.Arm.FEEDER_INTAKE_SPEED);},armSubsystem));
-  NamedCommands.registerCommand("ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, visionSubsystem));
+  NamedCommands.registerCommand("ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem));
   }
 
   /**
