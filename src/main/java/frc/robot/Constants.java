@@ -5,6 +5,8 @@
 package frc.robot;
 
 import java.util.ArrayList;
+import java.util.function.DoubleSupplier;
+
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -272,6 +274,7 @@ public final class Constants {
     public static final double ARM_AMP_POSE = -1.9;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
     public static final double ARM_FAR_SPEAKER = -0.6;
+    public static final double ARM_CLIMB_POSE = -1.27;
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;

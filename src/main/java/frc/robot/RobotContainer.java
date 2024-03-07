@@ -225,6 +225,7 @@ public class RobotContainer {
       new SetFeederSpeed(armSubsystem, 0)
     );
 
+    //Amp Pose
     m_steerJoystick.button(SteerStick.LEFT).onTrue(
       gotoAmpPose.handleInterrupt(
         () -> {
@@ -242,18 +243,14 @@ public class RobotContainer {
       )
     );
 
+    //Climb Button
     m_steerJoystick.button(SteerStick.RIGHT).onTrue(
-      new SequentialCommandGroup(
-        new SetIntakeFolded(intakeSubsystem, armSubsystem),
-        new SetArmTarget(armSubsystem,Constants.Arm.ARM_FAR_SPEAKER),
-        new WaitUntilCommand(()-> armSubsystem.getArmAngleRads() <= Arm.ARM_HUMAN_PLAYER_POSE),
-        new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
-      ).handleInterrupt(
-        ()-> {
-          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
-          intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
-        }
-      )
+        new SequentialCommandGroup(
+          new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
+          new SetArmTarget(armSubsystem, Arm.ARM_CLIMB_POSE)
+        )
+    ).onFalse(
+      new SetIntakeFolded(intakeSubsystem, armSubsystem)
     );
 
     //Manual Arm
