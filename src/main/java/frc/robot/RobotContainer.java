@@ -169,7 +169,12 @@ public class RobotContainer {
     );
     //Handoff Button
     m_driveJoystick.trigger().whileTrue(
-      new HandoffProc(intakeSubsystem, armSubsystem)
+      new HandoffProc(intakeSubsystem, armSubsystem).handleInterrupt(
+        ()->{
+          intakeSubsystem.setIntakeSpeed(0);
+          armSubsystem.setFeederSpeed(0);
+        }
+      )
     ).whileFalse(
       new SetIntakeFolded(intakeSubsystem,armSubsystem).handleInterrupt(
         () -> {
