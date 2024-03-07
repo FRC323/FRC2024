@@ -12,6 +12,7 @@ public class LedSubsystem extends SubsystemBase {
 
     public LedSubsystem() {
         setToAlliance();
+        _controller.setSafetyEnabled(false);
     }
 
     public void on(LedColor color) {
@@ -37,6 +38,7 @@ public class LedSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        this._color = LedColor.Blue;
         _controller.set(this._color.get());
     }
 }

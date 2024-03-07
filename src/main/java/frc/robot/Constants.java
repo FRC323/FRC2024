@@ -25,7 +25,7 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
   public static final class LED {
-    public static final int BLINKIN_PORT = 0;
+    public static final int BLINKIN_PORT = 1;
   }
   
   public static final class AprilTags {
