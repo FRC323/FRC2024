@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.AprilTags.Amp;
 import frc.robot.Constants.DriverConstants.DriveStick;
 import frc.robot.Constants.DriverConstants.SteerStick;
 import frc.robot.Constants.Arm;
@@ -73,6 +74,8 @@ public class RobotContainer {
         ()-> invertedDriveStick.getAsInt() * m_driveJoystick.getX(), 
         ()-> Math.pow(m_steerJoystick.getX(),2) * Math.signum(-m_steerJoystick.getX())
       );
+
+  private GotoAmpPose gotoAmpPose = new GotoAmpPose(armSubsystem,intakeSubsystem);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -142,7 +145,7 @@ public class RobotContainer {
     //Shoot
     m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).onTrue(
       new ParallelCommandGroup(
-        new ConditionalCommand(
+        new  ConditionalCommand(
           new InstantCommand(),
           new ScheduleCommand(
             new AlignArmForShot(
@@ -222,12 +225,19 @@ public class RobotContainer {
       new SetFeederSpeed(armSubsystem, 0)
     );
 
-    m_steerJoystick.button(SteerStick.LEFT).whileTrue(
-      new GotoAmpPose(armSubsystem, intakeSubsystem).handleInterrupt(
+    m_steerJoystick.button(SteerStick.LEFT).onTrue(
+      gotoAmpPose.handleInterrupt(
         () -> {
           armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
           armSubsystem.setShooterSpeed(0);
           intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
+        }
+      )
+    ).onFalse(
+      new InstantCommand(
+        ()->{
+          armSubsystem.setShooterSpeed(0.0);
+          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
         }
       )
     );
@@ -320,7 +330,8 @@ public class RobotContainer {
     new InstantCommand(()->{intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);},intakeSubsystem));
   NamedCommands.registerCommand("RunFeeder",
     new InstantCommand(()->{armSubsystem.setFeederSpeed(Constants.Arm.FEEDER_INTAKE_SPEED);},armSubsystem));
-  NamedCommands.registerCommand("ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem));
+  NamedCommands.registerCommand("ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem)
+  );
   }
 
   /**
