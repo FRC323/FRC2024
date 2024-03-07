@@ -24,7 +24,10 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
+  public static final class LED {
+    public static final int BLINKIN_PORT = 1;
+  }
+  
   public static final class AprilTags {
     public static final double APRILTAG_HEIGHT = 9.0;
     public static final double APRILTAG_HEIGHT_HALF = APRILTAG_HEIGHT/2;
