@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -64,9 +65,6 @@ public class VisionSubsystem extends SubsystemBase {
             // System.out.println("No alliance info available for botpose");
         }
 
-        computeShotState(driveSubsystem);
-
-        
     }
 
     public double get_shooterSpeed(){
@@ -82,7 +80,7 @@ public class VisionSubsystem extends SubsystemBase {
         return headingLimiter.calculate(shotState.get_heading().getRadians());
     }
 
-    public void computeShotState(DriveSubsystem driveSubsystem){
+    public void computeShotState(DriveSubsystem driveSubsystem,Pose2d robotPose){
         //Shot Target
         if(DriverStation.getAlliance().isEmpty()){
             return;
@@ -97,7 +95,7 @@ public class VisionSubsystem extends SubsystemBase {
         // var rangeToTarget = optionalRange.getAsDouble();
 
         //Robot Pose
-        var robotPose =  this.driveSubsystem.getRobotPose2d();
+        // var robotPose =  poseEstimatorSubsystem.getEstimatedPosition();
 
         //Robot Velocity
         var robotVelocity = this.driveSubsystem.getChassisSpeed();
