@@ -18,6 +18,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
@@ -110,6 +111,10 @@ public class ArmSubsystem extends SubsystemBase {
       ;
     }
     leftSpark.setVoltage(commandedVoltage);
+
+    if(DriverStation.getMatchTime() < 10.0){
+      armController.setTolerance(0.15);
+    }
   }
 
   public void setTargetRads(double rads) {
