@@ -1,11 +1,13 @@
 package frc.robot.commands.AutoCommands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.Arm;
 import frc.robot.commands.AlignArmForShot;
 import frc.robot.commands.AlignWhileDriving;
 import frc.robot.commands.SetFeederSpeed;
@@ -21,14 +23,15 @@ public class ShootAuto extends SequentialCommandGroup{
             new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
             new ParallelRaceGroup(
                 // new AlignWhileDriving(driveSubsystem, armSubsystem, visionSubsystem, () -> 0.0,() -> 0.0), 
-                // new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem),
+                new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem),
                 new SequentialCommandGroup(
                     new WaitCommand(0.1),
                     new WaitUntilCommand(
                         () -> armSubsystem.armIsAtTarget() && armSubsystem.atShootSpeed()
                     ),
-                    new SetFeederSpeed(armSubsystem, Constants.Arm.FEED_SHOOT_SPEED),
-                    new WaitUntilCommand(()->!armSubsystem.isHoldingNote())
+                    new InstantCommand(()-> armSubsystem.setFeederSpeed(Arm.FEED_SHOOT_SPEED)),
+                    new WaitUntilCommand(()->!armSubsystem.isHoldingNote()),
+                    new InstantCommand(()-> armSubsystem.setFeederSpeed(0))
                 )
             )
         );
