@@ -230,5 +230,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("ShooterVelocity R",rightShooterEncoder::getVelocity, null);
     builder.addDoubleProperty("Shooter Current L", leftShooterSpark::getOutputCurrent,null);
     builder.addDoubleProperty("Shooter Current R", rightShooterSpark::getOutputCurrent, null);
+
+    builder.addDoubleProperty("Feeder Current", feederSpark::getOutputCurrent, null);
   }
 }

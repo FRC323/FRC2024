@@ -310,7 +310,7 @@ public final class Constants {
 
     public static final double UNFOLDED_POSE = 3.01;
     public static final double FOLDED_POSE_INTERNAL = 0.02; 
-    public static final double SHOOTING_POSE = 1.5;
+    public static final double SHOOTING_POSE = 1.6;
     public static final double FOLDED_POSE = 0.92;
     
     public static final double INTAKE_SPEED = 0.5;
