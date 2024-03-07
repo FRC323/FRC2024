@@ -131,9 +131,13 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean atShootSpeed(){
+    return atShootSpeed(targetShooterVelocity);
+  }
+
+  public boolean atShootSpeed(double shooterRPM){
     return 
-      leftShooterEncoder.getVelocity() >= targetShooterVelocity
-      && rightShooterEncoder.getVelocity() >= targetShooterVelocity; 
+      leftShooterEncoder.getVelocity() >= shooterRPM
+      && rightShooterEncoder.getVelocity() >= shooterRPM; 
   }
 
   public boolean isHoldingNote(){

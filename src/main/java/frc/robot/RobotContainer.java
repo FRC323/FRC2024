@@ -135,7 +135,7 @@ public class RobotContainer {
     //Align While Driving
     m_steerJoystick.trigger().whileTrue(
       new ParallelCommandGroup(
-        alignWhileDriving,
+        // alignWhileDriving,
         new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem)
       ).finallyDo(
         () -> armSubsystem.setShooterSpeed(0)
@@ -144,23 +144,23 @@ public class RobotContainer {
 
     //Shoot
     m_driveJoystick.button(DriveStick.LEFT_SIDE_BUTTON).onTrue(
-      new ParallelCommandGroup(
-        new  ConditionalCommand(
-          new InstantCommand(),
-          new ScheduleCommand(
-            new AlignArmForShot(
-              armSubsystem,
-              intakeSubsystem,
-              visionSubsystem
-              )
-          ),
-          () -> alignWhileDriving.isScheduled()
-        ),
+      // new ParallelCommandGroup(
+        // new  ConditionalCommand(
+        //   new InstantCommand(),
+        //   new ScheduleCommand(
+        //     new AlignArmForShot(
+        //       armSubsystem,
+        //       intakeSubsystem,
+        //       visionSubsystem
+        //       )
+        //   ),
+        //   () -> alignWhileDriving.isScheduled()
+        // ),
         new SequentialCommandGroup(
-          new WaitUntilCommand(armSubsystem::atShootSpeed),
+          new WaitUntilCommand(() -> armSubsystem.atShootSpeed(Constants.Arm.Shooter.SHOOTER_SPEED)),
           new InstantCommand(()-> armSubsystem.setFeederSpeed(Constants.Arm.FEED_SHOOT_SPEED))
         )
-      )
+      // )
     ).onFalse(
       new ParallelCommandGroup(
         new SetShooterSpeed(armSubsystem, 0.0),
