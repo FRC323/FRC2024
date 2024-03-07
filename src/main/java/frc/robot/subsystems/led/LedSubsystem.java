@@ -5,14 +5,17 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.ArmSubsystem;
 
 public class LedSubsystem extends SubsystemBase {
     private final Spark _controller = new Spark(Constants.LED.BLINKIN_PORT);
     private LedColor _color;
+    private ArmSubsystem armSubsystem;
 
-    public LedSubsystem() {
+    public LedSubsystem(ArmSubsystem armSubsystem) {
         setToAlliance();
         _controller.setSafetyEnabled(false);
+        this.armSubsystem = armSubsystem;
     }
 
     public void on(LedColor color) {
@@ -27,18 +30,29 @@ public class LedSubsystem extends SubsystemBase {
         if (DriverStation.getAlliance().isPresent()) {
             if (DriverStation.getAlliance().get() == Alliance.Blue) {
                 on(LedColor.Blue_Chase);
+                return;
             }
             else if (DriverStation.getAlliance().get() == Alliance.Red) {
                 on(LedColor.Red_Chase);
+                return;
             }
         }
         on(LedColor.RAINBOW_PARTY);
     }
 
+    public void setToNote(boolean value){
+        if(value){
+            this._color = LedColor.Yellow;
+        }else{
+            setToAlliance();
+        }
+
+    }
+
 
     @Override
     public void periodic() {
-        this._color = LedColor.Blue;
+        setToNote(armSubsystem.isHoldingNote());
         _controller.set(this._color.get());
     }
 }

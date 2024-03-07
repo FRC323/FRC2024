@@ -55,7 +55,7 @@ public class RobotContainer {
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
   public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
-  private final LedSubsystem ledSubsystem = new LedSubsystem();
+  private final LedSubsystem ledSubsystem = new LedSubsystem(armSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // private final CommandXboxController m_operatorController =
