@@ -3,48 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.0,
-        "y": 0.0
+        "x": 15.321831669304363,
+        "y": 3.4029989427500227
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0,
-        "y": 0.0
+        "x": 14.538323321660885,
+        "y": 3.2275866261134247
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.88,
-        "y": 0.0
+        "x": 8.960211652617037,
+        "y": 0.725037575431277
       },
       "prevControl": {
-        "x": 1.88,
-        "y": 0.0
+        "x": 8.474775412596562,
+        "y": 0.4429597602813252
       },
       "nextControl": {
-        "x": 3.88,
-        "y": 0.0
+        "x": 9.825579081357136,
+        "y": 1.2278862164611333
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.0,
-        "y": 0.0
+        "x": 14.491546703890672,
+        "y": 3.5784112593915607
       },
       "prevControl": {
-        "x": -2.652929958779748,
-        "y": 0.0
+        "x": 11.895444417669003,
+        "y": 1.9295354830075284
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Back From Line Red"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.95,
+      "rotationDegrees": 158.65563367663964,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -55,13 +61,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -140.19442890824743,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Middle Line Red Paths",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -133.60281897212795,
     "velocity": 0
   },
   "useDefaultConstraints": true
