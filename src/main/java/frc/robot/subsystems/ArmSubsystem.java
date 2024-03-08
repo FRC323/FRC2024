@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Arm.Shooter;
+import frc.robot.subsystems.vision.Limelight;
+import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.utils.NoRolloverEncoder;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -110,6 +112,12 @@ public class ArmSubsystem extends SubsystemBase {
       ;
     }
     leftSpark.setVoltage(commandedVoltage);
+
+    if(isHoldingNote()){
+      LimelightHelpers.setLEDMode_ForceBlink(Limelight._name);
+    }else{
+      LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
+    }
   }
 
   public void setTargetRads(double rads) {

@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.vision.LimelightOptions.VisionMode;
 
 public class Limelight {
-    private final String _name;
+    public final static String _name = LimelightHelpers.sanitizeName("limelight");
     
     public Limelight() {
-        this._name = LimelightHelpers.sanitizeName("limelight");
+        // this._name = LimelightHelpers.sanitizeName("limelight");
         setCameraMode(LimelightOptions.VisionMode.VisionProcessing);
     }
     
