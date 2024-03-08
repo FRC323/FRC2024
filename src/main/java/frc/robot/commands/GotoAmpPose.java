@@ -13,7 +13,7 @@ public class GotoAmpPose extends SequentialCommandGroup{
             new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
             new RepeatCommand(new ParallelCommandGroup(
                 new SetArmTarget(armSubsystem, Arm.ARM_AMP_POSE),
-                new SetShooterSpeed(armSubsystem, Arm.ARM_AMP_POSE)
+                new SetShooterSpeed(armSubsystem, Arm.Shooter.AMP_SPEED)
             ))
         );
     }
