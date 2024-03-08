@@ -302,7 +302,7 @@ public final class Constants {
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
     
       public static final int WRIST_CURRENT_LIMIT = 30;
-      public static final int ROLLER_CURRENT_LIMIT = 40;
+      public static final int ROLLER_CURRENT_LIMIT = 60;
 
     //TODO: Get actual constants
     public static final double ENCODER_GEAR_RATION = (16.0/22.0);
