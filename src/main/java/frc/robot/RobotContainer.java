@@ -157,7 +157,7 @@ public class RobotContainer {
         //   () -> alignWhileDriving.isScheduled()
         // ),
         new SequentialCommandGroup(
-          new WaitUntilCommand(() -> armSubsystem.atShootSpeed(Constants.Arm.Shooter.SHOOTER_SPEED)),
+          new WaitUntilCommand(() -> armSubsystem.atShootSpeed()),
           new InstantCommand(()-> armSubsystem.setFeederSpeed(Constants.Arm.FEED_SHOOT_SPEED))
         )
       // )
@@ -227,13 +227,14 @@ public class RobotContainer {
 
     //Amp Pose
     m_steerJoystick.button(SteerStick.LEFT).onTrue(
-      gotoAmpPose.handleInterrupt(
-        () -> {
-          armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
-          armSubsystem.setShooterSpeed(0);
-          intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
-        }
-      )
+      gotoAmpPose
+      // .handleInterrupt(
+      //   () -> {
+      //     armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
+      //     armSubsystem.setShooterSpeed(0);
+      //     intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
+      //   }
+      // )
     ).onFalse(
       new InstantCommand(
         ()->{

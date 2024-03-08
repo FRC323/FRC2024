@@ -259,7 +259,7 @@ public final class Constants {
       public static final int Feeder_CAN_Id = 51;
 
       public static final double kF = 0.98 * Constants.NeoMotor.FREE_SPEED_RPM;
-      public static final double kP = 0.0003;
+      public static final double kP = 0.0;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
 
