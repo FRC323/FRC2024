@@ -77,6 +77,7 @@ public class ShotState {
 
   private static InterpolatingDoubleTreeMap initializeInterpolator() {
     var armAngleInterpolation = new InterpolatingDoubleTreeMap();
+//    TODO: Check these, and do some math to find some interpolations, within 45 - 90 try to do every 6-8"
     armAngleInterpolation.put(0.0, 0.0);
     armAngleInterpolation.put(45.0, -0.232);
     armAngleInterpolation.put(80.0,-0.41);
