@@ -141,6 +141,7 @@ public class RobotContainer {
         .trigger()
         .whileTrue(
             new ParallelCommandGroup(
+                    // TODO: Bring this back in but post verifying functionality
                     // alignWhileDriving,
                     new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem))
                 .finallyDo(() -> armSubsystem.setShooterSpeed(0)));
