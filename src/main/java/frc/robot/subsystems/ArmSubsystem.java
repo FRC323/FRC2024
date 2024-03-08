@@ -16,6 +16,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -52,6 +53,10 @@ public class ArmSubsystem extends SubsystemBase {
   private double commandedVoltage = 0.0;
   private boolean voltageOveride = false;
   private double targetShooterVelocity = 0.0;
+
+  // TODO: Play with this number, aim is that it takes us ~1/4 to second spin up
+  private SlewRateLimiter velocityRamp = new SlewRateLimiter(15000);
+  private double shooterVelocity = 0;
 
   //    private AbsoluteEncoderChecker encoderChecker;
 
@@ -92,8 +97,6 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setShooterSpeed(double vel) {
-    leftShooterController.setReference(vel,ControlType.kVelocity);
-    rightShooterController.setReference(vel,ControlType.kVelocity);
     targetShooterVelocity = vel;
   }
 
@@ -118,6 +121,10 @@ public class ArmSubsystem extends SubsystemBase {
     }else{
       LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
     }
+//    TODO: If ramping is causing issues, just set the references to targetVelocity
+    shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
+    leftShooterController.setReference(shooterVelocity,ControlType.kVelocity);
+    rightShooterController.setReference(shooterVelocity,ControlType.kVelocity);
   }
 
   public void setTargetRads(double rads) {
