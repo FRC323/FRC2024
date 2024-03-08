@@ -18,6 +18,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -59,6 +65,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
           }
         }
       ]

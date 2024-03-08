@@ -5,7 +5,7 @@
       "x": 15.427079059286326,
       "y": 3.5667171049441815
     },
-    "rotation": -132.79740183823426
+    "rotation": -117.13768312808875
   },
   "command": {
     "type": "sequential",
@@ -15,6 +15,12 @@
           "type": "named",
           "data": {
             "name": "Reset Odom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
           }
         },
         {
@@ -59,6 +65,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
           }
         }
       ]
