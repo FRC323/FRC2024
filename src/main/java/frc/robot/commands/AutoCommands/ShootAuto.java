@@ -25,6 +25,7 @@ public class ShootAuto extends SequentialCommandGroup{
                 new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0),
                 new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem),
                 new SequentialCommandGroup(
+                    // TODO: Check that we aren't catching the filter delay here, maybe increase wait just to be sure.
                     new WaitCommand(0.1),
                     new WaitUntilCommand(
                         () -> armSubsystem.armIsAtTarget() && armSubsystem.atShootSpeed(Constants.Arm.Shooter.SHOOTER_SPEED)
