@@ -21,11 +21,11 @@ public class AlignArmForShot extends SequentialCommandGroup{
         addCommands(
             new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE), 
-            new SetShooterSpeed(armSubsystem, Arm.Shooter.SHOOTER_SPEED),
             new RepeatCommand(
                 new ConditionalCommand(
                     new InstantCommand(), 
                     new ParallelCommandGroup(
+                        new SetShooterSpeed(armSubsystem, visionSubsystem.get_shooterSpeed()),
                         new SequentialCommandGroup(
                             new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
                             new SetArmTarget(armSubsystem,() -> visionSubsystem.get_armAngle())
