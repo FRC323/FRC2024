@@ -21,10 +21,7 @@ public class ShotState {
   private final Rotation2d _armAngle;
   private final double _shooterSpeed;
   private static final InterpolatingDoubleTreeMap armAngleInterpolation =
-      initializeArmInterpolator();
-
-  private static final InterpolatingDoubleTreeMap shooterSpeedInterpolation =
-      initializeShooterInterpolation();
+      initializeInterpolator();
 
   public ShotState(Rotation2d heading, Rotation2d armAngle, double shooterSpeed) {
     _heading = heading;
@@ -75,11 +72,10 @@ public class ShotState {
     return new ShotState(
         chassisAngle,
         Rotation2d.fromRadians(armAngleInterpolation.get(Units.metersToInches(rangeToTarget))),
-        shooterSpeedInterpolation.get(Units.metersToInches(rangeToTarget))    
-    );
+        Constants.Arm.Shooter.SHOOTER_SPEED);
   }
 
-  private static InterpolatingDoubleTreeMap initializeArmInterpolator() {
+  private static InterpolatingDoubleTreeMap initializeInterpolator() {
     var armAngleInterpolation = new InterpolatingDoubleTreeMap();
 //    TODO: Check these, and do some math to find some interpolations, within 45 - 90 try to do every 6-8"
     armAngleInterpolation.put(0.0, 0.0);
@@ -92,15 +88,5 @@ public class ShotState {
     armAngleInterpolation.put(203.0, -0.67);
     armAngleInterpolation.put(235.0, -0.68);
     return armAngleInterpolation;
-  }
-
-  private static InterpolatingDoubleTreeMap initializeShooterInterpolation(){
-    var shooterInterpolation = new InterpolatingDoubleTreeMap();
-    shooterInterpolation.put(0.0,4000.0);
-    shooterInterpolation.put(45.0,4000.0);
-    shooterInterpolation.put(80.0, 4500.0);
-    shooterInterpolation.put(102.0,5000.0);
-    shooterInterpolation.put(235.0, 5000.0);
-    return shooterInterpolation;
   }
 }

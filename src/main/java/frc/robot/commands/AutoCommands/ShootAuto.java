@@ -20,6 +20,7 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 public class ShootAuto extends SequentialCommandGroup{
     public ShootAuto(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, VisionSubsystem visionSubsystem){
         addCommands(
+            new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
             new ParallelRaceGroup(
                 // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0),
                 new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem),
@@ -27,7 +28,7 @@ public class ShootAuto extends SequentialCommandGroup{
                     new WaitCommand(0.1),
                     new WaitUntilCommand(
                         () -> armSubsystem.armIsAtTarget() 
-                        && armSubsystem.atShootSpeed()
+                        && armSubsystem.atShootSpeed(Constants.Arm.Shooter.SHOOTER_SPEED)
                         && armSubsystem.armTargetValidSpeakerTarget()
                     ),
                     new WaitCommand(0.25),
