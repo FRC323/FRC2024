@@ -116,11 +116,10 @@ public class ArmSubsystem extends SubsystemBase {
     }
     leftSpark.setVoltage(commandedVoltage);
 
-    if(isHoldingNote()){
-      LimelightHelpers.setLEDMode_ForceBlink(Limelight._name);
-    }else{
+    if(!isHoldingNote()){
       LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
     }
+
 //    TODO: If ramping is causing issues, just set the references to targetVelocity
     shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
     leftShooterController.setReference(shooterVelocity,ControlType.kVelocity);
