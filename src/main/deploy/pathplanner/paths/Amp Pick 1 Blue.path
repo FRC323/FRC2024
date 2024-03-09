@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7434431971001721,
+        "y": 6.561587279944157
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.6599204694846459,
+        "y": 6.67858437854643
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.859140730157946,
+        "y": 6.990576641485824
+      },
+      "prevControl": {
+        "x": 2.069410314592602,
+        "y": 6.542087763510444
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "End Amp Pick 1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 29.59657503753039,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Misc",
+  "previewStartingState": {
+    "rotation": 61.113418233089234,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

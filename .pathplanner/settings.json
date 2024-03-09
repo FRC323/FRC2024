@@ -4,9 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "Blue 5 Note Paths",
+    "Drive Away Paths",
     "Middle Line Blue Paths",
     "Middle Line Red Paths",
-    "Drive Away Paths",
+    "Misc",
     "Red 5 Note Paths"
   ],
   "autoFolders": [],
