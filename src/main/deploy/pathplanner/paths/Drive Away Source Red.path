@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 15.34521997818924,
+        "y": 3.2158924716709834
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 15.181501815995084,
+        "y": 1.1343329809166744
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 13.099942325240775,
+        "y": 0.4794603321400393
+      },
+      "prevControl": {
+        "x": 14.21088699727257,
+        "y": 0.4794603321400393
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.5906572146466526,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Drive Away Paths",
+  "previewStartingState": {
+    "rotation": 65.10328627121521,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
