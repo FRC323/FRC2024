@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 15.787320125709135,
-        "y": 4.408696224799858
+        "x": 15.298443360419483,
+        "y": 5.5430292057165325
       },
       "prevControl": null,
       "nextControl": {
-        "x": 15.190918249144703,
-        "y": 4.303448834817899
+        "x": 14.971007036031164,
+        "y": 5.098651336903814
       },
       "isLocked": false,
       "linkedName": "Start"
@@ -20,8 +20,8 @@
         "y": 4.303448834817898
       },
       "prevControl": {
-        "x": 14.362911005024287,
-        "y": 4.373613761472538
+        "x": 14.585099939430645,
+        "y": 4.350225452587657
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": "Red 5 Note Paths",
   "previewStartingState": {
-    "rotation": -120.96375653207409,
+    "rotation": -179.33380002981679,
     "velocity": 0
   },
   "useDefaultConstraints": false
