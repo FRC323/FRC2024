@@ -145,6 +145,16 @@ public class ArmSubsystem extends SubsystemBase {
     return armController.atGoal();
   }
 
+  public boolean armTargetValidSpeakerTarget(){
+    var goal = armController.getGoal().position;
+    return goal != Arm.ARM_AMP_POSE
+    && goal != Arm.ARM_HANDOFF_POSE
+    && goal != Arm.ARM_DOWN_POSE
+    && goal != Arm.ARM_INTAKE_UNFOLDING_POSE
+    && goal != Arm.ARM_HUMAN_PLAYER_POSE
+    && goal != Arm.ARM_CLIMB_POSE;
+  }
+
   public boolean atShootSpeed(){
     return atShootSpeed(targetShooterVelocity);
   }

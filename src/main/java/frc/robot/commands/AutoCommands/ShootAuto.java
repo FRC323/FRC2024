@@ -22,13 +22,14 @@ public class ShootAuto extends SequentialCommandGroup{
         addCommands(
             new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
             new ParallelRaceGroup(
-                new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0),
+                // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0),
                 new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem),
                 new SequentialCommandGroup(
-                    // TODO: Check that we aren't catching the filter delay here, maybe increase wait just to be sure.
                     new WaitCommand(0.1),
                     new WaitUntilCommand(
-                        () -> armSubsystem.armIsAtTarget() && armSubsystem.atShootSpeed(Constants.Arm.Shooter.SHOOTER_SPEED)
+                        () -> armSubsystem.armIsAtTarget() 
+                        && armSubsystem.atShootSpeed(Constants.Arm.Shooter.SHOOTER_SPEED)
+                        && armSubsystem.armTargetValidSpeakerTarget()
                     ),
                     new InstantCommand(()-> armSubsystem.setFeederSpeed(Arm.FEED_SHOOT_SPEED)),
                     new WaitUntilCommand(()->!armSubsystem.isHoldingNote()),
