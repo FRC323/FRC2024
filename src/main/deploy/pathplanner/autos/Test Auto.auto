@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 15.21,
-      "y": 5.58
-    },
-    "rotation": -179.76591660563324
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -18,9 +12,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Test Path"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "HandoffProc"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Test Path"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
           }
         }
       ]

@@ -15,7 +15,8 @@ public class AdjustFeederNote extends SequentialCommandGroup{
             new SetFeederSpeed(armSubsystem, -Constants.Arm.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(armSubsystem::isHoldingNote),
             new WaitCommand(0.15),
-            new SetFeederSpeed(armSubsystem, 0)
+            new SetFeederSpeed(armSubsystem, 0),
+            new LimelightBlink()
         );
     }
 }

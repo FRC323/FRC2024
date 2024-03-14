@@ -5,6 +5,8 @@
 package frc.robot;
 
 import java.util.ArrayList;
+import java.util.function.DoubleSupplier;
+
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -24,7 +26,10 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
+  public static final class LED {
+    public static final int BLINKIN_PORT = 1;
+  }
+  
   public static final class AprilTags {
     public static final double APRILTAG_HEIGHT = 9.0;
     public static final double APRILTAG_HEIGHT_HALF = APRILTAG_HEIGHT/2;
@@ -57,7 +62,7 @@ public final class Constants {
     public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
     public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
     public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.40,5.52);
-    public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.54,5.43);
+    public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
   }
 
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;
@@ -254,7 +259,8 @@ public final class Constants {
       public static final int Feeder_CAN_Id = 51;
 
       public static final double kF = 0.98 * Constants.NeoMotor.FREE_SPEED_RPM;
-      public static final double kP = 0.0003;
+//      TODO: This number probably needs tweaking
+      public static final double kP = 0.0001282051282;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
 
@@ -269,6 +275,7 @@ public final class Constants {
     public static final double ARM_AMP_POSE = -1.9;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
     public static final double ARM_FAR_SPEAKER = -0.6;
+    public static final double ARM_CLIMB_POSE = -1.27;
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
@@ -295,7 +302,7 @@ public final class Constants {
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
     
       public static final int WRIST_CURRENT_LIMIT = 30;
-      public static final int ROLLER_CURRENT_LIMIT = 30;
+      public static final int ROLLER_CURRENT_LIMIT = 60;
 
     //TODO: Get actual constants
     public static final double ENCODER_GEAR_RATION = (16.0/22.0);
@@ -304,6 +311,7 @@ public final class Constants {
 
     public static final double UNFOLDED_POSE = 3.01;
     public static final double FOLDED_POSE_INTERNAL = 0.02; 
+    public static final double SHOOTING_POSE = 1.6;
     public static final double FOLDED_POSE = 0.92;
     
     public static final double INTAKE_SPEED = 0.5;

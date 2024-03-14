@@ -16,6 +16,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -25,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Arm.Shooter;
+import frc.robot.subsystems.vision.Limelight;
+import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.utils.NoRolloverEncoder;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -50,6 +53,10 @@ public class ArmSubsystem extends SubsystemBase {
   private double commandedVoltage = 0.0;
   private boolean voltageOveride = false;
   private double targetShooterVelocity = 0.0;
+
+  // TODO: Play with this number, aim is that it takes us ~1/4 to second spin up
+  private SlewRateLimiter velocityRamp = new SlewRateLimiter(15000);
+  private double shooterVelocity = 0;
 
   //    private AbsoluteEncoderChecker encoderChecker;
 
@@ -90,8 +97,6 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setShooterSpeed(double vel) {
-    leftShooterController.setReference(vel,ControlType.kVelocity);
-    rightShooterController.setReference(vel,ControlType.kVelocity);
     targetShooterVelocity = vel;
   }
 
@@ -110,6 +115,15 @@ public class ArmSubsystem extends SubsystemBase {
       ;
     }
     leftSpark.setVoltage(commandedVoltage);
+
+    if(!isHoldingNote()){
+      LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
+    }
+
+//    TODO: If ramping is causing issues, just set the references to targetVelocity
+    shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
+    leftShooterController.setReference(shooterVelocity,ControlType.kVelocity);
+    rightShooterController.setReference(shooterVelocity,ControlType.kVelocity);
   }
 
   public void setTargetRads(double rads) {
@@ -130,8 +144,24 @@ public class ArmSubsystem extends SubsystemBase {
     return armController.atGoal();
   }
 
+  public boolean armTargetValidSpeakerTarget(){
+    var goal = armController.getGoal().position;
+    return goal != Arm.ARM_AMP_POSE
+    && goal != Arm.ARM_HANDOFF_POSE
+    && goal != Arm.ARM_DOWN_POSE
+    && goal != Arm.ARM_INTAKE_UNFOLDING_POSE
+    && goal != Arm.ARM_HUMAN_PLAYER_POSE
+    && goal != Arm.ARM_CLIMB_POSE;
+  }
+
   public boolean atShootSpeed(){
-    return leftShooterEncoder.getVelocity() >= targetShooterVelocity;
+    return atShootSpeed(targetShooterVelocity);
+  }
+
+  public boolean atShootSpeed(double shooterRPM){
+    return 
+      leftShooterEncoder.getVelocity() >= shooterRPM * 0.95
+      && rightShooterEncoder.getVelocity() >= shooterRPM * 0.95;
   }
 
   public boolean isHoldingNote(){
@@ -224,5 +254,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("ShooterVelocity R",rightShooterEncoder::getVelocity, null);
     builder.addDoubleProperty("Shooter Current L", leftShooterSpark::getOutputCurrent,null);
     builder.addDoubleProperty("Shooter Current R", rightShooterSpark::getOutputCurrent, null);
+
+    builder.addDoubleProperty("Feeder Current", feederSpark::getOutputCurrent, null);
   }
 }

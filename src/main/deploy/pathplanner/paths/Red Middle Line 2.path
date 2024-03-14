@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 13.74312081957497,
-        "y": 6.864468657712245
+        "x": 14.491546703890672,
+        "y": 3.5784112593915607
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.35721372297445,
-        "y": 6.934633584366885
+        "x": 12.07085673430606,
+        "y": -0.08185908109707923
       },
       "isLocked": false,
-      "linkedName": "End Fourth"
+      "linkedName": "Back From Line Red"
     },
     {
       "anchor": {
-        "x": 8.165009150531121,
-        "y": 7.297152372082522
+        "x": 8.718745418488464,
+        "y": 2.378941004912889
       },
       "prevControl": {
-        "x": 7.552316189752521,
-        "y": 7.6602296821735445
+        "x": 8.753827881815782,
+        "y": 2.566047475991928
       },
       "nextControl": {
-        "x": 8.796493490422879,
-        "y": 6.922939429924443
+        "x": 8.627821709333105,
+        "y": 1.8940145560842954
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 11.263960077777703,
-        "y": 6.232984317820488
+        "x": 14.491546703890672,
+        "y": 3.5784112593915607
       },
       "prevControl": {
-        "x": 10.655864046770827,
-        "y": 6.3850083255722065
+        "x": 13.053165707471015,
+        "y": -0.5028486410249161
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,28 +46,28 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.75,
-      "rotationDegrees": -174.72512539485058,
+      "waypointRelativePos": 1.05,
+      "rotationDegrees": 162.20350530981722,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.7,
+    "maxVelocity": 5.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 173.65980825409005,
+    "rotation": -134.99999999961133,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "New Folder",
+  "folder": "Middle Line Red Paths",
   "previewStartingState": {
-    "rotation": 148.6269948598916,
+    "rotation": -136.16913932763316,
     "velocity": 0
   },
   "useDefaultConstraints": false

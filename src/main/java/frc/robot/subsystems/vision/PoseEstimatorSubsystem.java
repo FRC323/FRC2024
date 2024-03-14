@@ -71,6 +71,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
         }
 
+        this._visionSubsystem.computeShotState(_driveSubsystem, getEstimatedPosition());
         // publisher.set(capture.botpose());
     }
 

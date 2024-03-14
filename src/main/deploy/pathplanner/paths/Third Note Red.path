@@ -1,0 +1,58 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 13.97700390842377,
+        "y": 4.303448834817898
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 14.25766361504233,
+        "y": 4.689355931418416
+      },
+      "isLocked": false,
+      "linkedName": "Second Note"
+    },
+    {
+      "anchor": {
+        "x": 13.97700390842377,
+        "y": 5.615860732909115
+      },
+      "prevControl": {
+        "x": 14.117333761733049,
+        "y": 5.136400400769078
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "End Third"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.25,
+      "rotationDegrees": 121.46656352067784,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 177.67793359925003,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red 5 Note Paths",
+  "previewStartingState": {
+    "rotation": -146.30993247402031,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

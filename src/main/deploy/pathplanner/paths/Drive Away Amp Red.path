@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.0,
-        "y": 0.0
+        "x": 15.333525823746804,
+        "y": 7.308846526524962
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0,
-        "y": 0.0
+        "x": 15.216584279322404,
+        "y": 7.74153024089524
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.88,
-        "y": 0.0
+        "x": 11.486149012184063,
+        "y": 7.6947536231254805
       },
       "prevControl": {
-        "x": 1.88,
-        "y": 0.0
-      },
-      "nextControl": {
-        "x": 3.88,
-        "y": 0.0
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 0.0,
-        "y": 0.0
-      },
-      "prevControl": {
-        "x": -2.652929958779748,
-        "y": 0.0
+        "x": 12.597093684215858,
+        "y": 7.6947536231254805
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 0.5906572146466526,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Drive Away Paths",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -54.29330859939693,
     "velocity": 0
   },
   "useDefaultConstraints": true

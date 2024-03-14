@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 15.78,
+      "y": 4.41
+    },
+    "rotation": -169.99
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -9,6 +15,12 @@
           "type": "named",
           "data": {
             "name": "Reset Odom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartShooterWheelSpeaker"
           }
         },
         {
@@ -30,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue Second Note"
+                  "pathName": "Second Note Red"
                 }
               },
               {
@@ -62,7 +74,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue Third Note"
+                  "pathName": "Third Note Red"
                 }
               },
               {
@@ -94,7 +106,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue Fourth Note"
+                  "pathName": "Fourth Note Red"
                 }
               },
               {
@@ -126,7 +138,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue Fifth Note"
+                  "pathName": "Fifth Note Red"
                 }
               },
               {

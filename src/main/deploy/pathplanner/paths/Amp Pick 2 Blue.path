@@ -3,64 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.0,
-        "y": 0.0
+        "x": 2.859140730157946,
+        "y": 6.990576641485824
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0,
-        "y": 0.0
+        "x": 3.8591407301579466,
+        "y": 6.990576641485824
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "End Amp Pick 1"
     },
     {
       "anchor": {
-        "x": 1.7566125160740347,
-        "y": 2.2101951896211496
+        "x": 8.328755089814218,
+        "y": 7.468314794111773
       },
       "prevControl": {
-        "x": 3.966807705695183,
-        "y": 0.21049477996391902
+        "x": 7.3287550898142175,
+        "y": 7.468314794111773
       },
       "nextControl": {
-        "x": -0.45358267354711357,
-        "y": 4.20989559927838
+        "x": 9.328755089814218,
+        "y": 7.468314794111773
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.0,
-        "y": 0.0
+        "x": 4.029111716180679,
+        "y": 5.918103237631654
       },
       "prevControl": {
-        "x": -1.297603316704414,
-        "y": 0.0
+        "x": 6.57379861078012,
+        "y": 6.834580510016127
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 89.99999999999991,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 2.0,
-      "rotationDegrees": 0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -71,11 +55,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 1.2188752351313377,
+    "rotation": 6.254032743916392,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Misc",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

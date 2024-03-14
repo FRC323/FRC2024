@@ -132,7 +132,8 @@ public class IntakeSubsystem extends SubsystemBase {
         null);
     builder.addDoubleProperty("Velocity",()-> wristController.getSetpoint().velocity, null);
     builder.addDoubleProperty("Commanded Voltage", () -> commandedVoltage, null);
-    builder.addDoubleProperty("Current", wristSpark::getOutputCurrent, null);
+    builder.addDoubleProperty("Wrist Current", wristSpark::getOutputCurrent, null);
+    builder.addDoubleProperty("Intake Current", feederRoller::getOutputCurrent, null);
     // builder.addBooleanProperty("Arm Encoder Plugged In", wristAbsoluteEncoder::isConnected,
     builder.addDoubleProperty("Roller Current",feederRoller::getOutputCurrent, null);
     // null);
