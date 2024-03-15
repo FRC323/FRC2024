@@ -34,6 +34,13 @@ import frc.robot.Constants.Intake;
 import frc.robot.commands.*;
 import frc.robot.commands.AutoCommands.ResetOdomFromLimelight;
 import frc.robot.commands.AutoCommands.ShootAuto;
+import frc.robot.commands.SetCommands.SetArmTarget;
+import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.SetIntakeSpeed;
+import frc.robot.commands.SetCommands.SetShooterSpeed;
+import frc.robot.commands.StoreOffsetCommands.StoreArmOffset;
+import frc.robot.commands.StoreOffsetCommands.StoreIntakeOffset;
+import frc.robot.commands.StoreOffsetCommands.StoreDrivetrainOffsets;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -274,7 +281,7 @@ public class RobotContainer {
   }
 
   private void addShuffleBoardData() {
-    Shuffleboard.getTab("Buttons").add(new StoredDrivetrainOffsets(driveSubsystem));
+    Shuffleboard.getTab("Buttons").add(new StoreDrivetrainOffsets(driveSubsystem));
     Shuffleboard.getTab("Buttons").add(new StoreArmOffset(armSubsystem));
     Shuffleboard.getTab("Buttons").add(new StoreIntakeOffset(intakeSubsystem));
 

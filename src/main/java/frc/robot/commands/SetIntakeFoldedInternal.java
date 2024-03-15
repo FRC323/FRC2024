@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
+import frc.robot.commands.SetCommands.SetArmTarget;
+import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.SetIntakeSpeed;
+import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 

@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.SetCommands;
 
 import java.util.function.DoubleSupplier;
 
