@@ -25,7 +25,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
-import frc.robot.Constants.Arm.Shooter;
+import frc.robot.Constants.Feeder;
+import frc.robot.Constants.Shooter;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.utils.NoRolloverEncoder;
@@ -45,11 +46,9 @@ public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax rightSpark;
   private CANSparkMax leftShooterSpark;
   private CANSparkMax rightShooterSpark;
-  private CANSparkMax feederSpark;
 
   //    private AbsoluteEncoder armEncoder;
   private DutyCycleEncoder armAbsoluteEncoder;
-  private DigitalInput beamBreakSensor;
   private double commandedVoltage = 0.0;
   private boolean voltageOveride = false;
   private double targetShooterVelocity = 0.0;
@@ -63,10 +62,9 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmSubsystem() {
     leftSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_L, MotorType.kBrushless);
     rightSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_R, MotorType.kBrushless);
-    leftShooterSpark = new CANSparkMax(Arm.Shooter.Shooter_L_CAN_Id, MotorType.kBrushless);
-    rightShooterSpark = new CANSparkMax(Arm.Shooter.Shooter_R_CAN_Id, MotorType.kBrushless);
+    leftShooterSpark = new CANSparkMax(Shooter.Shooter_L_CAN_Id, MotorType.kBrushless);
+    rightShooterSpark = new CANSparkMax(Shooter.Shooter_R_CAN_Id, MotorType.kBrushless);
     //Todo Add Right shooter spark
-    feederSpark = new CANSparkMax(Arm.Shooter.Feeder_CAN_Id, MotorType.kBrushless);
 
     leftShooterController = leftShooterSpark.getPIDController();
     rightShooterController = rightShooterSpark.getPIDController();
@@ -81,7 +79,6 @@ public class ArmSubsystem extends SubsystemBase {
     armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);
     armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Arm.OFFSET_KEY, 0.0));
 
-    beamBreakSensor = new DigitalInput(Arm.BEAM_BREAK_PORT);
 
     initWithRetry(this::initSparks, 5);
     armController.setGoal(getArmAngleRads());
@@ -92,9 +89,7 @@ public class ArmSubsystem extends SubsystemBase {
     Preferences.setDouble(Arm.OFFSET_KEY, armAbsoluteEncoder.getPositionOffset());
   }
 
-  public void setFeederSpeed(double vel) {
-    feederSpark.set(vel);
-  }
+  
 
   public void setShooterSpeed(double vel) {
     targetShooterVelocity = vel;
@@ -116,9 +111,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
     leftSpark.setVoltage(commandedVoltage);
 
-    if(!isHoldingNote()){
-      LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
-    }
+    
 
 //    TODO: If ramping is causing issues, just set the references to targetVelocity
     shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
@@ -164,9 +157,7 @@ public class ArmSubsystem extends SubsystemBase {
       && rightShooterEncoder.getVelocity() >= shooterRPM * 0.95;
   }
 
-  public boolean isHoldingNote(){
-    return beamBreakSensor.get();
-  }
+  
 
   public void burnFlash() {
     Timer.delay(0.005);
@@ -182,7 +173,6 @@ public class ArmSubsystem extends SubsystemBase {
     errors += check(rightSpark.restoreFactoryDefaults());
     errors += check(leftShooterSpark.restoreFactoryDefaults());
     errors += check(rightShooterSpark.restoreFactoryDefaults());
-    errors += check(feederSpark.restoreFactoryDefaults());
     errors += check(rightSpark.follow(leftSpark, true));
     leftSpark.setInverted(true); //TODO: Add to constant
     // errors += check(rightShooterSpark.follow(leftShooterSpark,false));
@@ -248,13 +238,10 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Arm Current R", rightSpark::getOutputCurrent, null);
     builder.addBooleanProperty("Arm Encoder Plugged In", armAbsoluteEncoder::isConnected, null);
 
-    builder.addBooleanProperty("Beam Blocked", ()-> beamBreakSensor.get(), null);
-    builder.addBooleanProperty("Is Holding Note", this::isHoldingNote, null);
-    builder.addDoubleProperty("ShooterVelocity L",leftShooterEncoder::getVelocity, null);
+   builder.addDoubleProperty("ShooterVelocity L",leftShooterEncoder::getVelocity, null);
     builder.addDoubleProperty("ShooterVelocity R",rightShooterEncoder::getVelocity, null);
     builder.addDoubleProperty("Shooter Current L", leftShooterSpark::getOutputCurrent,null);
     builder.addDoubleProperty("Shooter Current R", rightShooterSpark::getOutputCurrent, null);
 
-    builder.addDoubleProperty("Feeder Current", feederSpark::getOutputCurrent, null);
   }
 }
