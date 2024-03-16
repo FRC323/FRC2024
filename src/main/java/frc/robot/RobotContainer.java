@@ -41,6 +41,7 @@ import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
 // import frc.robot.commands.ButtonCommands.HandoffProc;
 // import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
 import frc.robot.commands.ButtonCommands.ManualArmControl;
+import frc.robot.commands.ButtonCommands.OuttakeCommand;
 // import frc.robot.commands.ButtonCommands.OuttakeCommand;
 import frc.robot.commands.ButtonCommands.ShootCommand;
 import frc.robot.commands.SetCommands.SetArmTarget;
@@ -195,12 +196,12 @@ public class RobotContainer {
             )
         );
 
-    // // Outtake
-    // m_driveJoystick
-    //     .button(DriveStick.TOP_BIG_BUTTON)
-    //     .whileTrue(
-    //         new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
-    //     );
+    // Outtake
+    m_driveJoystick
+        .button(DriveStick.TOP_BIG_BUTTON)
+        .whileTrue(
+            new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
+        );
 
     // Folded 
     m_driveJoystick
@@ -253,16 +254,6 @@ public class RobotContainer {
     //             //   () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
     //             // ),
     //             new ManualArmControl(armSubsystem, false)));
-
-    //Todo: Remove after testing
-
-    m_driveJoystick.button(DriveStick.TOP_BIG_BUTTON).onTrue(
-        new SetIntakeUnfolded(intakeSubsystem, armSubsystem)
-    );
-
-    // m_steerJoystick.button(SteerStick.RIGHT).onTrue(
-    //     new SetIntakeUp(intakeSubsystem, armSubsystem)
-    // );
 
     m_driveJoystick
         .button(DriveStick.SMALL_TOP_BUTTON)
