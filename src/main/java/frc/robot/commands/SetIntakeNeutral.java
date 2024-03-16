@@ -13,12 +13,17 @@ import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class SetIntakeUp extends SequentialCommandGroup{
-    public SetIntakeUp(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem){
+public class SetIntakeNeutral extends SequentialCommandGroup{
+    public SetIntakeNeutral(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem){
         addCommands(
-            new SetIntakeNeutral(armSubsystem, intakeSubsystem),
-            new SetArmTarget(armSubsystem, Arm.ARM_DOWN_POSE),
-            new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE)            
+            //Checks if intake is inside robot
+            new ConditionalCommand(
+                new SetArmTarget(armSubsystem, Arm.ARM_INTAKE_UNFOLDING_POSE),
+                new InstantCommand(),
+                () -> intakeSubsystem.getWristAngleRads() < (Intake.FOLDED_POSE - Constants.MARGIN_OF_ERROR_RADS)
+            ),
+
+            new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE)
         );
     }
 }

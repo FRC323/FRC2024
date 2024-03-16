@@ -20,8 +20,7 @@ public class GotoAmpPose extends SequentialCommandGroup{
     public GotoAmpPose(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
             // new GotoArmIntakeState(armSubsystem, intakeSubsystem, Arm.ARM_AMP_POSE, Intake.SHOOTING_POSE),
-            new SetIntakeUp(armSubsystem, intakeSubsystem),
-            new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
+            new SetIntakeNeutral(armSubsystem, intakeSubsystem),
             new ParallelCommandGroup(
                 new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE),
                 new SetShooterSpeed(shooterSubsystem, Constants.Shooter.AMP_SPEED)

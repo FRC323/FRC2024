@@ -14,6 +14,7 @@ import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.AdjustFeederNote;
 import frc.robot.commands.FeedUntilNote;
+import frc.robot.commands.SetIntakeNeutral;
 import frc.robot.commands.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
@@ -26,8 +27,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class HandoffProc extends SequentialCommandGroup{
     public HandoffProc(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem,FeederSubsystem feederSubsystem){
         addCommands(
-            new SetIntakeUp(armSubsystem, intakeSubsystem),
-            new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
+            new SetIntakeNeutral(armSubsystem, intakeSubsystem),
             new ParallelCommandGroup(
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
                 new SetArmTarget(armSubsystem, Arm.ARM_HANDOFF_POSE)
