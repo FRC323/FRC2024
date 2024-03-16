@@ -19,22 +19,16 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class SetIntakeFoldedInternal extends SequentialCommandGroup{
     public SetIntakeFoldedInternal(IntakeSubsystem intakeSubsystem,ArmSubsystem armSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
-            new 
-            // new SetIntakeSpeed(intakeSubsystem, 0),
-            // new SetFeederSpeed(feederSubsystem, 0),
-            // new ConditionalCommand(
-            //     new InstantCommand(),
-            //     new SequentialCommandGroup(
-            //         new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
-            //         new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
-            //         new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
-            //         new WaitUntilCommand(()-> armSubsystem.armIsAtTarget()),
-            //         new SetIntakeTarget(intakeSubsystem,Constants.Intake.FOLDED_POSE_INTERNAL), 
-            //         new WaitUntilCommand(()->intakeSubsystem.wristIsAtTarget())
-            //     ),
-            //     () -> intakeSubsystem.getWristAngleRads() <= (Constants.Intake.FOLDED_POSE_INTERNAL + 0.2)
-            // ),
-            new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE)
+            new ConditionalCommand(
+                new SequentialCommandGroup(
+                    new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
+                    new SetArmTarget(armSubsystem, Arm.ARM_INTAKE_UNFOLDING_POSE)
+                ),
+                new InstantCommand(),
+                () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE_INTERNAL + Constants.MARGIN_OF_ERROR_RADS
+            ),
+            new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL),
+            new SetArmTarget(armSubsystem, Arm.ARM_DOWN_POSE)
         );
     }
 }

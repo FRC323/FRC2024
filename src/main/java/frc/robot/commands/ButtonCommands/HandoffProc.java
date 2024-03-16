@@ -26,6 +26,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class HandoffProc extends SequentialCommandGroup{
     public HandoffProc(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem,FeederSubsystem feederSubsystem){
         addCommands(
+            new SetIntakeUp(armSubsystem, intakeSubsystem),
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
             new ParallelCommandGroup(
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),

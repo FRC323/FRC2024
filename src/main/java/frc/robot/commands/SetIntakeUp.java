@@ -1,8 +1,11 @@
 package frc.robot.commands;
 
+import static frc.robot.Constants.MARGIN_OF_ERROR_RADS;
+
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.SetCommands.SetArmTarget;
@@ -20,16 +23,16 @@ public class SetIntakeUp extends SequentialCommandGroup{
                     new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE)
                 ),
                 new InstantCommand(),
-                () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE - 0.05
+                () -> intakeSubsystem.getWristAngleRads() < (Intake.FOLDED_POSE - Constants.MARGIN_OF_ERROR_RADS)
             ),
 
             //Checks if intake is locked and arm is up
             new ConditionalCommand(
                 new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
                 new InstantCommand(),
-                () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE - 0.5
+                () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE - Constants.MARGIN_OF_ERROR_RADS
                     && intakeSubsystem.getWristAngleRads() < Intake.SHOOTING_POSE
-                    && !(armSubsystem.getArmAngleRads() > Arm.ARM_DOWN_POSE - 0.05)
+                    && !(armSubsystem.getArmAngleRads() > Arm.ARM_DOWN_POSE - Constants.MARGIN_OF_ERROR_RADS)
             ),
 
             new SetArmTarget(armSubsystem, Arm.ARM_DOWN_POSE),

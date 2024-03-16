@@ -202,12 +202,12 @@ public class RobotContainer {
     //         new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
     //     );
 
-    // // Folded (Must be Held)
-    // m_driveJoystick
-    //     .button(Constants.DriverConstants.DriveStick.BACK_SIDE_BUTTON)
-    //     .onTrue(
-    //         new GotoArmIntakeState(armSubsystem, intakeSubsystem, Constants.Arm.ARM_DOWN_POSE, Constants.Intake.FOLDED_POSE_INTERNAL)
-    //     );
+    // Folded 
+    m_driveJoystick
+        .button(Constants.DriverConstants.DriveStick.BACK_SIDE_BUTTON)
+        .onTrue(
+            new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem, feederSubsystem)
+        );
 
     // //Human Player Pickup 
     m_steerJoystick
