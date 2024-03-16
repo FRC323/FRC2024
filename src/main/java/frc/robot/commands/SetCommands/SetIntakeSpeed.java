@@ -9,6 +9,7 @@ public class SetIntakeSpeed extends Command {
     public SetIntakeSpeed(IntakeSubsystem intakeSubsystem, double vel) {
         this.intakeSubsystem = intakeSubsystem;
         this.intakeVel = vel;
+        addRequirements(intakeSubsystem);
     }
 
     @Override

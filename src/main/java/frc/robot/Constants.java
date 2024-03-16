@@ -318,6 +318,10 @@ public final class Constants {
     public static final double FOLDED_POSE_INTERNAL = 0.02; 
     public static final double SHOOTING_POSE = 1.6;
     public static final double FOLDED_POSE = 0.92;
+
+    //Danger Zones
+    public static final double START_DANGER_ZONE = 2.0;
+    public static final double END_DANGER_ZONE = 2.2;
     
     public static final double INTAKE_SPEED = 0.5;
     public static final double OUTTAKE_SPEED = -0.5;

@@ -8,16 +8,17 @@ import frc.robot.Constants;
 import frc.robot.commands.SetCommands.SetLimelightBlink;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 
 public class AdjustFeederNote extends SequentialCommandGroup{
-    public AdjustFeederNote(ArmSubsystem armSubsystem){
+    public AdjustFeederNote(FeederSubsystem feederSubsystem){
         addCommands(
-            new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_ADJUST_SPEED),
-            new WaitUntilCommand(() -> !armSubsystem.isHoldingNote()),
-            new SetFeederSpeed(armSubsystem, -Constants.Arm.FEEDER_ADJUST_SPEED),
-            new WaitUntilCommand(armSubsystem::isHoldingNote),
+            new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
+            new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
+            new SetFeederSpeed(feederSubsystem, -Constants.Feeder.FEEDER_ADJUST_SPEED),
+            new WaitUntilCommand(feederSubsystem::isHoldingNote),
             new WaitCommand(0.15),
-            new SetFeederSpeed(armSubsystem, 0),
+            new SetFeederSpeed(feederSubsystem, 0),
             new SetLimelightBlink()
         );
     }

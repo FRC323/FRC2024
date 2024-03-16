@@ -14,6 +14,7 @@ public class SetShooterSpeed extends Command {
     public SetShooterSpeed(ShooterSubsystem shooterSubsystem, double shooterVel) {
         this.shooterVel = () -> shooterVel;
         this.shooterSubsystem = shooterSubsystem;
+        addRequirements(shooterSubsystem);
     }
 
     public SetShooterSpeed(ShooterSubsystem shooterSubsystem, DoubleSupplier shooterVel){
