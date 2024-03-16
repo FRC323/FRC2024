@@ -13,25 +13,27 @@ import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.commands.SetCommands.SetIntakeSpeed;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class SetIntakeFoldedInternal extends SequentialCommandGroup{
-    public SetIntakeFoldedInternal(IntakeSubsystem intakeSubsystem,ArmSubsystem armSubsystem){
+    public SetIntakeFoldedInternal(IntakeSubsystem intakeSubsystem,ArmSubsystem armSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
-            new SetIntakeSpeed(intakeSubsystem, 0),
-            new SetFeederSpeed(armSubsystem, 0),
-            new ConditionalCommand(
-                new InstantCommand(),
-                new SequentialCommandGroup(
-                    new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
-                    new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
-                    new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
-                    new WaitUntilCommand(()-> armSubsystem.armIsAtTarget()),
-                    new SetIntakeTarget(intakeSubsystem,Constants.Intake.FOLDED_POSE_INTERNAL), 
-                    new WaitUntilCommand(()->intakeSubsystem.wristIsAtTarget())
-                ),
-                () -> intakeSubsystem.getWristAngleRads() <= (Constants.Intake.FOLDED_POSE_INTERNAL + 0.2)
-            ),
+            new 
+            // new SetIntakeSpeed(intakeSubsystem, 0),
+            // new SetFeederSpeed(feederSubsystem, 0),
+            // new ConditionalCommand(
+            //     new InstantCommand(),
+            //     new SequentialCommandGroup(
+            //         new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
+            //         new WaitUntilCommand(intakeSubsystem::wristIsAtTarget),
+            //         new SetArmTarget(armSubsystem, Constants.Arm.ARM_INTAKE_UNFOLDING_POSE),
+            //         new WaitUntilCommand(()-> armSubsystem.armIsAtTarget()),
+            //         new SetIntakeTarget(intakeSubsystem,Constants.Intake.FOLDED_POSE_INTERNAL), 
+            //         new WaitUntilCommand(()->intakeSubsystem.wristIsAtTarget())
+            //     ),
+            //     () -> intakeSubsystem.getWristAngleRads() <= (Constants.Intake.FOLDED_POSE_INTERNAL + 0.2)
+            // ),
             new SetArmTarget(armSubsystem, Constants.Arm.ARM_DOWN_POSE)
         );
     }

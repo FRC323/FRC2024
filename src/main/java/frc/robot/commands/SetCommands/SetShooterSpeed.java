@@ -28,6 +28,6 @@ public class SetShooterSpeed extends Command {
     }
     @Override
     public boolean isFinished() {
-        return true;
+        return shooterSubsystem.atShootSpeed();
     }
 }

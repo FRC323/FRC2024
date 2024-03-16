@@ -39,6 +39,7 @@ public class ShooterSubsystem extends SubsystemBase{
     leftShooterEncoder = leftShooterSpark.getEncoder ();
     rightShooterEncoder = rightShooterSpark.getEncoder();
 
+    initSparks();
 
   }
 
@@ -46,8 +47,8 @@ public class ShooterSubsystem extends SubsystemBase{
   public void periodic(){
     //    TODO: If ramping is causing issues, just set the references to targetVelocity
     shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
-    leftShooterController.setReference(shooterVelocity,ControlType.kVelocity);
-    rightShooterController.setReference(shooterVelocity,ControlType.kVelocity);
+    leftShooterController.setReference(shooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+    rightShooterController.setReference(shooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
   }
 
   public void setShooterSpeed(double vel) {

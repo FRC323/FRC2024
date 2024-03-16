@@ -108,7 +108,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // wristAbsoluteEncoder.setDutyCycleRange(errors, errors);
     // wristAbsoluteEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
     wristSpark.setInverted(true);
-    wristSpark.setIdleMode(IdleMode.kBrake);
+    wristSpark.setIdleMode(IdleMode.kCoast);
     return errors == 0;
   }
 

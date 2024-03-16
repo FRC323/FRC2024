@@ -34,7 +34,7 @@ public class SetArmTarget extends Command {
 
     @Override
     public boolean isFinished(){
-        return true;
+        return this.arm.armIsAtTarget();
     }    
 
 }

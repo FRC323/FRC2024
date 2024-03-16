@@ -39,68 +39,18 @@ public class GotoArmIntakeState extends Command{
 
     @Override
     public void execute(){
-        currentState = getStateFromAngles(
-            intakeSubsystem.getWristAngleRads(),
-            armSubsystem.getArmAngleRads()
-        );
-
-        //Todo: Handle INVALID_STATE
-
-        //If intake and arm are already in current zones
-        if(currentState == targetState){
+        if( //Move Arm if intake not in the way
+            intakeSubsystem.getWristAngleRads() > Intake.END_DANGER_ZONE
+            || intakeSubsystem.getWristAngleRads() < Intake.START_DANGER_ZONE
+        ){
             armSubsystem.setTargetRads(armTarget);
+        }
+
+        if( //Move intake if arm not in the way
+            armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE
+        ){
             intakeSubsystem.setTargetRads(intakeTarget);
-            return;
         }
-
-        //Unlocks intake to go to other states
-        if(currentState == SystemState.ARM_DOWN_INTAKE_INTEFERE){
-            intakeSubsystem.setTargetRads(Intake.UNFOLDED_POSE);
-            return;
-        }
-
-
-
-
-
-        /*
-         * States that can move to certain state
-         * ARM_DOWN_INTAKE_IN:
-         *      ARM_DOWN_INTAKE_IN
-         *      ARM_UP_INTAKE_IN
-         * ARM_DOWN_INTAKE_OUT:
-         *      ARM_DOWN_INTAKE_OUT
-         *      ARM_DOWN_INTAKE_INTERFERE
-         *      ARM_UP_INTAKE_OUT
-         * ARM_DOWN_INTAKE_INTERFERE:
-         *      ARM_DOWN_INTAKE_OUT
-         *      ARM_DOWN_INTAKE_INTERFERE
-         *      ARM_UP_INTAKE_OUT   
-         * ARM_UP_INTAKE_IN:
-         *      ARM_DOWN_INTAKE_IN
-         *      ARM_UP_INTAKE_OUT
-         *      ARM_UP_INTAKE_IN
-         *      ARM_UP_INTAKE_INTERFERE
-         * ARM_UP_INTAKE_OUT:
-         *      ARM_DOWN_INTAKE_OUT
-         *      ARM_UP_INTAKE_OUT
-         *      ARM_UP_INTAKE_IN
-         *      ARM_UP_INTAKE_INTERFERE
-         * ARM_UP_INTAKE_INTERFERE:
-         *      ARM_UP_INTAKE_OUT
-         *      ARM_UP_INTAKE_IN
-         *      ARM_UP_INTAKE_INTERFERE
-         */
-
-         //Generalization
-         /*
-          * If arm is up, intake can freely move
-          * If arm is down, intake can only move between Out and Locked
-          *
-          * If intake is In, arm can freely move
-          * If intake is Out, arm can freely move
-          * If intake is Interfereing, arm can not move
-          */
 
     }
 

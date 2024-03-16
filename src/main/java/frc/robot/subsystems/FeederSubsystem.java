@@ -20,6 +20,8 @@ public class FeederSubsystem extends SubsystemBase{
     public FeederSubsystem(){
         feederSpark = new CANSparkMax(Feeder.Feeder_CAN_Id, MotorType.kBrushless);
         beamBreakSensor = new DigitalInput(Feeder.BEAM_BREAK_PORT);
+
+        initSparks();
     }
 
     @Override
