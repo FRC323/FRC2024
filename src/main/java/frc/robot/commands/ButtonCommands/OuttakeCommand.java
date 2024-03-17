@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
-import frc.robot.commands.Procedures.SetIntakeNeutral;
+import frc.robot.commands.Procedures.CheckIntakeOutside;
 import frc.robot.commands.Procedures.SetIntakeUnfolded;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
@@ -22,7 +22,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class OuttakeCommand extends SequentialCommandGroup{
     public OuttakeCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, FeederSubsystem feederSubsystem, ShooterSubsystem shooterSubsystem){
         addCommands(
-            new SetIntakeNeutral(armSubsystem, intakeSubsystem),
+            new CheckIntakeOutside(armSubsystem, intakeSubsystem),
             new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
             new SetArmTarget(armSubsystem, Arm.ARM_OUTAKE_POSE),
             new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED),

@@ -26,6 +26,7 @@ public class AlignArmForShot extends SequentialCommandGroup{
         VisionSubsystem visionSubsystem
     ){
         addCommands(
+            new CheckIntakeOutside(armSubsystem, intakeSubsystem),
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE), 
             new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
             new RepeatCommand(

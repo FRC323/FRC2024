@@ -223,7 +223,7 @@ public final class Constants {
           new ReplanningConfig());
   }
 
-  public static final double MARGIN_OF_ERROR_RADS = 0.05;
+  public static final double MARGIN_OF_ERROR_RADS = 0.15;
 
   public static class Arm {
     // CAN IDs

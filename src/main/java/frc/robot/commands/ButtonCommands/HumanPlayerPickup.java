@@ -7,6 +7,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.Procedures.AdjustFeederNote;
+import frc.robot.commands.Procedures.CheckIntakeOutside;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
@@ -17,7 +18,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class HumanPlayerPickup extends SequentialCommandGroup{
     public HumanPlayerPickup(IntakeSubsystem intake,ArmSubsystem armSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
-            new SetIntakeTarget(intake, Intake.UNFOLDED_POSE),
+            new CheckIntakeOutside(armSubsystem, intake),
+            new SetIntakeTarget(intake, Intake.SHOOTING_POSE),
             new SetArmTarget(armSubsystem, Arm.ARM_HUMAN_PLAYER_POSE),
             new SetIntakeTarget(intake, Intake.FOLDED_POSE_INTERNAL),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
