@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Vision;
@@ -62,9 +63,9 @@ public class PhotonPoseEstimatorSubsystem extends SubsystemBase{
     @Override
     public void periodic(){
         //Todo: Fina camera latency
-        addEstimation(backPoseEstimator, 0.0, visionMeasurementStdDevs);
-        addEstimation(frontRightEstimator, 0, visionMeasurementStdDevs);
-        addEstimation(frontLeftEstimator, 0, visionMeasurementStdDevs);
+        addEstimation(backPoseEstimator, backPhotonCamera.getLatestResult().getTimestampSeconds(), visionMeasurementStdDevs);
+        addEstimation(frontRightEstimator, frontRightPhotonCamera.getLatestResult().getTimestampSeconds(), visionMeasurementStdDevs);
+        addEstimation(frontLeftEstimator, frontLeftPhotonCamera.getLatestResult().getTimestampSeconds(), visionMeasurementStdDevs);
     }
 
     public void updateOdometry(){
@@ -80,6 +81,22 @@ public class PhotonPoseEstimatorSubsystem extends SubsystemBase{
     private void addEstimation(PhotonPoseEstimator estimator,double timestamp, Matrix<N3,N1> visionMeasurementStdDevs){
         var optionalEstimatedPose = estimator.update();
         if(optionalEstimatedPose.isEmpty()) return;
+        
+        //Checks if the pose difference is within 1 meter
+        var differenceInTranslation = optionalEstimatedPose.get().estimatedPose.toPose2d().relativeTo(poseEstimator.getEstimatedPosition());
+        if(
+            Math.abs(differenceInTranslation.getX()) > 1.0
+            || Math.abs(differenceInTranslation.getY()) > 1.0
+        ) return;
+
         poseEstimator.addVisionMeasurement(optionalEstimatedPose.get().estimatedPose.toPose2d(),timestamp,visionMeasurementStdDevs);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.addDoubleProperty("XPose: ",() -> poseEstimator.getEstimatedPosition().getX(), null);
+        builder.addDoubleProperty("YPose: ", () -> poseEstimator.getEstimatedPosition().getY(), null);
+        builder.addDoubleProperty("Rotation: ", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
     }
 }
