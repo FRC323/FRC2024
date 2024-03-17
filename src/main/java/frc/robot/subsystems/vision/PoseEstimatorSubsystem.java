@@ -5,6 +5,7 @@ import java.util.Optional;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N3;
@@ -14,15 +15,24 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Vision;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.vision.Limelight.LimelightCaptureDetail;
+import frc.robot.utils.ShotState;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
     private final DriveSubsystem _driveSubsystem;
     private final VisionSubsystem _visionSubsystem;
     private final SwerveDrivePoseEstimator _poseEstimator;
+
+    private static ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
+
+    private SlewRateLimiter headingLimiter = new SlewRateLimiter(4.0 * Math.PI);
+    private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(4.0 * Math.PI);
+    private SlewRateLimiter shooterSpeedLimiter = new SlewRateLimiter(1.0);
 
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
@@ -45,34 +55,29 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
                 visionMeasurementStdDevs);
     }
 
-    public double getTimestampSeconds(double latencyMillis) {
-        return Timer.getFPGATimestamp() - (latencyMillis / 1000d);
-    }
-
     public Pose2d getEstimatedPosition(){
         return _poseEstimator.getEstimatedPosition();
     }
 
     @Override
     public void periodic() {
-        limelightCapture = _visionSubsystem.getLimelightCapture();
-        if(!limelightCapture.isPresent()) return;
-        var capture =  limelightCapture.get();
-        double currentTimestamp = getTimestampSeconds(capture.latency());
-        // Actually do we only want to do this if we have multiple targets?
-        if (capture.hasTarget()) {
-          // Should this subtract the LL latency from the  timestamp?
-          _poseEstimator.addVisionMeasurement(capture.botpose_blue(), currentTimestamp);
-        }
-       _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
+        double currentTimestamp = this._visionSubsystem.getTimestampSeconds();
 
-        if(capture.hasTarget() && !DriverStation.isAutonomous()){
+        // Actually do we only want to do this if we have multiple targets?
+        if (_visionSubsystem.getFieldPose().isPresent()) {
+          // Should this subtract the LL latency from the  timestamp?
+          _poseEstimator.addVisionMeasurement(_visionSubsystem.getFieldPose().get(), currentTimestamp);
+
+          if(!DriverStation.isAutonomous()){
             _driveSubsystem.resetOdometry(_poseEstimator.getEstimatedPosition());
             // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+          }
+
         }
 
-        this._visionSubsystem.computeShotState(_driveSubsystem, getEstimatedPosition());
-        // publisher.set(capture.botpose());
+       _poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(_driveSubsystem.getGyroYaw()), _driveSubsystem.getModulePositions());
+
+        this.computeShotState(_driveSubsystem, getEstimatedPosition());
     }
 
     public void updateOdometry(){
@@ -89,7 +94,57 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             System.out.println("Updated Odometry From Limelight");
         // }
     }
+    
 
+    public boolean isShotStateValid(){
+        //Todo
+        return true;
+    }
+
+    public double get_shooterSpeed(){
+        // shooterSpeedLimiter.calculate(shotState.get_shooterSpeed());
+        return shotState.get_shooterSpeed();
+    }
+
+    public double get_armAngle(){
+        return armAngleLimiter.calculate(shotState.get_armAngle().getRadians());
+    }
+
+    public double get_heading(){
+        return headingLimiter.calculate(shotState.get_heading().getRadians());
+    }
+
+    public void computeShotState(DriveSubsystem driveSubsystem,Pose2d robotPose){
+        //Shot Target
+        if(DriverStation.getAlliance().isEmpty()){
+            return;
+        } 
+        var shotTarget = DriverStation.getAlliance().get() == Alliance.Red ? Vision.RED_SHOT_TARGET : Vision.BLUE_SHOT_TARGET;
+    
+        //Range To Target
+        // var optionalRange = VisionSubsystem.getTargetDistance();
+        // if(optionalRange.isEmpty()){
+        //     var rangeToTarget = 
+        // } 
+        // var rangeToTarget = optionalRange.getAsDouble();
+
+        //Robot Pose
+        // var robotPose =  poseEstimatorSubsystem.getEstimatedPosition();
+
+        //Robot Velocity
+        var robotVelocity = this._driveSubsystem.getChassisSpeed();
+
+        //dt (Todo: find actual dt)
+        var dt = 0.75;
+
+        this.shotState =  ShotState.computedFromPose(
+            shotTarget,
+            // rangeToTarget,
+            robotPose,
+            robotVelocity,
+            dt
+        );
+    }
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
@@ -97,7 +152,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         builder.addDoubleProperty("XPose: ",() -> _poseEstimator.getEstimatedPosition().getX(), null);
         builder.addDoubleProperty("YPose: ", () -> _poseEstimator.getEstimatedPosition().getY(), null);
         builder.addDoubleProperty("Rotation: ", () -> _poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
-
+        builder.addDoubleProperty("ShotState Heading", () -> shotState.get_heading().getDegrees() , null);
     }
 
 }

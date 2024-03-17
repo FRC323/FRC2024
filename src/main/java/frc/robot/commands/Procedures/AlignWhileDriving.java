@@ -23,7 +23,7 @@ import frc.robot.utils.ShotState;
 public class AlignWhileDriving extends SequentialCommandGroup{
     public AlignWhileDriving(
         DriveSubsystem driveSubsystem,
-        VisionSubsystem visionSubsystem,
+        PoseEstimatorSubsystem poseEstimatorSubsystem,
         DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vTheta
     ){
         addCommands(
@@ -34,11 +34,11 @@ public class AlignWhileDriving extends SequentialCommandGroup{
                     driveSubsystem.driveWithHeading(
                         vx.getAsDouble(),
                         vy.getAsDouble(),
-                        Rotation2d.fromRadians(visionSubsystem.get_heading()),
+                        Rotation2d.fromRadians(poseEstimatorSubsystem.get_heading()),
                         true
                     )
                 ),
-                () -> !visionSubsystem.isShotStateValid()
+                () -> !poseEstimatorSubsystem.isShotStateValid()
             )
         );
     }

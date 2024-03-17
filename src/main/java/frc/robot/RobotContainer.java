@@ -82,7 +82,7 @@ public class RobotContainer {
   public final FeederSubsystem feederSubsystem = new FeederSubsystem();
   public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  public final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
+  public final VisionSubsystem visionSubsystem = new VisionSubsystem();
   public final PoseEstimatorSubsystem poseEstimatorSubsystem =
       new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
   private final LedSubsystem ledSubsystem = new LedSubsystem(feederSubsystem);
@@ -104,7 +104,7 @@ public class RobotContainer {
   private AlignWhileDriving alignWhileDriving =
       new AlignWhileDriving(
           driveSubsystem,
-          visionSubsystem,
+          poseEstimatorSubsystem,
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
           () -> Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()));
@@ -182,7 +182,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
                     // alignWhileDriving,
-                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, visionSubsystem))
+                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, poseEstimatorSubsystem))
             );
 
     // // Shoot
@@ -314,7 +314,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
     NamedCommands.registerCommand(
-        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, visionSubsystem));
+        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, poseEstimatorSubsystem));
   }
 
   /**
