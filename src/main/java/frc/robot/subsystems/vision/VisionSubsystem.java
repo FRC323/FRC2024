@@ -27,9 +27,6 @@ public class VisionSubsystem extends SubsystemBase {
     private final Limelight _limelight = new Limelight();
     private static LimelightCaptureDetail _limelightCapture;
 
-    private static PhotonCamera frontPhotonCamera = new PhotonCamera("Front Camera");
-    private static PhotonCamera backPhotonCamera = new PhotonCamera("Back Camera");
-    private static List<PhotonTrackedTarget> visionTargets;
     
     private SlewRateLimiter headingLimiter = new SlewRateLimiter(4.0 * Math.PI);
     private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(4.0 * Math.PI);
@@ -67,7 +64,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        visionTargets = frontPhotonCamera.getLatestResult().getTargets();
 
         try {
             _limelightCapture = _limelight.capture();

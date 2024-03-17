@@ -11,6 +11,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase;
+
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -63,6 +65,11 @@ public final class Constants {
     public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
     public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.40,5.52);
     public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
+
+    //Todo
+    public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d();
+    public static final Transform3d FRONT_RIGHT_CAMERA_TO_ROBOT = new Transform3d();
+    public static final Transform3d FRONT_LEFT_CAMERA_TO_ROBOT = new Transform3d();
   }
 
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;
