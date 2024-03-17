@@ -77,11 +77,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     if(!voltageOveride){
       commandedVoltage = armController.calculate(getArmAngleRads())
-      // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to
-      // kp:0.1 and up slowly
-                + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity)
-      //            + (Arm.kG * Math.cos(getArmAngleRads())
-      ;
+                + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity);
     }
     leftSpark.setVoltage(commandedVoltage); 
   }
@@ -123,7 +119,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   private boolean initSparks() {
     int errors = 0;
-    // TODO: Config all
     errors += check(leftSpark.restoreFactoryDefaults());
     errors += check(rightSpark.restoreFactoryDefaults());
    errors += check(rightSpark.follow(leftSpark, true));

@@ -230,7 +230,7 @@ public final class Constants {
     public static final int Arm_Actuation_L = 41;
     public static final int Arm_Actuation_R = 42;
 
-    // Profiled PID Constants //TODO:Tune values
+    // Profiled PID Constants 
     public static final double kP = 22.0;
     public static final double kI = 8.0;
     public static final double kD = 0.0;
@@ -299,7 +299,7 @@ public final class Constants {
     public static final int ROLLER_ID = 32;
     public static final int ACTUATION_ID = 31;
 
-    // Profiled PID Constants //TODO:Tune values
+    // Profiled PID Constants 
     public static final double kP = 0.5;
     public static final double kI = 0.0;
     public static final double kD = 0.0;

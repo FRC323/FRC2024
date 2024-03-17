@@ -10,7 +10,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class ShootCommand extends SequentialCommandGroup{
     public ShootCommand(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem){
         addCommands(
-            //    TODO: Verify this atShootSpeed works correctly
             new WaitUntilCommand(() -> shooterSubsystem.atShootSpeed()),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
             new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
