@@ -43,17 +43,6 @@ public class IntakeNote extends SequentialCommandGroup{
             new AdjustFeederNote(feederSubsystem),
             new SetIntakeUp(armSubsystem, intakeSubsystem)
 
-
-
-
-            // new SetIntakeTarget(armSubsystem, intakeSubsystem, Constants.Arm.ARM_HANDOFF_POSE, Constants.Intake.UNFOLDED_POSE),
-            // new ParallelCommandGroup(
-            //     new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED), 
-            //     new SetIntakeSpeed(intakeSubsystem, Constants.Intake.INTAKE_SPEED)
-            // ),
-            // new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            // new AdjustFeederNote(feederSubsystem),
-            // new WaitCommand(0.2)
         );
 
     }
