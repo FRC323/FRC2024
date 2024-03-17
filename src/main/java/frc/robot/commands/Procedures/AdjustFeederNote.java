@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.Feeder;
 import frc.robot.commands.SetCommands.SetLimelightBlink;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.subsystems.ArmSubsystem;
@@ -17,8 +18,8 @@ public class AdjustFeederNote extends SequentialCommandGroup{
             new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
             new SetFeederSpeed(feederSubsystem, -Constants.Feeder.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            new WaitCommand(0.15),
-            new SetFeederSpeed(feederSubsystem, 0),
+            new WaitCommand(Feeder.FEEDER_ADJUST_TIME),
+            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
             new SetLimelightBlink()
         );
     }
