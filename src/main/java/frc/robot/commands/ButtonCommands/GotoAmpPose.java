@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.ButtonCommands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
+import frc.robot.commands.Procedures.SetIntakeNeutral;
+import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.commands.SetCommands.SetShooterSpeed;

@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
-import frc.robot.commands.AdjustFeederNote;
-import frc.robot.commands.FeedUntilNote;
-import frc.robot.commands.SetIntakeNeutral;
-import frc.robot.commands.SetIntakeUp;
+import frc.robot.commands.Procedures.AdjustFeederNote;
+import frc.robot.commands.Procedures.FeedUntilNote;
+import frc.robot.commands.Procedures.SetIntakeNeutral;
+import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.commands.SetCommands.SetIntakeSpeed;
@@ -24,8 +24,8 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class HandoffProc extends SequentialCommandGroup{
-    public HandoffProc(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem,FeederSubsystem feederSubsystem){
+public class IntakeNote extends SequentialCommandGroup{
+    public IntakeNote(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem,FeederSubsystem feederSubsystem){
         addCommands(
             new SetIntakeNeutral(armSubsystem, intakeSubsystem),
             new ParallelCommandGroup(

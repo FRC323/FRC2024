@@ -35,7 +35,8 @@ import frc.robot.commands.*;
 import frc.robot.commands.AutoCommands.ResetOdomFromLimelight;
 import frc.robot.commands.AutoCommands.ShootAuto;
 import frc.robot.commands.ButtonCommands.ClimbCommand;
-import frc.robot.commands.ButtonCommands.HandoffProc;
+import frc.robot.commands.ButtonCommands.GotoAmpPose;
+import frc.robot.commands.ButtonCommands.IntakeNote;
 import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
 // import frc.robot.commands.ButtonCommands.ClimbCommand;
 // import frc.robot.commands.ButtonCommands.HandoffProc;
@@ -44,6 +45,11 @@ import frc.robot.commands.ButtonCommands.ManualArmControl;
 import frc.robot.commands.ButtonCommands.OuttakeCommand;
 // import frc.robot.commands.ButtonCommands.OuttakeCommand;
 import frc.robot.commands.ButtonCommands.ShootCommand;
+import frc.robot.commands.Procedures.AlignArmForShot;
+import frc.robot.commands.Procedures.AlignWhileDriving;
+import frc.robot.commands.Procedures.SetIntakeFoldedInternal;
+import frc.robot.commands.Procedures.SetIntakeUnfolded;
+import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.commands.SetCommands.SetIntakeSpeed;
@@ -188,7 +194,7 @@ public class RobotContainer {
     m_driveJoystick
         .trigger()
         .toggleOnTrue(
-            new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem)
+            new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
         ).toggleOnFalse(
             new ParallelCommandGroup(
                 new SetIntakeUp(armSubsystem, intakeSubsystem),
@@ -296,7 +302,7 @@ public class RobotContainer {
   }
 
   private void addCommandsToAutoChooser() {
-    NamedCommands.registerCommand("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem));
+    NamedCommands.registerCommand("HandoffProc", new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem));
     NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem));
     NamedCommands.registerCommand(
         "UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));

@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Procedures;
 
 import static frc.robot.Constants.MARGIN_OF_ERROR_RADS;
 
