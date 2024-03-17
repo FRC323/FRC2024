@@ -72,6 +72,10 @@ public class ShooterSubsystem extends SubsystemBase{
      
     errors += check(rightShooterSpark.setSmartCurrentLimit(60));
     errors += check(leftShooterSpark.setSmartCurrentLimit(60));
+    errors += check(rightShooterEncoder.setAverageDepth(2));
+    errors += check(leftShooterEncoder.setAverageDepth(2));
+    errors += check(rightShooterEncoder.setMeasurementPeriod(16));
+    errors += check(leftShooterEncoder.setMeasurementPeriod(16));
 
     errors += check(rightShooterController.setFF(Shooter.kF));
     errors += check(rightShooterController.setP(Shooter.kP));   
