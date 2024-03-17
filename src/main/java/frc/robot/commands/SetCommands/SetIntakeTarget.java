@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.SetCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -26,7 +26,7 @@ public class SetIntakeTarget extends Command {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return intake.wristIsAtTarget();
     }
 }
 

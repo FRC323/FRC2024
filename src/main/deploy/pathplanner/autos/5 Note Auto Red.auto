@@ -20,12 +20,6 @@
         {
           "type": "named",
           "data": {
-            "name": "StartShooterWheelSpeaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "UnfoldIntake"
           }
         },

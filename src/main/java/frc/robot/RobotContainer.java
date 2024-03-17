@@ -34,8 +34,34 @@ import frc.robot.Constants.Intake;
 import frc.robot.commands.*;
 import frc.robot.commands.AutoCommands.ResetOdomFromLimelight;
 import frc.robot.commands.AutoCommands.ShootAuto;
+import frc.robot.commands.ButtonCommands.ClimbCommand;
+import frc.robot.commands.ButtonCommands.GotoAmpPose;
+import frc.robot.commands.ButtonCommands.IntakeNote;
+import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
+// import frc.robot.commands.ButtonCommands.ClimbCommand;
+// import frc.robot.commands.ButtonCommands.HandoffProc;
+// import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
+import frc.robot.commands.ButtonCommands.ManualArmControl;
+import frc.robot.commands.ButtonCommands.OuttakeCommand;
+// import frc.robot.commands.ButtonCommands.OuttakeCommand;
+import frc.robot.commands.ButtonCommands.ShootCommand;
+import frc.robot.commands.Procedures.AlignArmForShot;
+import frc.robot.commands.Procedures.AlignWhileDriving;
+import frc.robot.commands.Procedures.SetIntakeFoldedInternal;
+import frc.robot.commands.Procedures.SetIntakeUnfolded;
+import frc.robot.commands.Procedures.SetIntakeUp;
+import frc.robot.commands.SetCommands.SetArmTarget;
+import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.SetIntakeSpeed;
+import frc.robot.commands.SetCommands.SetIntakeTarget;
+import frc.robot.commands.SetCommands.SetShooterSpeed;
+import frc.robot.commands.StoreOffsetCommands.StoreArmOffset;
+import frc.robot.commands.StoreOffsetCommands.StoreIntakeOffset;
+import frc.robot.commands.StoreOffsetCommands.StoreDrivetrainOffsets;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.led.LedSubsystem;
 import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
@@ -52,11 +78,13 @@ public class RobotContainer {
 
   public final DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final ArmSubsystem armSubsystem = new ArmSubsystem();
+  public final FeederSubsystem feederSubsystem = new FeederSubsystem();
+  public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
   public final PoseEstimatorSubsystem poseEstimatorSubsystem =
       new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
-  private final LedSubsystem ledSubsystem = new LedSubsystem(armSubsystem);
+  private final LedSubsystem ledSubsystem = new LedSubsystem(feederSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // private final CommandXboxController m_operatorController =
@@ -80,8 +108,6 @@ public class RobotContainer {
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
           () -> Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()));
 
-  private GotoAmpPose gotoAmpPose = new GotoAmpPose(armSubsystem, intakeSubsystem);
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     addCommandsToAutoChooser();
@@ -90,6 +116,8 @@ public class RobotContainer {
     configureBindings();
     Shuffleboard.getTab("Subsystems").add(driveSubsystem.getName(), driveSubsystem);
     Shuffleboard.getTab("Subsystems").add(armSubsystem.getName(), armSubsystem);
+    Shuffleboard.getTab("Subsystems").add(feederSubsystem.getName(), feederSubsystem);
+    Shuffleboard.getTab("Subsystems").add(shooterSubsystem.getName(), shooterSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
     Shuffleboard.getTab("Subsystems").add(visionSubsystem.getName(), visionSubsystem);
     Shuffleboard.getTab("Subsystems").add(poseEstimatorSubsystem.getName(), poseEstimatorSubsystem);
@@ -121,11 +149,21 @@ public class RobotContainer {
             ,
             driveSubsystem));
 
-    // m_steerJoystick.trigger().whileTrue(
-    //   new AlignToTargetXOffset(
-    //     visionSubsystem, driveSubsystem, m_driveJoystick, Constants.AprilTags.Speaker.HEIGHT,
-    // Constants.AprilTags.Speaker.TAGS_CENTER)
-    //   );
+
+    shooterSubsystem.setDefaultCommand(
+        new SetShooterSpeed(shooterSubsystem, 0)
+    );
+
+    feederSubsystem.setDefaultCommand(
+        new SetFeederSpeed(feederSubsystem, 0)
+    );
+
+    intakeSubsystem.setDefaultCommand(
+        new SetIntakeSpeed(intakeSubsystem, 0)
+    );
+
+
+
     // Reset Gyro
     m_driveJoystick
         .button(DriveStick.RIGHT_SIDE_BUTTON)
@@ -143,130 +181,85 @@ public class RobotContainer {
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
                     // alignWhileDriving,
-                    new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem))
-                .finallyDo(() -> armSubsystem.setShooterSpeed(0)));
+                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, visionSubsystem))
+            );
 
-    // Shoot
+    // // Shoot
     m_driveJoystick
         .button(DriveStick.LEFT_SIDE_BUTTON)
         .onTrue(
-            new SequentialCommandGroup(
-                //    TODO: Verify this atShootSpeed works correctly
-                new WaitUntilCommand(() -> armSubsystem.atShootSpeed()),
-                new InstantCommand(
-                    () -> armSubsystem.setFeederSpeed(Constants.Arm.FEED_SHOOT_SPEED)),
-                new WaitUntilCommand(() -> !armSubsystem.isHoldingNote()),
-                // TODO: You may need to add a small wait time here
-                new ParallelCommandGroup(
-                    new SetShooterSpeed(armSubsystem, 0.0), new SetFeederSpeed(armSubsystem, 0.0))))
-        .onFalse(
-            new ParallelCommandGroup(
-                new SetShooterSpeed(armSubsystem, 0.0), new SetFeederSpeed(armSubsystem, 0.0)));
-    // Handoff Button
+            new ShootCommand(feederSubsystem,shooterSubsystem)
+        );
+    // // Handoff Button
     m_driveJoystick
         .trigger()
-        .whileTrue(
-            new HandoffProc(intakeSubsystem, armSubsystem)
-                .handleInterrupt(
-                    () -> {
-                      intakeSubsystem.setIntakeSpeed(0);
-                      armSubsystem.setFeederSpeed(0);
-                    }))
-        .whileFalse(
-            new SetIntakeFolded(intakeSubsystem, armSubsystem)
-                .handleInterrupt(
-                    () -> {
-                      armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
-                      intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
-                    }));
+        .toggleOnTrue(
+            new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
+        ).toggleOnFalse(
+            new ParallelCommandGroup(
+                new SetIntakeUp(armSubsystem, intakeSubsystem),
+                new SetFeederSpeed(feederSubsystem, 0)
+            )
+        );
 
     // Outtake
     m_driveJoystick
         .button(DriveStick.TOP_BIG_BUTTON)
         .whileTrue(
-            new SequentialCommandGroup(
-                new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
-                new SetArmTarget(armSubsystem, Constants.Arm.ARM_OUTAKE_POSE),
-                new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED),
-                new ConditionalCommand(
-                    new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_REVERSE_SPEED),
-                    new InstantCommand(),
-                    () -> armSubsystem.getArmAngleRads() <= Constants.Arm.ARM_OUTAKE_POSE),
-                new SetFeederSpeed(armSubsystem, Constants.Arm.FEEDER_REVERSE_SPEED),
-                new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.REVERSE_SPEED)))
-        .onFalse(
-            new ParallelCommandGroup(
-                new SetIntakeSpeed(intakeSubsystem, 0),
-                new SetFeederSpeed(armSubsystem, 0),
-                new SetShooterSpeed(armSubsystem, 0)));
+            new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
+        );
 
-    // Folded (Must be Held)
+    // Folded 
     m_driveJoystick
         .button(Constants.DriverConstants.DriveStick.BACK_SIDE_BUTTON)
         .onTrue(
-            new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem)
-                .handleInterrupt(
-                    () -> {
-                      armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
-                      intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
-                    }));
+            new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem, feederSubsystem)
+        );
 
-    // Arm Poses
+    // //Human Player Pickup 
     m_steerJoystick
         .button(SteerStick.MIDDLE)
-        .whileTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem))
-        .onFalse(new SetFeederSpeed(armSubsystem, 0));
+        .onTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem))
+        .onFalse(new SetIntakeUp(armSubsystem, intakeSubsystem));
 
-    // Amp Pose
+    // // Amp Pose
     m_steerJoystick
         .button(SteerStick.LEFT)
         .onTrue(
-            gotoAmpPose
-            // .handleInterrupt(
-            //   () -> {
-            //     armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
-            //     armSubsystem.setShooterSpeed(0);
-            //     intakeSubsystem.setTargetRads(intakeSubsystem.getWristAngleRads());
-            //   }
-            // )
-            )
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  armSubsystem.setShooterSpeed(0.0);
-                  armSubsystem.setTargetRads(armSubsystem.getArmAngleRads());
-                }));
+            new GotoAmpPose(armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem)
+        );
 
-    // Climb Button
+    // // Climb Button
     m_steerJoystick
         .button(SteerStick.RIGHT)
         .onTrue(
-            new SequentialCommandGroup(
-                new SetIntakeUnfolded(intakeSubsystem, armSubsystem),
-                new SetArmTarget(armSubsystem, Arm.ARM_CLIMB_POSE)))
-        .onFalse(new SetIntakeFolded(intakeSubsystem, armSubsystem));
+            new ClimbCommand(armSubsystem, intakeSubsystem)
+        )
+        .onFalse(
+            new SetIntakeUp(armSubsystem, intakeSubsystem)
+        );
 
-    // Manual Arm
-    m_driveJoystick
-        .button(DriveStick.UP_DIRECTIONAL)
-        .whileTrue(
-            new SequentialCommandGroup(
-                // new ConditionalCommand(
-                // new InstantCommand(),
-                // new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-                // () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-                // ),
-                new ManualArmControl(armSubsystem, true)));
-    m_driveJoystick
-        .button(DriveStick.DOWN_DIRECTIONAL)
-        .whileTrue(
-            new SequentialCommandGroup(
-                // new ConditionalCommand(
-                //   new InstantCommand(),
-                //   new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-                //   () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-                // ),
-                new ManualArmControl(armSubsystem, false)));
+    // // Manual Arm
+    // m_driveJoystick
+    //     .button(DriveStick.UP_DIRECTIONAL)
+    //     .whileTrue(
+    //         new SequentialCommandGroup(
+    //             // new ConditionalCommand(
+    //             // new InstantCommand(),
+    //             // new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+    //             // () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+    //             // ),
+    //             new ManualArmControl(armSubsystem, true)));
+    // m_driveJoystick
+    //     .button(DriveStick.DOWN_DIRECTIONAL)
+    //     .whileTrue(
+    //         new SequentialCommandGroup(
+    //             // new ConditionalCommand(
+    //             //   new InstantCommand(),
+    //             //   new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
+    //             //   () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
+    //             // ),
+    //             new ManualArmControl(armSubsystem, false)));
 
     m_driveJoystick
         .button(DriveStick.SMALL_TOP_BUTTON)
@@ -274,7 +267,7 @@ public class RobotContainer {
   }
 
   private void addShuffleBoardData() {
-    Shuffleboard.getTab("Buttons").add(new StoredDrivetrainOffsets(driveSubsystem));
+    Shuffleboard.getTab("Buttons").add(new StoreDrivetrainOffsets(driveSubsystem));
     Shuffleboard.getTab("Buttons").add(new StoreArmOffset(armSubsystem));
     Shuffleboard.getTab("Buttons").add(new StoreIntakeOffset(intakeSubsystem));
 
@@ -287,17 +280,17 @@ public class RobotContainer {
     Shuffleboard.getTab("Buttons")
         .add("Follow Path", PathFollowerCommands.followPathFromFile(driveSubsystem, "Test Path"));
 
-    Shuffleboard.getTab("Buttons").add("Shooter Slow", new SetShooterSpeed(armSubsystem, -.2));
-    Shuffleboard.getTab("Buttons").add("Shooter On", new SetShooterSpeed(armSubsystem, -1));
-    Shuffleboard.getTab("Buttons").add("Shooter Off", new SetShooterSpeed(armSubsystem, 0));
-    Shuffleboard.getTab("Buttons").add("Feeder On", new SetFeederSpeed(armSubsystem, -1.0));
-    Shuffleboard.getTab("Buttons").add("Feeder Off", new SetFeederSpeed(armSubsystem, 0));
+    Shuffleboard.getTab("Buttons").add("Shooter Slow", new SetShooterSpeed(shooterSubsystem, -.2));
+    Shuffleboard.getTab("Buttons").add("Shooter On", new SetShooterSpeed(shooterSubsystem, -1));
+    Shuffleboard.getTab("Buttons").add("Shooter Off", new SetShooterSpeed(shooterSubsystem, 0));
+    Shuffleboard.getTab("Buttons").add("Feeder On", new SetFeederSpeed(feederSubsystem, -1.0));
+    Shuffleboard.getTab("Buttons").add("Feeder Off", new SetFeederSpeed(feederSubsystem, 0));
     Shuffleboard.getTab("Buttons").add("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
     Shuffleboard.getTab("Buttons").add("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
     Shuffleboard.getTab("Buttons").add("Align While Driving", alignWhileDriving);
 
-    Shuffleboard.getTab("Buttons")
-        .add("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem));
+    // Shuffleboard.getTab("Buttons")
+        // .add("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem));
 
     Shuffleboard.getTab("Buttons")
         .add("ResetPose", new ResetOdomFromLimelight(poseEstimatorSubsystem));
@@ -309,40 +302,12 @@ public class RobotContainer {
   }
 
   private void addCommandsToAutoChooser() {
-    NamedCommands.registerCommand("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem));
-    //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
-    // NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
-    //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem,
-    // armSubsystem));
-    // NamedCommands.registerCommand("Align To Shoot", new AlignWhileDriving(driveSubsystem,
-    // armSubsystem, visionSubsystem, () -> driveSubsystem.getChassisSpeed().vxMetersPerSecond, ()
-    // -> driveSubsystem.getChassisSpeed().vyMetersPerSecond));
+    NamedCommands.registerCommand("HandoffProc", new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem));
     NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem));
-    NamedCommands.registerCommand(
-        "StartShooterWheelSpeaker",
-        new InstantCommand(
-            () -> {
-              armSubsystem.setShooterSpeed(Constants.Arm.Shooter.SHOOTER_SPEED);
-            },
-            armSubsystem));
     NamedCommands.registerCommand(
         "UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
     NamedCommands.registerCommand(
-        "RunIntake",
-        new InstantCommand(
-            () -> {
-              intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);
-            },
-            intakeSubsystem));
-    NamedCommands.registerCommand(
-        "RunFeeder",
-        new InstantCommand(
-            () -> {
-              armSubsystem.setFeederSpeed(Constants.Arm.FEEDER_INTAKE_SPEED);
-            },
-            armSubsystem));
-    NamedCommands.registerCommand(
-        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem));
+        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, visionSubsystem));
   }
 
   /**

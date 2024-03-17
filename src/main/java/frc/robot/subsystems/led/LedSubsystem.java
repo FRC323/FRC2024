@@ -6,18 +6,19 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.LimelightHelpers;
 
 public class LedSubsystem extends SubsystemBase {
     private final Spark _controller = new Spark(Constants.LED.BLINKIN_PORT);
     private LedColor _color;
-    private ArmSubsystem armSubsystem;
+    private FeederSubsystem feederSubsystem;
 
-    public LedSubsystem(ArmSubsystem armSubsystem) {
+    public LedSubsystem(FeederSubsystem feederSubsystem) {
         setToAlliance();
         _controller.setSafetyEnabled(false);
-        this.armSubsystem = armSubsystem;
+        this.feederSubsystem = feederSubsystem;
     }
 
     public void on(LedColor color) {
@@ -54,7 +55,7 @@ public class LedSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setToNote(armSubsystem.isHoldingNote());
+        setToNote(feederSubsystem.isHoldingNote());
         _controller.set(this._color.get());
     }
 }

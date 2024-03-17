@@ -1,12 +1,12 @@
-package frc.robot.commands;
+package frc.robot.commands.StoreOffsetCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
-public class StoredDrivetrainOffsets extends Command{
+public class StoreDrivetrainOffsets extends Command{
     private DriveSubsystem driveSubsystem;
 
-    public StoredDrivetrainOffsets(DriveSubsystem driveSubsystem){
+    public StoreDrivetrainOffsets(DriveSubsystem driveSubsystem){
         addRequirements(driveSubsystem);
         this.driveSubsystem = driveSubsystem;
         

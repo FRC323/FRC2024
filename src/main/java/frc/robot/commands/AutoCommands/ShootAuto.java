@@ -2,40 +2,42 @@ package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
-import frc.robot.commands.AlignArmForShot;
-import frc.robot.commands.AlignWhileDriving;
-import frc.robot.commands.SetFeederSpeed;
-import frc.robot.commands.SetShooterSpeed;
+import frc.robot.Constants.Feeder;
+import frc.robot.commands.Procedures.AlignArmForShot;
+import frc.robot.commands.Procedures.AlignWhileDriving;
+import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.SetShooterSpeed;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class ShootAuto extends SequentialCommandGroup{
-    public ShootAuto(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, VisionSubsystem visionSubsystem){
+    public ShootAuto(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, FeederSubsystem feederSubsystem, VisionSubsystem visionSubsystem){
         addCommands(
-            new SetShooterSpeed(armSubsystem, Constants.Arm.Shooter.SHOOTER_SPEED),
-            new ParallelRaceGroup(
-                // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0),
-                new AlignArmForShot(armSubsystem, intakeSubsystem, visionSubsystem),
+            new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                    new WaitCommand(0.1),
                     new WaitUntilCommand(
                         () -> armSubsystem.armIsAtTarget() 
-                        && armSubsystem.atShootSpeed(Constants.Arm.Shooter.SHOOTER_SPEED)
+                        && shooterSubsystem.atShootSpeed(Constants.Shooter.SHOOTER_SPEED)
                         && armSubsystem.armTargetValidSpeakerTarget()
                     ),
-                    new WaitCommand(0.25),
-                    new InstantCommand(()-> armSubsystem.setFeederSpeed(Arm.FEED_SHOOT_SPEED)),
-                    new WaitUntilCommand(()->!armSubsystem.isHoldingNote()),
-                    new InstantCommand(()-> armSubsystem.setFeederSpeed(0))
-                )
+                    new SetFeederSpeed(feederSubsystem, Feeder.FEED_SHOOT_SPEED),
+                    new WaitUntilCommand(()->!feederSubsystem.isHoldingNote()),
+                    new SetFeederSpeed(feederSubsystem, 0)
+                ),
+                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, visionSubsystem)
+                // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0)
             )
         );
     }

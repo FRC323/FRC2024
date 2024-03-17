@@ -25,7 +25,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
-import frc.robot.Constants.Arm.Shooter;
+import frc.robot.Constants.Feeder;
+import frc.robot.Constants.Shooter;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.utils.NoRolloverEncoder;
@@ -35,45 +36,20 @@ public class ArmSubsystem extends SubsystemBase {
   private ProfiledPIDController armController;
   private ArmFeedforward armFeedForward;
 
-  private SparkPIDController leftShooterController;
-  private SparkPIDController rightShooterController;
-  private RelativeEncoder leftShooterEncoder;
-  private RelativeEncoder rightShooterEncoder;
-
   // Hardware
   private CANSparkMax leftSpark;
   private CANSparkMax rightSpark;
-  private CANSparkMax leftShooterSpark;
-  private CANSparkMax rightShooterSpark;
-  private CANSparkMax feederSpark;
+
 
   //    private AbsoluteEncoder armEncoder;
   private DutyCycleEncoder armAbsoluteEncoder;
-  private DigitalInput beamBreakSensor;
   private double commandedVoltage = 0.0;
   private boolean voltageOveride = false;
-  private double targetShooterVelocity = 0.0;
-
-  // TODO: Play with this number, aim is that it takes us ~1/4 to second spin up
-  private SlewRateLimiter velocityRamp = new SlewRateLimiter(15000);
-  private double shooterVelocity = 0;
-
   //    private AbsoluteEncoderChecker encoderChecker;
 
   public ArmSubsystem() {
     leftSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_L, MotorType.kBrushless);
     rightSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_R, MotorType.kBrushless);
-    leftShooterSpark = new CANSparkMax(Arm.Shooter.Shooter_L_CAN_Id, MotorType.kBrushless);
-    rightShooterSpark = new CANSparkMax(Arm.Shooter.Shooter_R_CAN_Id, MotorType.kBrushless);
-    //Todo Add Right shooter spark
-    feederSpark = new CANSparkMax(Arm.Shooter.Feeder_CAN_Id, MotorType.kBrushless);
-
-    leftShooterController = leftShooterSpark.getPIDController();
-    rightShooterController = rightShooterSpark.getPIDController();
-
-    leftShooterEncoder = leftShooterSpark.getEncoder ();
-    rightShooterEncoder = rightShooterSpark.getEncoder();
-
     armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
     armController.setTolerance(0.20);
 
@@ -81,7 +57,6 @@ public class ArmSubsystem extends SubsystemBase {
     armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);
     armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Arm.OFFSET_KEY, 0.0));
 
-    beamBreakSensor = new DigitalInput(Arm.BEAM_BREAK_PORT);
 
     initWithRetry(this::initSparks, 5);
     armController.setGoal(getArmAngleRads());
@@ -92,13 +67,7 @@ public class ArmSubsystem extends SubsystemBase {
     Preferences.setDouble(Arm.OFFSET_KEY, armAbsoluteEncoder.getPositionOffset());
   }
 
-  public void setFeederSpeed(double vel) {
-    feederSpark.set(vel);
-  }
-
-  public void setShooterSpeed(double vel) {
-    targetShooterVelocity = vel;
-  }
+  
 
   public double getArmAngleRads() {
     return armAbsoluteEncoder.get() * (2 * Math.PI);
@@ -108,22 +77,9 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     if(!voltageOveride){
       commandedVoltage = armController.calculate(getArmAngleRads())
-      // TODO: If you re-enable this (and we should) it'll require a retune of the arm, punch it to
-      // kp:0.1 and up slowly
-                + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity)
-      //            + (Arm.kG * Math.cos(getArmAngleRads())
-      ;
+                + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity);
     }
-    leftSpark.setVoltage(commandedVoltage);
-
-    if(!isHoldingNote()){
-      LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
-    }
-
-//    TODO: If ramping is causing issues, just set the references to targetVelocity
-    shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
-    leftShooterController.setReference(shooterVelocity,ControlType.kVelocity);
-    rightShooterController.setReference(shooterVelocity,ControlType.kVelocity);
+    leftSpark.setVoltage(commandedVoltage); 
   }
 
   public void setTargetRads(double rads) {
@@ -152,21 +108,7 @@ public class ArmSubsystem extends SubsystemBase {
     && goal != Arm.ARM_INTAKE_UNFOLDING_POSE
     && goal != Arm.ARM_HUMAN_PLAYER_POSE
     && goal != Arm.ARM_CLIMB_POSE;
-  }
-
-  public boolean atShootSpeed(){
-    return atShootSpeed(targetShooterVelocity);
-  }
-
-  public boolean atShootSpeed(double shooterRPM){
-    return 
-      leftShooterEncoder.getVelocity() >= shooterRPM * 0.95
-      && rightShooterEncoder.getVelocity() >= shooterRPM * 0.95;
-  }
-
-  public boolean isHoldingNote(){
-    return beamBreakSensor.get();
-  }
+  } 
 
   public void burnFlash() {
     Timer.delay(0.005);
@@ -177,34 +119,14 @@ public class ArmSubsystem extends SubsystemBase {
 
   private boolean initSparks() {
     int errors = 0;
-    // TODO: Config all
     errors += check(leftSpark.restoreFactoryDefaults());
     errors += check(rightSpark.restoreFactoryDefaults());
-    errors += check(leftShooterSpark.restoreFactoryDefaults());
-    errors += check(rightShooterSpark.restoreFactoryDefaults());
-    errors += check(feederSpark.restoreFactoryDefaults());
-    errors += check(rightSpark.follow(leftSpark, true));
+   errors += check(rightSpark.follow(leftSpark, true));
     leftSpark.setInverted(true); //TODO: Add to constant
     // errors += check(rightShooterSpark.follow(leftShooterSpark,false));
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
     // errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
     // errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
-
-    errors += check(rightShooterSpark.setSmartCurrentLimit(60));
-    errors += check(leftShooterSpark.setSmartCurrentLimit(60));
-
-    errors += check(rightShooterController.setFF(Shooter.kF));
-    errors += check(rightShooterController.setP(Shooter.kP));   
-    errors += check(rightShooterController.setI(Shooter.kI));
-    errors += check(rightShooterController.setD(Shooter.kD));
-
-    errors += check(leftShooterController.setFF(Shooter.kF));
-    errors += check(leftShooterController.setP(Shooter.kP));   
-    errors += check(leftShooterController.setI(Shooter.kI));
-    errors += check(leftShooterController.setD(Shooter.kD));
-
-    leftShooterSpark.setInverted(true);
-    rightShooterSpark.setInverted(true);
 
     return errors == 0;
 
@@ -248,13 +170,6 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Arm Current R", rightSpark::getOutputCurrent, null);
     builder.addBooleanProperty("Arm Encoder Plugged In", armAbsoluteEncoder::isConnected, null);
 
-    builder.addBooleanProperty("Beam Blocked", ()-> beamBreakSensor.get(), null);
-    builder.addBooleanProperty("Is Holding Note", this::isHoldingNote, null);
-    builder.addDoubleProperty("ShooterVelocity L",leftShooterEncoder::getVelocity, null);
-    builder.addDoubleProperty("ShooterVelocity R",rightShooterEncoder::getVelocity, null);
-    builder.addDoubleProperty("Shooter Current L", leftShooterSpark::getOutputCurrent,null);
-    builder.addDoubleProperty("Shooter Current R", rightShooterSpark::getOutputCurrent, null);
 
-    builder.addDoubleProperty("Feeder Current", feederSpark::getOutputCurrent, null);
   }
 }

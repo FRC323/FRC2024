@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.SetCommands;
 
 import java.util.function.DoubleSupplier;
 
@@ -34,7 +34,7 @@ public class SetArmTarget extends Command {
 
     @Override
     public boolean isFinished(){
-        return true;
+        return this.arm.armIsAtTarget();
     }    
 
 }

@@ -72,7 +72,7 @@ public class ShotState {
     return new ShotState(
         chassisAngle,
         Rotation2d.fromRadians(armAngleInterpolation.get(Units.metersToInches(rangeToTarget))),
-        Constants.Arm.Shooter.SHOOTER_SPEED);
+        Constants.Shooter.SHOOTER_SPEED);
   }
 
   private static InterpolatingDoubleTreeMap initializeInterpolator() {
