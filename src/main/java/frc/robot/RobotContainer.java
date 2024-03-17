@@ -296,33 +296,12 @@ public class RobotContainer {
   }
 
   private void addCommandsToAutoChooser() {
-    // NamedCommands.registerCommand("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem));
-    //   NamedCommands.registerCommand("ShootAmp", new ShootAmp(armSubsystem));
-    // NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(armSubsystem));
-    //   NamedCommands.registerCommand("Fold Intake", new SetIntakeFolded(intakeSubsystem,
-    // armSubsystem));
-    // NamedCommands.registerCommand("Align To Shoot", new AlignWhileDriving(driveSubsystem,
-    // armSubsystem, visionSubsystem, () -> driveSubsystem.getChassisSpeed().vxMetersPerSecond, ()
-    // -> driveSubsystem.getChassisSpeed().vyMetersPerSecond));
+    NamedCommands.registerCommand("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem));
     NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem));
     NamedCommands.registerCommand(
         "UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
     NamedCommands.registerCommand(
-        "RunIntake",
-        new InstantCommand(
-            () -> {
-              intakeSubsystem.setIntakeSpeed(Constants.Intake.INTAKE_SPEED);
-            },
-            intakeSubsystem));
-    NamedCommands.registerCommand(
-        "RunFeeder",
-        new InstantCommand(
-            () -> {
-              feederSubsystem.setFeederSpeed(Constants.Feeder.FEEDER_INTAKE_SPEED);
-            },
-            armSubsystem));
-    // NamedCommands.registerCommand(
-        // "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, visionSubsystem));
+        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, visionSubsystem));
   }
 
   /**

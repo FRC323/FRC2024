@@ -2,7 +2,9 @@ package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -23,22 +25,19 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 public class ShootAuto extends SequentialCommandGroup{
     public ShootAuto(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, FeederSubsystem feederSubsystem, VisionSubsystem visionSubsystem){
         addCommands(
-            new SetShooterSpeed(shooterSubsystem, Constants.Shooter.SHOOTER_SPEED),
-            new ParallelRaceGroup(
-                // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0),
-                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, visionSubsystem),
+            new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                    new WaitCommand(0.1),
                     new WaitUntilCommand(
                         () -> armSubsystem.armIsAtTarget() 
                         && shooterSubsystem.atShootSpeed(Constants.Shooter.SHOOTER_SPEED)
                         && armSubsystem.armTargetValidSpeakerTarget()
                     ),
-                    new WaitCommand(0.25),
-                    new InstantCommand(()-> feederSubsystem.setFeederSpeed(Feeder.FEED_SHOOT_SPEED)),
+                    new SetFeederSpeed(feederSubsystem, Feeder.FEED_SHOOT_SPEED),
                     new WaitUntilCommand(()->!feederSubsystem.isHoldingNote()),
-                    new InstantCommand(()-> feederSubsystem.setFeederSpeed(0))
-                )
+                    new SetFeederSpeed(feederSubsystem, 0)
+                ),
+                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, visionSubsystem)
+                // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0)
             )
         );
     }
