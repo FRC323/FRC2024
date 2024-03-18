@@ -89,6 +89,13 @@ public class PhotonPoseEstimatorSubsystem extends SubsystemBase{
             || Math.abs(differenceInTranslation.getY()) > 1.0
         ) return;
 
+        //make sure est pose is within field boundaries
+        if (optionalEstimatedPose.get().estimatedPose.toPose2d().getX() > aprilTagFieldLayout.getFieldLength())
+            return;
+
+        if (optionalEstimatedPose.get().estimatedPose.toPose2d().getY() > aprilTagFieldLayout.getFieldWidth())
+            return;
+
         poseEstimator.addVisionMeasurement(optionalEstimatedPose.get().estimatedPose.toPose2d(),timestamp,visionMeasurementStdDevs);
     }
 
