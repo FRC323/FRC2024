@@ -334,7 +334,6 @@ public final class Constants {
     public static final double kS = 0.0;
     public static double kV = 0.0;//0.1;//0.73;
      public static double kA =  0.01;
-//    TODO: We should check this
-     public static double kG = 0.03; //0.1 //0.57; //0.25
+     public static double kG = 0.033; //0.03  //0.1 //0.57; //0.25
   }
 }
