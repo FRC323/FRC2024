@@ -228,6 +228,8 @@ public class RobotContainer {
         .button(SteerStick.LEFT)
         .onTrue(
             new GotoAmpPose(armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem)
+        ).onFalse(
+            new SetShooterSpeed(shooterSubsystem, 0.0)
         );
 
     // // Climb Button
