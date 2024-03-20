@@ -42,6 +42,7 @@ import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
 // import frc.robot.commands.ButtonCommands.HandoffProc;
 // import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
 import frc.robot.commands.ButtonCommands.ManualArmControl;
+import frc.robot.commands.ButtonCommands.ManualIntakeControl;
 import frc.robot.commands.ButtonCommands.OuttakeCommand;
 // import frc.robot.commands.ButtonCommands.OuttakeCommand;
 import frc.robot.commands.ButtonCommands.ShootCommand;
@@ -218,7 +219,7 @@ public class RobotContainer {
 
     // //Human Player Pickup 
     m_steerJoystick
-        .button(SteerStick.MIDDLE)
+        .button(SteerStick.RIGHT)
         .onTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem))
         .onFalse(new SetIntakeUp(armSubsystem, intakeSubsystem));
 
@@ -230,8 +231,8 @@ public class RobotContainer {
         );
 
     // // Climb Button
-    m_steerJoystick
-        .button(SteerStick.RIGHT)
+    m_driveJoystick
+        .button(DriveStick.SMALL_TOP_BUTTON)
         .onTrue(
             new ClimbCommand(armSubsystem, intakeSubsystem)
         )
@@ -240,30 +241,34 @@ public class RobotContainer {
         );
 
     // // Manual Arm
-    // m_driveJoystick
-    //     .button(DriveStick.UP_DIRECTIONAL)
-    //     .whileTrue(
-    //         new SequentialCommandGroup(
-    //             // new ConditionalCommand(
-    //             // new InstantCommand(),
-    //             // new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-    //             // () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-    //             // ),
-    //             new ManualArmControl(armSubsystem, true)));
-    // m_driveJoystick
-    //     .button(DriveStick.DOWN_DIRECTIONAL)
-    //     .whileTrue(
-    //         new SequentialCommandGroup(
-    //             // new ConditionalCommand(
-    //             //   new InstantCommand(),
-    //             //   new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem),
-    //             //   () -> intakeSubsystem.getWristAngleRads() < Intake.FOLDED_POSE_INTERNAL + 0.2
-    //             // ),
-    //             new ManualArmControl(armSubsystem, false)));
-
     m_driveJoystick
-        .button(DriveStick.SMALL_TOP_BUTTON)
-        .onTrue(new ResetOdomFromLimelight(poseEstimatorSubsystem));
+        .button(DriveStick.UP_DIRECTIONAL)
+        .whileTrue(
+            new SequentialCommandGroup(
+                new ManualArmControl(armSubsystem, true)));
+    m_driveJoystick
+        .button(DriveStick.DOWN_DIRECTIONAL)
+        .whileTrue(
+            new SequentialCommandGroup(
+                new ManualArmControl(armSubsystem, false)));
+    //Manual Intake
+    m_driveJoystick
+        .povUp()
+        .whileTrue(
+            new ManualIntakeControl(intakeSubsystem, true)
+        );
+    
+    m_driveJoystick
+        .povDown()
+        .whileTrue(
+            new ManualIntakeControl(intakeSubsystem, false)
+        );
+    
+
+    // m_driveJoystick
+    //     .button(DriveStick.SMALL_TOP_BUTTON)
+        // .onTrue(new ResetOdomFromLimelight(poseEstimatorSubsystem));
+        
   }
 
   private void addShuffleBoardData() {
