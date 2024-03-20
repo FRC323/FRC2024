@@ -19,7 +19,7 @@ public class ManualIntakeControl extends Command{
     public void execute(){
         intakeSubsystem
         .setTargetRads(
-            intakeSubsystem.getWristAngleRads() + (direction ? -0.10 : 0.10)
+            intakeSubsystem.getWristAngleRads() + (direction ? -0.20 : 0.20)
         );
         
     }
