@@ -26,7 +26,11 @@ public class GotoAmpPose extends SequentialCommandGroup{
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
             new ParallelCommandGroup(
                 new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE),
-                new SetShooterSpeed(shooterSubsystem, Constants.Shooter.AMP_SPEED)
+                new SetShooterSpeed(shooterSubsystem, Constants.Shooter.AMP_SPEED),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE),
+                    new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
+                )
             ),
             new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
             new WaitCommand(0.15),
