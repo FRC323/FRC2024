@@ -13,8 +13,9 @@ import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.Procedures.AdjustFeederNote;
+import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.Procedures.FeedUntilNote;
-import frc.robot.commands.Procedures.CheckIntakeOutside;
+import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
@@ -27,7 +28,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakeNote extends SequentialCommandGroup{
     public IntakeNote(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem,FeederSubsystem feederSubsystem){
         addCommands(
-            new CheckIntakeOutside(armSubsystem, intakeSubsystem),
+            new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.UNFOLDED_POSE),
             new ParallelCommandGroup(
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
                 new SequentialCommandGroup(

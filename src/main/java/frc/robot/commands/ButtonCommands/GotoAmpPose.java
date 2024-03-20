@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
-import frc.robot.commands.Procedures.CheckIntakeOutside;
+import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
@@ -22,7 +22,7 @@ public class GotoAmpPose extends SequentialCommandGroup{
     public GotoAmpPose(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
             // new GotoArmIntakeState(armSubsystem, intakeSubsystem, Arm.ARM_AMP_POSE, Intake.SHOOTING_POSE),
-            new CheckIntakeOutside(armSubsystem, intakeSubsystem),
+            new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.SHOOTING_POSE),
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
             new ParallelCommandGroup(
                 new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE),
