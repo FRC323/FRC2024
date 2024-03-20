@@ -40,10 +40,8 @@ public class IntakeNote extends SequentialCommandGroup{
                 new FeedUntilNote(feederSubsystem),
                 new SetIntakeSpeed(intakeSubsystem, Intake.INTAKE_SPEED)
             ),
-            new SetIntakeSpeed(intakeSubsystem, 0),
-            new AdjustFeederNote(feederSubsystem),
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
-
+            new SetIntakeSpeed(intakeSubsystem, Intake.OUTTAKE_SPEED),
+            new AdjustFeederNote(feederSubsystem)
         );
 
     }
