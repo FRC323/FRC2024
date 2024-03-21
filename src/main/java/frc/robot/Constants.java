@@ -321,12 +321,12 @@ public final class Constants {
 
     public static final double UNFOLDED_POSE = 3.01;
     public static final double FOLDED_POSE_INTERNAL = 0.02; 
-    public static final double SHOOTING_POSE = 1.6;
+    public static final double SHOOTING_POSE = 1.65;
     public static final double FOLDED_POSE = 0.92;
 
     //Danger Zones
-    public static final double START_DANGER_ZONE = 2.0;
-    public static final double END_DANGER_ZONE = 2.2;
+    // public static final double START_DANGER_ZONE = 2.0;
+    // public static final double END_DANGER_ZONE = 2.2;
     
     public static final double INTAKE_SPEED = 0.5;
     public static final double OUTTAKE_SPEED = -0.5;
@@ -334,7 +334,6 @@ public final class Constants {
     public static final double kS = 0.0;
     public static double kV = 0.0;//0.1;//0.73;
      public static double kA =  0.01;
-//    TODO: We should check this
-     public static double kG = 0.03; //0.1 //0.57; //0.25
+     public static double kG = 0.033; //0.03  //0.1 //0.57; //0.25
   }
 }

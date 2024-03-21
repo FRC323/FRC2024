@@ -92,7 +92,21 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.armSubsystem.enableCoast();
+    //Prevents movement on startup
+    m_robotContainer.armSubsystem.setTargetRads(
+      m_robotContainer.armSubsystem.getArmAngleRads()
+    );
+
+    var armCommand = m_robotContainer.armSubsystem.getCurrentCommand();
+    if(armCommand != null) armCommand.cancel();
+
+    m_robotContainer.intakeSubsystem.setTargetRads(
+      m_robotContainer.intakeSubsystem.getWristAngleRads()
+    );
+
+    var intakeCommand = m_robotContainer.armSubsystem.getCurrentCommand();
+    if(intakeCommand != null) intakeCommand.cancel();
+    // m_robotContainer.armSubsystem.enableCoast();
   }
 
   /** This function is called periodically during operator control. */

@@ -16,7 +16,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class SetIntakeUp extends SequentialCommandGroup{
     public SetIntakeUp(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem){
         addCommands(
-            new CheckIntakeOutside(armSubsystem, intakeSubsystem),
+            new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.SHOOTING_POSE),
             new SetArmTarget(armSubsystem, Arm.ARM_DOWN_POSE),
             new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE)            
         );
