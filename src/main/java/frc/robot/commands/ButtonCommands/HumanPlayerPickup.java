@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
+import frc.robot.Constants.Feeder;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
@@ -24,7 +25,8 @@ public class HumanPlayerPickup extends SequentialCommandGroup{
             new SetIntakeTarget(intake, Intake.FOLDED_POSE_INTERNAL),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            new AdjustFeederNote(feederSubsystem)
+            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
+            // new AdjustFeederNote(feederSubsystem)
         );
     }
 }

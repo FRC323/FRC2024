@@ -27,7 +27,9 @@ public class FeederSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        if(!isHoldingNote()){
+        if(isHoldingNote()){
+            PoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
+        }else{
             PoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kOff);
         }
     }
