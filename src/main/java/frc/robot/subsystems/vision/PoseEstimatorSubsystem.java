@@ -30,7 +30,7 @@ import frc.robot.Constants.Vision;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.utils.ShotState;
 
-public class PhotonPoseEstimatorSubsystem extends SubsystemBase{ 
+public class PoseEstimatorSubsystem extends SubsystemBase{ 
     // private static PhotonCamera frontRightPhotonCamera = new PhotonCamera("Front Right Camera");
     // private static PhotonCamera frontLeftPhotonCamera = new PhotonCamera("Front Left Camera");
     private static PhotonCamera backPhotonCamera = new PhotonCamera("BackCamera");
@@ -60,7 +60,7 @@ public class PhotonPoseEstimatorSubsystem extends SubsystemBase{
 
 
 
-    public PhotonPoseEstimatorSubsystem(DriveSubsystem driveSubsystem){
+    public PoseEstimatorSubsystem(DriveSubsystem driveSubsystem){
         poseEstimator = new SwerveDrivePoseEstimator(
             Constants.Swerve.DRIVE_KINEMATICS,
             Rotation2d.fromDegrees(driveSubsystem.getGyroYaw()),

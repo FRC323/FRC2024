@@ -1,13 +1,13 @@
 package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.vision.PhotonPoseEstimatorSubsystem;
+import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 
 public class ResetOdomFromLimelight extends Command{
-    private PhotonPoseEstimatorSubsystem poseEstimatorSubsystem;
+    private PoseEstimatorSubsystem poseEstimatorSubsystem;
     private boolean finished = false;
 
-    public ResetOdomFromLimelight(PhotonPoseEstimatorSubsystem poseEstimatorSubsystem){
+    public ResetOdomFromLimelight(PoseEstimatorSubsystem poseEstimatorSubsystem){
         this.poseEstimatorSubsystem = poseEstimatorSubsystem;
         addRequirements(poseEstimatorSubsystem);
     }

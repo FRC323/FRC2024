@@ -65,7 +65,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.led.LedSubsystem;
-import frc.robot.subsystems.vision.PhotonPoseEstimatorSubsystem;
+import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -84,8 +84,8 @@ public class RobotContainer {
 //   public final VisionSubsystem visionSubsystem = new VisionSubsystem();
 //   public final PoseEstimatorSubsystem poseEstimatorSubsystem =
 //       new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
-  public final PhotonPoseEstimatorSubsystem photonPoseEstimatorSubsystem =
-      new PhotonPoseEstimatorSubsystem(driveSubsystem);
+  public final PoseEstimatorSubsystem photonPoseEstimatorSubsystem =
+      new PoseEstimatorSubsystem(driveSubsystem);
   private final LedSubsystem ledSubsystem = new LedSubsystem(feederSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
