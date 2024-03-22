@@ -28,7 +28,7 @@ public class AlignArmForShot extends SequentialCommandGroup{
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE),
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE), 
-            // new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
+            new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
             new RepeatCommand(
                 new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
             )
