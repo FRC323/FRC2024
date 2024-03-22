@@ -125,7 +125,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
         // if (multiTagResults.get().estimatedPose.toPose2d().getY() > aprilTagFieldLayout.getFieldWidth())
         //     return;
 
-        poseEstimator.addVisionMeasurement(camPose.toPose2d(),imageCaptureTime,visionMeasurementStdDevs);
+        poseEstimator.addVisionMeasurement(robotPose.toPose2d(),imageCaptureTime,visionMeasurementStdDevs);
 
         this.computeShotState(driveSubsystem, getEstimatedPose2d());
     }
