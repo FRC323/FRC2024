@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static frc.robot.utils.SparkMaxUtils.check;
 
+import org.photonvision.common.hardware.VisionLEDMode;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -9,8 +11,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Feeder;
-import frc.robot.subsystems.vision.Limelight;
-import frc.robot.subsystems.vision.LimelightHelpers;;
+import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 
 
 public class FeederSubsystem extends SubsystemBase{  
@@ -27,7 +28,7 @@ public class FeederSubsystem extends SubsystemBase{
     @Override
     public void periodic(){
         if(!isHoldingNote()){
-        LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
+            PoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kOff);
         }
     }
 

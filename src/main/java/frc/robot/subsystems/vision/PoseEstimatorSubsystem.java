@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -33,7 +34,7 @@ import frc.robot.utils.ShotState;
 public class PoseEstimatorSubsystem extends SubsystemBase{ 
     // private static PhotonCamera frontRightPhotonCamera = new PhotonCamera("Front Right Camera");
     // private static PhotonCamera frontLeftPhotonCamera = new PhotonCamera("Front Left Camera");
-    private static PhotonCamera backPhotonCamera = new PhotonCamera("BackCamera");
+    public static PhotonCamera backPhotonCamera = new PhotonCamera("BackCamera");
 
 
     private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
@@ -83,7 +84,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
             driveSubsystem.resetOdometry(poseEstimator.getEstimatedPosition());
             // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
           }
-
     }
 
     public void updateOdometry(){
