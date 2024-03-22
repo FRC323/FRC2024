@@ -20,25 +20,32 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 
 public class ShootAuto extends SequentialCommandGroup{
-    public ShootAuto(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, FeederSubsystem feederSubsystem, VisionSubsystem visionSubsystem){
-        addCommands(
-            new ParallelDeadlineGroup(
-                new SequentialCommandGroup(
-                    new WaitUntilCommand(
-                        () -> armSubsystem.armIsAtTarget() 
-                        && shooterSubsystem.atShootSpeed(Constants.Shooter.SHOOTER_SPEED)
-                        && armSubsystem.armTargetValidSpeakerTarget()
+    public ShootAuto(
+        DriveSubsystem driveSubsystem,
+        ArmSubsystem armSubsystem, 
+        IntakeSubsystem intakeSubsystem, 
+        ShooterSubsystem shooterSubsystem, 
+        FeederSubsystem feederSubsystem, 
+        PoseEstimatorSubsystem poseEstimatorSubsystem
+        ){ 
+            addCommands(
+                new ParallelDeadlineGroup(
+                    new SequentialCommandGroup(
+                        new WaitUntilCommand(
+                            () -> armSubsystem.armIsAtTarget() 
+                            && shooterSubsystem.atShootSpeed(Constants.Shooter.SHOOTER_SPEED)
+                            && armSubsystem.armTargetValidSpeakerTarget()
+                        ),
+                        new SetFeederSpeed(feederSubsystem, Feeder.FEED_SHOOT_SPEED),
+                        new WaitUntilCommand(()->!feederSubsystem.isHoldingNote()),
+                        new SetFeederSpeed(feederSubsystem, 0)
                     ),
-                    new SetFeederSpeed(feederSubsystem, Feeder.FEED_SHOOT_SPEED),
-                    new WaitUntilCommand(()->!feederSubsystem.isHoldingNote()),
-                    new SetFeederSpeed(feederSubsystem, 0)
-                ),
-                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, visionSubsystem)
-                // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0)
-            )
-        );
+                    new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, poseEstimatorSubsystem)
+                    // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0)
+                )
+            );
     }
 }

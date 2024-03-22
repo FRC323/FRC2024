@@ -3,6 +3,8 @@ package frc.robot.commands.Procedures;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
+import org.photonvision.PhotonPoseEstimator;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -17,13 +19,12 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.utils.ShotState;
 
 public class AlignWhileDriving extends SequentialCommandGroup{
     public AlignWhileDriving(
         DriveSubsystem driveSubsystem,
-        VisionSubsystem visionSubsystem,
+        PoseEstimatorSubsystem poseEstimatorSubsystem,
         DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vTheta
     ){
         addCommands(
@@ -34,11 +35,11 @@ public class AlignWhileDriving extends SequentialCommandGroup{
                     driveSubsystem.driveWithHeading(
                         vx.getAsDouble(),
                         vy.getAsDouble(),
-                        Rotation2d.fromRadians(visionSubsystem.get_heading()),
+                        Rotation2d.fromRadians(poseEstimatorSubsystem.get_heading()),
                         true
                     )
                 ),
-                () -> !visionSubsystem.isShotStateValid()
+                () -> !poseEstimatorSubsystem.isShotStateValid()
             )
         );
     }

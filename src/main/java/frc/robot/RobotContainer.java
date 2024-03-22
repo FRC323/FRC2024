@@ -66,7 +66,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.led.LedSubsystem;
 import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -82,9 +81,11 @@ public class RobotContainer {
   public final FeederSubsystem feederSubsystem = new FeederSubsystem();
   public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  public final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
-  public final PoseEstimatorSubsystem poseEstimatorSubsystem =
-      new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
+//   public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+//   public final PoseEstimatorSubsystem poseEstimatorSubsystem =
+//       new PoseEstimatorSubsystem(driveSubsystem, visionSubsystem);
+  public final PoseEstimatorSubsystem photonPoseEstimatorSubsystem =
+      new PoseEstimatorSubsystem(driveSubsystem);
   private final LedSubsystem ledSubsystem = new LedSubsystem(feederSubsystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -104,7 +105,7 @@ public class RobotContainer {
   private AlignWhileDriving alignWhileDriving =
       new AlignWhileDriving(
           driveSubsystem,
-          visionSubsystem,
+          photonPoseEstimatorSubsystem,
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
           () -> Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()));
@@ -120,8 +121,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Subsystems").add(feederSubsystem.getName(), feederSubsystem);
     Shuffleboard.getTab("Subsystems").add(shooterSubsystem.getName(), shooterSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
-    Shuffleboard.getTab("Subsystems").add(visionSubsystem.getName(), visionSubsystem);
-    Shuffleboard.getTab("Subsystems").add(poseEstimatorSubsystem.getName(), poseEstimatorSubsystem);
+    Shuffleboard.getTab("Subsystems").add(photonPoseEstimatorSubsystem.getName(),photonPoseEstimatorSubsystem);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     addShuffleBoardData();
@@ -182,7 +182,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
                     // alignWhileDriving,
-                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, visionSubsystem))
+                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, photonPoseEstimatorSubsystem))
             );
 
     // // Shoot
@@ -300,7 +300,7 @@ public class RobotContainer {
         // .add("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem));
 
     Shuffleboard.getTab("Buttons")
-        .add("ResetPose", new ResetOdomFromLimelight(poseEstimatorSubsystem));
+        .add("ResetPose", new ResetOdomFromLimelight(photonPoseEstimatorSubsystem));
 
     Shuffleboard.getTab("Buttons").add("Auto Chooser", autoChooser);
 
@@ -310,11 +310,11 @@ public class RobotContainer {
 
   private void addCommandsToAutoChooser() {
     NamedCommands.registerCommand("HandoffProc", new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem));
-    NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem));
+    NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(photonPoseEstimatorSubsystem));
     NamedCommands.registerCommand(
         "UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
     NamedCommands.registerCommand(
-        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, visionSubsystem));
+        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, photonPoseEstimatorSubsystem));
   }
 
   /**
