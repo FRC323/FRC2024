@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class ShotState {
   private final Rotation2d _heading;
