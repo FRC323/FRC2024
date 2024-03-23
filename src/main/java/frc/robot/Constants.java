@@ -240,7 +240,7 @@ public final class Constants {
 
     // Profiled PID Constants 
     public static final double kP = 22.0;
-    public static final double kI = 8.0;
+    public static final double kI = 16.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
     public static final String OFFSET_KEY = "Arm_Offset";
