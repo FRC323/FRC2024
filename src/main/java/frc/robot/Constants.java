@@ -64,11 +64,11 @@ public final class Constants {
     public static final int APRIL_TAG_PIPELINE = 0;
     public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
     public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
-    public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.40,5.52);
+    public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.50,5.52);
     public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
 
     //Todo
-    public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(0.1661,0.0,0.4616, new Rotation3d(0.0,25.52,0.0));
+    public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,25.52,0.0));
     public static final Transform3d FRONT_RIGHT_CAMERA_TO_ROBOT = new Transform3d();
     public static final Transform3d FRONT_LEFT_CAMERA_TO_ROBOT = new Transform3d();
   }
@@ -240,7 +240,7 @@ public final class Constants {
 
     // Profiled PID Constants 
     public static final double kP = 22.0;
-    public static final double kI = 8.0;
+    public static final double kI = 16.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
     public static final String OFFSET_KEY = "Arm_Offset";

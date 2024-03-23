@@ -33,7 +33,6 @@ public class GotoAmpPose extends SequentialCommandGroup{
                 )
             ),
             new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
-            new WaitCommand(0.15),
             new SetIntakeUp(armSubsystem, intakeSubsystem)
         );
     }

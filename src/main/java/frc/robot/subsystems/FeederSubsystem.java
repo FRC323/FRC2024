@@ -5,6 +5,7 @@ import static frc.robot.utils.SparkMaxUtils.check;
 import org.photonvision.common.hardware.VisionLEDMode;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -27,7 +28,9 @@ public class FeederSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        if(!isHoldingNote()){
+        if(isHoldingNote()){
+            PoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
+        }else{
             PoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kOff);
         }
     }
@@ -43,6 +46,7 @@ public class FeederSubsystem extends SubsystemBase{
     private boolean initSparks(){
         int errors = 0;
         errors += check(feederSpark.restoreFactoryDefaults());
+        feederSpark.setIdleMode(IdleMode.kBrake);
         return errors == 0;
     }
 

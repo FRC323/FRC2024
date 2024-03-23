@@ -16,6 +16,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -55,9 +56,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
 
     private static ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
 
-    private SlewRateLimiter headingLimiter = new SlewRateLimiter(4.0 * Math.PI);
-    private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(4.0 * Math.PI);
-    private SlewRateLimiter shooterSpeedLimiter = new SlewRateLimiter(1.0);
+    private MedianFilter headingLimiter = new MedianFilter(10);
+    private MedianFilter armAngleLimiter = new MedianFilter(10);
+    private MedianFilter shooterSpeedLimiter = new MedianFilter(10);
 
 
 
@@ -125,7 +126,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
         // if (multiTagResults.get().estimatedPose.toPose2d().getY() > aprilTagFieldLayout.getFieldWidth())
         //     return;
 
-        poseEstimator.addVisionMeasurement(camPose.toPose2d(),imageCaptureTime,visionMeasurementStdDevs);
+        poseEstimator.addVisionMeasurement(robotPose.toPose2d(),imageCaptureTime,visionMeasurementStdDevs);
 
         this.computeShotState(driveSubsystem, getEstimatedPose2d());
     }

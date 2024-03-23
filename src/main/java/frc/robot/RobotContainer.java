@@ -183,7 +183,10 @@ public class RobotContainer {
                     // TODO: Bring this back in but post verifying functionality
                     // alignWhileDriving,
                 new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, photonPoseEstimatorSubsystem))
-            );
+            )
+        .onFalse(
+            new SetIntakeUp(armSubsystem, intakeSubsystem)
+        );
 
     // // Shoot
     m_driveJoystick
@@ -191,7 +194,7 @@ public class RobotContainer {
         .onTrue(
             new ShootCommand(feederSubsystem,shooterSubsystem)
         );
-    // // Handoff Button
+    // // Intake Button
     m_driveJoystick
         .trigger()
         .toggleOnTrue(
