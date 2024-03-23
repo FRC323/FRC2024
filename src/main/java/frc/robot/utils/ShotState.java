@@ -70,22 +70,24 @@ public class ShotState {
     // Now build a new ShotState object
     return new ShotState(
         chassisAngle,
-        Rotation2d.fromRadians(armAngleInterpolation.get(Units.metersToInches(rangeToTarget))),
+        Rotation2d.fromRadians(armAngleInterpolation.get(rangeToTarget)),
         Constants.Shooter.SHOOTER_SPEED);
   }
 
   private static InterpolatingDoubleTreeMap initializeInterpolator() {
     var armAngleInterpolation = new InterpolatingDoubleTreeMap();
-//    TODO: Check these, and do some math to find some interpolations, within 45 - 90 try to do every 6-8"
     armAngleInterpolation.put(0.0, 0.0);
-    armAngleInterpolation.put(45.0, -0.232);
-    armAngleInterpolation.put(80.0,-0.41);
-    armAngleInterpolation.put(81.5, -0.47);
-    armAngleInterpolation.put(102.0, -0.58);
-    armAngleInterpolation.put(138.0, -0.65);
-    armAngleInterpolation.put(174.0, -0.66);
-    armAngleInterpolation.put(203.0, -0.67);
-    armAngleInterpolation.put(235.0, -0.68);
+    armAngleInterpolation.put(0.75, -0.12);
+    armAngleInterpolation.put(1.35, -0.25);
+    armAngleInterpolation.put(1.61,-0.35);
+    armAngleInterpolation.put(2.0,-0.49);
+    armAngleInterpolation.put(2.25,-0.55);
+    armAngleInterpolation.put(2.6,-0.61);
+    armAngleInterpolation.put(2.99,-0.66);
+    armAngleInterpolation.put(3.5, -0.70);
+    armAngleInterpolation.put(4.0, -0.75);
+    //Points after here are not very accurate
+    armAngleInterpolation.put(4.5,-0.77);
     return armAngleInterpolation;
   }
 }
