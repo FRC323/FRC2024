@@ -48,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase{
     //    TODO: If ramping is causing issues, just set the references to targetVelocity
     shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
     leftShooterController.setReference(shooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-    rightShooterController.setReference(shooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+    rightShooterController.setReference(1.1 * shooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
   }
 
   public void setShooterSpeed(double vel) {

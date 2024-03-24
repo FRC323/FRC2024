@@ -49,7 +49,7 @@ public class ArmSubsystem extends SubsystemBase {
     leftSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_L, MotorType.kBrushless);
     rightSpark = new CANSparkMax(Constants.Arm.Arm_Actuation_R, MotorType.kBrushless);
     armController = new ProfiledPIDController(Arm.kP, Arm.kI, Arm.kD, Arm.ARM_CONSTRAINTS);
-    armController.setTolerance(0.20);
+    armController.setTolerance(0.01);
 
     armFeedForward = new ArmFeedforward(0, Arm.kG, Arm.kV);
     armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);
@@ -95,7 +95,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
   
   public boolean armIsAtTarget() {
-    return armController.atGoal();
+    var target = armController.getGoal();
+    return Math.abs(target.position - getArmAngleRads()) < Arm.AT_TARGET_TOLLERANCE;
+    // return armController.atGoal();
   }
 
   public boolean armTargetValidSpeakerTarget(){
@@ -123,8 +125,8 @@ public class ArmSubsystem extends SubsystemBase {
     leftSpark.setInverted(true); //TODO: Add to constant
     // errors += check(rightShooterSpark.follow(leftShooterSpark,false));
     errors += check(leftSpark.setSmartCurrentLimit(Arm.CURRENT_LIMIT));
-    // errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
-    // errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
+    errors += check(leftSpark.setIdleMode(IdleMode.kBrake));
+    errors += check(rightSpark.setIdleMode(IdleMode.kBrake));
 
     return errors == 0;
 

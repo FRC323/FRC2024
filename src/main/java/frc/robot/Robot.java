@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
     // disableTimer.reset();
     // disableTimer.start();
     // m_robotContainer.armSubsystem.enableBrake();
+    m_robotContainer.armSubsystem.enableCoast();
     // m_robotContainer.armSubsystem.setTargetRads(m_robotContainer.armSubsystem.getArmAngleRads());
     // m_robotContainer.intakeSubsystem.setTargetRads(m_robotContainer.intakeSubsystem.getWristAngleRads());
   }
@@ -62,8 +63,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     // if(disableTimer.get() > 6.0){
-    //   m_robotContainer.intakeSubsystem.enableCoast();
-    //   m_robotContainer.armSubsystem.enableCoast();
+      // m_robotContainer.intakeSubsystem.enableCoast();
+      // m_robotContainer.armSubsystem.enableCoast();
     // }
   }
 
@@ -76,6 +77,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    m_robotContainer.armSubsystem.enableBrake();
   }
 
   /** This function is called periodically during autonomous. */
@@ -96,6 +99,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.armSubsystem.setTargetRads(
       m_robotContainer.armSubsystem.getArmAngleRads()
     );
+
+    m_robotContainer.armSubsystem.enableBrake();
 
     var armCommand = m_robotContainer.armSubsystem.getCurrentCommand();
     if(armCommand != null) armCommand.cancel();

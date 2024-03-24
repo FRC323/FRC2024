@@ -39,9 +39,11 @@ public class ShootAuto extends SequentialCommandGroup{
                             && shooterSubsystem.atShootSpeed(Constants.Shooter.SHOOTER_SPEED)
                             && armSubsystem.armTargetValidSpeakerTarget()
                         ),
-                        new SetFeederSpeed(feederSubsystem, Feeder.FEED_SHOOT_SPEED),
-                        new WaitUntilCommand(()->!feederSubsystem.isHoldingNote()),
-                        new SetFeederSpeed(feederSubsystem, 0)
+                        new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
+                        new WaitUntilCommand(()-> !feederSubsystem.isHoldingNote()),
+                        new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
+                        new WaitUntilCommand(feederSubsystem::isHoldingNote),
+                        new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
                     ),
                     new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, poseEstimatorSubsystem)
                     // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0)

@@ -239,8 +239,8 @@ public final class Constants {
     public static final int Arm_Actuation_R = 42;
 
     // Profiled PID Constants 
-    public static final double kP = 22.0;
-    public static final double kI = 16.0;
+    public static final double kP = 18.0;
+    public static final double kI = 4.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
     public static final String OFFSET_KEY = "Arm_Offset";
@@ -269,6 +269,8 @@ public final class Constants {
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
     public static final double ARM_FAR_SPEAKER = -0.6;
     public static final double ARM_CLIMB_POSE = -1.27;
+
+    public static final double AT_TARGET_TOLLERANCE = 0.05;
 
    
   }

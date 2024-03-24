@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.Shooter;
 import frc.robot.Constants.AprilTags.Amp;
 import frc.robot.Constants.DriverConstants.DriveStick;
 import frc.robot.Constants.DriverConstants.SteerStick;
@@ -191,7 +193,7 @@ public class RobotContainer {
     // // Shoot
     m_driveJoystick
         .button(DriveStick.LEFT_SIDE_BUTTON)
-        .onTrue(
+        .toggleOnTrue(
             new ShootCommand(feederSubsystem,shooterSubsystem)
         );
     // // Intake Button
@@ -291,13 +293,18 @@ public class RobotContainer {
         .add("Follow Path", PathFollowerCommands.followPathFromFile(driveSubsystem, "Test Path"));
 
     Shuffleboard.getTab("Buttons").add("Shooter Slow", new SetShooterSpeed(shooterSubsystem, -.2));
-    Shuffleboard.getTab("Buttons").add("Shooter On", new SetShooterSpeed(shooterSubsystem, -1));
+    Shuffleboard.getTab("Buttons").add("Shooter On", new RepeatCommand(new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED)));
     Shuffleboard.getTab("Buttons").add("Shooter Off", new SetShooterSpeed(shooterSubsystem, 0));
-    Shuffleboard.getTab("Buttons").add("Feeder On", new SetFeederSpeed(feederSubsystem, -1.0));
+    Shuffleboard.getTab("Buttons").add("Feeder On", new RepeatCommand(new SetFeederSpeed(feederSubsystem, -1.0)));
     Shuffleboard.getTab("Buttons").add("Feeder Off", new SetFeederSpeed(feederSubsystem, 0));
     Shuffleboard.getTab("Buttons").add("Intake On", new SetIntakeSpeed(intakeSubsystem, 0.5));
     Shuffleboard.getTab("Buttons").add("Intake Off", new SetIntakeSpeed(intakeSubsystem, 0));
     Shuffleboard.getTab("Buttons").add("Align While Driving", alignWhileDriving);
+    Shuffleboard.getTab("Buttons").add("Feed Note", new SequentialCommandGroup(
+        new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
+        new WaitUntilCommand(feederSubsystem::isHoldingNote),
+        new SetFeederSpeed(feederSubsystem, 0.0)
+    ));
 
     // Shuffleboard.getTab("Buttons")
         // .add("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem));

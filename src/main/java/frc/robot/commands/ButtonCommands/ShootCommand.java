@@ -19,9 +19,12 @@ public class ShootCommand extends SequentialCommandGroup{
         addCommands(
             new ParallelRaceGroup(
                 new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
-                new WaitCommand(0.5)
+                new WaitCommand(1.5)
             ),
+            new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
+            new WaitUntilCommand(()-> !feederSubsystem.isHoldingNote()),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
+            new WaitUntilCommand(feederSubsystem::isHoldingNote),
             new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
         );
     }
