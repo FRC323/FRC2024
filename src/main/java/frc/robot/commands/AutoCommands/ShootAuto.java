@@ -36,7 +36,7 @@ public class ShootAuto extends SequentialCommandGroup{
                     new SequentialCommandGroup(
                         new WaitUntilCommand(
                             () -> armSubsystem.armIsAtTarget() 
-                            && shooterSubsystem.atShootSpeed(Constants.Shooter.SHOOTER_SPEED)
+                            && shooterSubsystem.atShootSpeed()
                             && armSubsystem.armTargetValidSpeakerTarget()
                         ),
                         new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),

@@ -46,23 +46,24 @@ public class ShooterSubsystem extends SubsystemBase{
   @Override
   public void periodic(){
     //    TODO: If ramping is causing issues, just set the references to targetVelocity
-    shooterVelocity = velocityRamp.calculate(targetShooterVelocity);
-    leftShooterController.setReference(shooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-    rightShooterController.setReference(1.1 * shooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+    if(targetShooterVelocity == 0.0){
+      leftShooterController.setReference(0.0, com.revrobotics.CANSparkBase.ControlType.kVoltage);
+      rightShooterController.setReference(0.0, com.revrobotics.CANSparkBase.ControlType.kVoltage);
+    }else{
+      leftShooterController.setReference(targetShooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+      rightShooterController.setReference(Shooter.RIGHT_SHOOTER_SPEED_DIFFERENCE * targetShooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+    }
   }
 
   public void setShooterSpeed(double vel) {
     targetShooterVelocity = vel;
   }
 
-  public boolean atShootSpeed(){
-    return atShootSpeed(targetShooterVelocity);
-  }
 
-  public boolean atShootSpeed(double shooterRPM){
+  public boolean atShootSpeed(){
     return 
-      leftShooterEncoder.getVelocity() >= shooterRPM * 0.95
-      && rightShooterEncoder.getVelocity() >= shooterRPM * 0.95;
+      leftShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95
+      && rightShooterEncoder.getVelocity() >= targetShooterVelocity * Shooter.RIGHT_SHOOTER_SPEED_DIFFERENCE * 0.95;
   }
 
   private boolean initSparks() {
