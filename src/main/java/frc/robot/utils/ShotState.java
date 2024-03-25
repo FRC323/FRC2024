@@ -84,7 +84,7 @@ public class ShotState {
     armAngleInterpolation.put(3.0,-0.52);
     armAngleInterpolation.put(3.6,-0.60);
     armAngleInterpolation.put(4.44, -0.61);
-    armAngleInterpolation.put(6.0, -0.61);
+    armAngleInterpolation.put(4.9, -0.75);
     return armAngleInterpolation;
   }
 }

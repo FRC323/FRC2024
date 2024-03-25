@@ -294,7 +294,6 @@ public final class Constants {
       public static final int Shooter_R_CAN_Id = 62;
 
       public static final double kF = 0.0; //* Constants.NeoMotor.FREE_SPEED_RPM;
-//      TODO: This number probably needs tweaking
       public static final double kP = 0.002; //0.0003205128205; //0.0001282051282;
       public static final double kI = 0.000005;
       public static final double kD = 0.0;
