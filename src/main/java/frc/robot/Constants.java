@@ -302,7 +302,7 @@ public final class Constants {
       public static final double SHOOTER_SPEED = 5000;
       public static final double AMP_SPEED = SHOOTER_SPEED * 0.3;
       public static final double REVERSE_SPEED = -0.2;
-    public static final double RIGHT_SHOOTER_SPEED_DIFFERENCE = 0.8;
+    public static final double RIGHT_SHOOTER_SPEED_DIFFERENCE = 0.78;
     }
 
   public static class Intake {

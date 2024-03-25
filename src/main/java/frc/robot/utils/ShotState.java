@@ -78,16 +78,13 @@ public class ShotState {
     var armAngleInterpolation = new InterpolatingDoubleTreeMap();
     armAngleInterpolation.put(0.0, 0.0);
     armAngleInterpolation.put(0.75, -0.12);
-    armAngleInterpolation.put(1.35, -0.25);
-    armAngleInterpolation.put(1.61,-0.35);
-    armAngleInterpolation.put(2.0,-0.49);
-    armAngleInterpolation.put(2.25,-0.55);
-    armAngleInterpolation.put(2.6,-0.61);
-    armAngleInterpolation.put(2.99,-0.66);
-    armAngleInterpolation.put(3.5, -0.70);
-    armAngleInterpolation.put(4.0, -0.75);
-    //Points after here are not very accurate
-    armAngleInterpolation.put(4.5,-0.77);
+    armAngleInterpolation.put(1.1,-0.22);
+    armAngleInterpolation.put(2.0, -0.35);
+    armAngleInterpolation.put(2.5,-0.49);
+    armAngleInterpolation.put(3.0,-0.52);
+    armAngleInterpolation.put(3.6,-0.60);
+    armAngleInterpolation.put(4.44, -0.61);
+    armAngleInterpolation.put(6.0, -0.61);
     return armAngleInterpolation;
   }
 }
