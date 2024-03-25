@@ -105,4 +105,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
   }
 
+public boolean isRunning() {
+  return targetShooterVelocity != 0.0;
+}
+
 }
