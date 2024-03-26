@@ -71,7 +71,7 @@ public class DriveSubsystem extends SubsystemBase {
   private Optional<Pose2d> targetPose = Optional.empty();
 
   private PIDController rotController = new PIDController(
-        6.0,
+        6.0, 
         0.1,
         0.1
     );
@@ -87,8 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
     navx.reset();
     // TODO: Make this in a different initilztion place
 
-    rotController.enableContinuousInput(0.0, Math.PI * 2);
-
+    rotController.enableContinuousInput(-Math.PI, Math.PI);
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::resetOdometry,
@@ -266,13 +265,17 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads,boolean fieldRelative){
-    rotController.setSetpoint(targetHeadingRads.getRadians());
+    rotController.setSetpoint(0.0);
 
+    var rotation = new Rotation2d(this.getPose().getRotation().getRadians() % 360.0);
+    var error = targetHeadingRads.plus(rotation);
+
+    
     drive(
       xSpeed,
       ySpeed,
       rotController.calculate(
-        this.getRobotPose2d().getRotation().getRadians()
+        error.getRadians()
       ) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
       fieldRelative
     );
@@ -329,7 +332,7 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
     builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
     builder.addDoubleProperty(
-        "Odometry Yaw (deg)", () -> getPose().getRotation().getDegrees(), null);
+        "Odometry Yaw (deg)", () -> (getPose().getRotation().getDegrees()%360.0), null);
     builder.addDoubleProperty(
         "Front Left Abs Encoder (rad)", frontLeft::getEncoderAbsPositionRad, null);
     builder.addDoubleProperty(

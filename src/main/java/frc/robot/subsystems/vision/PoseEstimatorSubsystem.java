@@ -141,7 +141,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
     }
 
     public double get_heading(){
-        return headingLimiter.calculate(shotState.get_heading().getRadians());
+        // return headingLimiter.calculate(shotState.get_heading().getRadians());
+        return shotState.get_heading().getRadians();
     }
 
     public void computeShotState(DriveSubsystem driveSubsystem,Pose2d robotPose){
@@ -187,5 +188,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
         builder.addDoubleProperty("YPose: ", () -> poseEstimator.getEstimatedPosition().getY(), null);
         builder.addDoubleProperty("Rotation: ", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
         builder.addDoubleProperty("ShotState Arm Angle", () -> shotState.get_armAngle().getDegrees() , null);
+        builder.addDoubleProperty("Shot State Heading", () -> shotState.get_heading().getDegrees(), null);
     }
 }

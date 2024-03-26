@@ -183,7 +183,7 @@ public class RobotContainer {
         .whileTrue(
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
-                    // alignWhileDriving,
+                    alignWhileDriving,
                 new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, photonPoseEstimatorSubsystem))
             )
         .onFalse(
@@ -233,8 +233,6 @@ public class RobotContainer {
         .button(SteerStick.LEFT)
         .onTrue(
             new GotoAmpPose(armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem)
-        ).onFalse(
-            new SetShooterSpeed(shooterSubsystem, 0.0)
         );
 
     // // Climb Button
@@ -271,6 +269,9 @@ public class RobotContainer {
             new ManualIntakeControl(intakeSubsystem, false)
         );
     
+    m_steerJoystick.button(SteerStick.MIDDLE).onTrue(
+        new SetArmTarget(armSubsystem, -0.50)
+    );
 
     // m_driveJoystick
     //     .button(DriveStick.SMALL_TOP_BUTTON)

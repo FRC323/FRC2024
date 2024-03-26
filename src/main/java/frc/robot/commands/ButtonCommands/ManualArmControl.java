@@ -17,7 +17,7 @@ public class ManualArmControl extends Command{
     @Override
     public void execute(){
         armSubsystem.setTargetRads(
-            armSubsystem.getArmAngleRads() + (direction ? -0.10 : 0.10)
+            armSubsystem.getArmAngleRads() + (direction ? -0.01 : 0.01)
         );
         
     }
