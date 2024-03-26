@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,6 +22,10 @@ public class ShotState {
   private final double _shooterSpeed;
   private static final InterpolatingDoubleTreeMap armAngleInterpolation =
       initializeInterpolator();
+
+    private LinearFilter headingLimiter = LinearFilter.movingAverage(4);
+    private LinearFilter armAngleLimiter = LinearFilter.movingAverage(4);
+    private LinearFilter shooterSpeedLimiter = LinearFilter.movingAverage(10);
 
   public ShotState(Rotation2d heading, Rotation2d armAngle, double shooterSpeed) {
     _heading = heading;
