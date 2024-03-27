@@ -2,7 +2,10 @@ package frc.robot.utils;
 
 import java.util.Optional;
 
+import javax.sound.sampled.Line;
+
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,8 +26,8 @@ public class ShotState {
   private static final InterpolatingDoubleTreeMap armAngleInterpolation =
       initializeInterpolator();
 
-    private LinearFilter headingLimiter = LinearFilter.movingAverage(4);
-    private LinearFilter armAngleLimiter = LinearFilter.movingAverage(4);
+    private SlewRateLimiter headingLimiter = new SlewRateLimiter(Math.PI);
+    private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(Math.PI);
     private LinearFilter shooterSpeedLimiter = LinearFilter.movingAverage(10);
 
   public ShotState(Rotation2d heading, Rotation2d armAngle, double shooterSpeed) {
@@ -34,7 +37,7 @@ public class ShotState {
   }
 
   public Rotation2d get_armAngle() {
-    return _armAngle;
+    return Rotation2d.fromRadians(armAngleLimiter.calculate(_armAngle.getRadians()));
   }
 
   public Rotation2d get_heading() {
