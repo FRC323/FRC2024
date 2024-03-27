@@ -18,13 +18,13 @@ import frc.robot.Constants.Intake;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.vision.PhotonPoseEstimatorSubsystem;
+import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 import frc.robot.utils.ShotState;
 
 public class AlignWhileDriving extends SequentialCommandGroup{
     public AlignWhileDriving(
         DriveSubsystem driveSubsystem,
-        PhotonPoseEstimatorSubsystem poseEstimatorSubsystem,
+        PoseEstimatorSubsystem poseEstimatorSubsystem,
         DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vTheta
     ){
         addCommands(

@@ -16,14 +16,14 @@ import frc.robot.commands.SetCommands.SetShooterSpeed;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.vision.PhotonPoseEstimatorSubsystem;
+import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 
 public class AlignArmForShot extends SequentialCommandGroup{
     public AlignArmForShot(
         ArmSubsystem armSubsystem,
         ShooterSubsystem shooterSubsystem,
         IntakeSubsystem intakeSubsystem,
-        PhotonPoseEstimatorSubsystem poseEstimatorSubsystem
+        PoseEstimatorSubsystem poseEstimatorSubsystem
     ){
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE),
