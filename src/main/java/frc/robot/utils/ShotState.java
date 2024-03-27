@@ -76,7 +76,6 @@ public class ShotState {
     chassisAngle = chassisAngle.rotateBy(Rotation2d.fromRadians(Math.PI));
 
     var rangeToTarget = futureShotTarget.getDistance(robotPosition);
-    System.out.println("Range To Target: " + rangeToTarget);
     // Now build a new ShotState object
     return new ShotState(
         chassisAngle,
