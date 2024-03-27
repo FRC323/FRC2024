@@ -267,7 +267,7 @@ public final class Constants {
     public static final double ARM_OUTAKE_POSE = -0.41;
     public static final double ARM_AMP_POSE = -1.9;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
-    public static final double ARM_FAR_SPEAKER = -0.6;
+    public static final double ARM_SAFE_ZONE_SHOT = -0.695;
     public static final double ARM_CLIMB_POSE = -1.27;
 
     public static final double AT_TARGET_TOLLERANCE = 0.05;
@@ -301,7 +301,6 @@ public final class Constants {
       public static final double SHOOTER_SPEED = 5000;
       public static final double AMP_SPEED = SHOOTER_SPEED * 0.3;
       public static final double REVERSE_SPEED = -0.2;
-    public static final double RIGHT_SHOOTER_SPEED_DIFFERENCE = 0.78;
     }
 
   public static class Intake {

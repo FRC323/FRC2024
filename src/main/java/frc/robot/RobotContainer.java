@@ -46,6 +46,7 @@ import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
 import frc.robot.commands.ButtonCommands.ManualArmControl;
 import frc.robot.commands.ButtonCommands.ManualIntakeControl;
 import frc.robot.commands.ButtonCommands.OuttakeCommand;
+import frc.robot.commands.ButtonCommands.SafeShotCommand;
 // import frc.robot.commands.ButtonCommands.OuttakeCommand;
 import frc.robot.commands.ButtonCommands.ShootCommand;
 import frc.robot.commands.Procedures.AlignArmForShot;
@@ -183,7 +184,7 @@ public class RobotContainer {
         .whileTrue(
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
-                    // alignWhileDriving,
+                    alignWhileDriving,
                 new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, photonPoseEstimatorSubsystem))
             )
         .onFalse(
@@ -228,13 +229,19 @@ public class RobotContainer {
         .onTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem))
         .onFalse(new SetIntakeUp(armSubsystem, intakeSubsystem));
 
+    // Safe Zone Shot
+    m_steerJoystick
+        .button(SteerStick.MIDDLE)
+        .onTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem))
+        .onFalse(
+            new SetIntakeUp(armSubsystem, intakeSubsystem)
+        );
+
     // // Amp Pose
     m_steerJoystick
         .button(SteerStick.LEFT)
         .onTrue(
             new GotoAmpPose(armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem)
-        ).onFalse(
-            new SetShooterSpeed(shooterSubsystem, 0.0)
         );
 
     // // Climb Button
@@ -271,7 +278,6 @@ public class RobotContainer {
             new ManualIntakeControl(intakeSubsystem, false)
         );
     
-
     // m_driveJoystick
     //     .button(DriveStick.SMALL_TOP_BUTTON)
         // .onTrue(new ResetOdomFromLimelight(poseEstimatorSubsystem));

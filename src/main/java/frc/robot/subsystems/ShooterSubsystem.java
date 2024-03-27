@@ -51,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase{
       rightShooterController.setReference(0.0, com.revrobotics.CANSparkBase.ControlType.kVoltage);
     }else{
       leftShooterController.setReference(targetShooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-      rightShooterController.setReference(Shooter.RIGHT_SHOOTER_SPEED_DIFFERENCE * targetShooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+      rightShooterController.setReference(targetShooterVelocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
     }
   }
 
@@ -63,7 +63,7 @@ public class ShooterSubsystem extends SubsystemBase{
   public boolean atShootSpeed(){
     return 
       leftShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95
-      && rightShooterEncoder.getVelocity() >= targetShooterVelocity * Shooter.RIGHT_SHOOTER_SPEED_DIFFERENCE * 0.95;
+      && rightShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95;
   }
 
   private boolean initSparks() {

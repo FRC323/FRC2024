@@ -16,6 +16,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -55,12 +56,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
     private static ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
-
-    private MedianFilter headingLimiter = new MedianFilter(10);
-    private MedianFilter armAngleLimiter = new MedianFilter(10);
-    private MedianFilter shooterSpeedLimiter = new MedianFilter(10);
-
-
 
     public PoseEstimatorSubsystem(DriveSubsystem driveSubsystem){
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -137,11 +132,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
     }
 
     public double get_armAngle(){
-        return armAngleLimiter.calculate(shotState.get_armAngle().getRadians());
+        return shotState.get_armAngle().getRadians();
     }
 
     public double get_heading(){
-        return headingLimiter.calculate(shotState.get_heading().getRadians());
+        return shotState.get_heading().getRadians();
     }
 
     public void computeShotState(DriveSubsystem driveSubsystem,Pose2d robotPose){
@@ -186,6 +181,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase{
         builder.addDoubleProperty("XPose: ",() -> poseEstimator.getEstimatedPosition().getX(), null);
         builder.addDoubleProperty("YPose: ", () -> poseEstimator.getEstimatedPosition().getY(), null);
         builder.addDoubleProperty("Rotation: ", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
-        builder.addDoubleProperty("ShotState Arm Angle", () -> shotState.get_armAngle().getDegrees() , null);
+        builder.addDoubleProperty("ShotState Arm Angle", () -> shotState.get_armAngle().getRadians() , null);
+        builder.addDoubleProperty("Shot State Heading", () -> shotState.get_heading().getDegrees(), null);
     }
 }
