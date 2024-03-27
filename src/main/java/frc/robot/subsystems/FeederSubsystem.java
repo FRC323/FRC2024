@@ -12,7 +12,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Feeder;
-import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
+import frc.robot.subsystems.vision.Limelight;
+import frc.robot.subsystems.vision.LimelightHelpers;
 
 
 public class FeederSubsystem extends SubsystemBase{  
@@ -29,9 +30,10 @@ public class FeederSubsystem extends SubsystemBase{
     @Override
     public void periodic(){
         if(isHoldingNote()){
-            PoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
+            // PhotonPoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
+            LimelightHelpers.setLEDMode_ForceBlink(Limelight._name);
         }else{
-            PoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kOff);
+            LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
         }
     }
 

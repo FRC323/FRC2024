@@ -27,8 +27,8 @@ public class ShotState {
       initializeInterpolator();
 
     private SlewRateLimiter headingLimiter = new SlewRateLimiter(Math.PI);
-    private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(Math.PI);
-    private LinearFilter shooterSpeedLimiter = LinearFilter.movingAverage(10);
+    private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(4 * Math.PI);
+    // private LinearFilter shooterSpeedLimiter = new SlewRateLimiter();
 
   public ShotState(Rotation2d heading, Rotation2d armAngle, double shooterSpeed) {
     _heading = heading;
@@ -37,7 +37,8 @@ public class ShotState {
   }
 
   public Rotation2d get_armAngle() {
-    return Rotation2d.fromRadians(armAngleLimiter.calculate(_armAngle.getRadians()));
+    // return Rotation2d.fromRadians(armAngleLimiter.calculate(_armAngle.getRadians()));
+    return _armAngle;
   }
 
   public Rotation2d get_heading() {
@@ -75,6 +76,7 @@ public class ShotState {
     chassisAngle = chassisAngle.rotateBy(Rotation2d.fromRadians(Math.PI));
 
     var rangeToTarget = futureShotTarget.getDistance(robotPosition);
+    System.out.println("Range To Target: " + rangeToTarget);
     // Now build a new ShotState object
     return new ShotState(
         chassisAngle,
