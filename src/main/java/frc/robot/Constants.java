@@ -267,7 +267,7 @@ public final class Constants {
     public static final double ARM_OUTAKE_POSE = -0.41;
     public static final double ARM_AMP_POSE = -1.9;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
-    public static final double ARM_FAR_SPEAKER = -0.6;
+    public static final double ARM_SAFE_ZONE_SHOT = -0.695;
     public static final double ARM_CLIMB_POSE = -1.27;
 
     public static final double AT_TARGET_TOLLERANCE = 0.05;
