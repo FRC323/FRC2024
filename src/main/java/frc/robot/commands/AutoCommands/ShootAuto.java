@@ -20,7 +20,7 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
+import frc.robot.subsystems.vision.PhotonPoseEstimatorSubsystem;
 
 public class ShootAuto extends SequentialCommandGroup{
     public ShootAuto(
@@ -29,7 +29,7 @@ public class ShootAuto extends SequentialCommandGroup{
         IntakeSubsystem intakeSubsystem, 
         ShooterSubsystem shooterSubsystem, 
         FeederSubsystem feederSubsystem, 
-        PoseEstimatorSubsystem poseEstimatorSubsystem
+        PhotonPoseEstimatorSubsystem poseEstimatorSubsystem
         ){ 
             addCommands(
                 new ParallelDeadlineGroup(
