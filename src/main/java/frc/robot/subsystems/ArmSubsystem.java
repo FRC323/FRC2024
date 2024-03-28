@@ -95,9 +95,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
   
   public boolean armIsAtTarget() {
-    var target = armController.getGoal();
-    return Math.abs(target.position - getArmAngleRads()) < Arm.AT_TARGET_TOLLERANCE;
-    // return armController.atGoal();
+    // var target = armController.getGoal();
+    // return Math.abs(target.position - getArmAngleRads()) < Arm.AT_TARGET_TOLLERANCE;
+    return armController.atGoal();
   }
 
   public boolean armTargetValidSpeakerTarget(){
@@ -169,6 +169,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Arm Current L", leftSpark::getOutputCurrent, null);
     builder.addDoubleProperty("Arm Current R", rightSpark::getOutputCurrent, null);
     builder.addBooleanProperty("Arm Encoder Plugged In", armAbsoluteEncoder::isConnected, null);
+    builder.addBooleanProperty("At Target", this::armIsAtTarget, null);
 
 
   }

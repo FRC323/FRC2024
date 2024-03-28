@@ -9,9 +9,7 @@ public class SetArmTarget extends Command {
     DoubleSupplier target;
     ArmSubsystem arm;
     public SetArmTarget(ArmSubsystem arm, double radTarget) {
-        addRequirements(arm);
-        this.arm = arm;
-        target = () -> radTarget;
+        this(arm,()->radTarget);
     }
 
     public SetArmTarget(ArmSubsystem arm, DoubleSupplier radTarget) {
@@ -21,7 +19,7 @@ public class SetArmTarget extends Command {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         arm.setTargetRads(target.getAsDouble());
     }
 

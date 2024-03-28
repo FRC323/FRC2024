@@ -10,7 +10,8 @@ public class FeedUntilNote extends SequentialCommandGroup{
     public FeedUntilNote(FeederSubsystem feederSubsystem){
         addCommands(
             new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_INTAKE_SPEED),
-            new WaitUntilCommand(feederSubsystem::isHoldingNote)
+            new WaitUntilCommand(feederSubsystem::isHoldingNote),
+            new SetFeederSpeed(feederSubsystem, 0.0)
         );
     }
 }

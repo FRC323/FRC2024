@@ -62,8 +62,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
   public boolean atShootSpeed(){
     return 
-      leftShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95
-      && rightShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95;
+      (leftShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95) 
+      && (rightShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95);
   }
 
   private boolean initSparks() {
@@ -103,6 +103,8 @@ public class ShooterSubsystem extends SubsystemBase{
     builder.addDoubleProperty("Shooter Current L", leftShooterSpark::getOutputCurrent,null);
     builder.addDoubleProperty("Shooter Current R", rightShooterSpark::getOutputCurrent, null);
 
+    builder.addDoubleProperty("Target Speed", () -> targetShooterVelocity, null);
+    builder.addBooleanProperty("At Speed", this::atShootSpeed, null);
   }
 
 public boolean isRunning() {

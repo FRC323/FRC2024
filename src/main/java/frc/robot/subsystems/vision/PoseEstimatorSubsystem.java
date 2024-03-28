@@ -178,6 +178,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         builder.addDoubleProperty("Heading", () -> shotState.get_heading().getDegrees(), null);
         builder.addDoubleProperty("Arm Angle", () -> shotState.get_armAngle().getRadians(), null);
+
+        builder.addDoubleProperty("Shooter Speed", () -> shotState.get_shooterSpeed(), null);
     }
 
 }

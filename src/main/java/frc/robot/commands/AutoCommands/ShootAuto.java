@@ -11,8 +11,11 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Feeder;
+import frc.robot.Constants.Intake;
 import frc.robot.commands.Procedures.AlignArmForShot;
 import frc.robot.commands.Procedures.AlignWhileDriving;
+import frc.robot.commands.Procedures.CheckIntakeGotoOut;
+import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.commands.SetCommands.SetShooterSpeed;
 import frc.robot.subsystems.ArmSubsystem;
@@ -21,6 +24,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
+import frc.robot.utils.ShotState;
 
 public class ShootAuto extends SequentialCommandGroup{
     public ShootAuto(
@@ -32,22 +36,17 @@ public class ShootAuto extends SequentialCommandGroup{
         PoseEstimatorSubsystem poseEstimatorSubsystem
         ){ 
             addCommands(
-                new ParallelDeadlineGroup(
-                    new SequentialCommandGroup(
-                        new WaitUntilCommand(
-                            () -> armSubsystem.armIsAtTarget() 
-                            && shooterSubsystem.atShootSpeed()
-                            && armSubsystem.armTargetValidSpeakerTarget()
-                        ),
-                        new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
-                        new WaitUntilCommand(()-> !feederSubsystem.isHoldingNote()),
-                        new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
-                        new WaitUntilCommand(feederSubsystem::isHoldingNote),
-                        new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
-                    ),
-                    new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, poseEstimatorSubsystem)
-                    // new AlignWhileDriving(driveSubsystem, visionSubsystem, ()->0.0, ()-> 0.0, () ->0.0)
-                )
+                new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE), 
+                //Todo: Make sure filtering doesn't break robot
+                new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
+                new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed),
+                new WaitUntilCommand(
+                    shooterSubsystem::atShootSpeed
+                ),
+                new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
+                new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
+                new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
+                new SetShooterSpeed(shooterSubsystem, 0.0)
             );
     }
 }
