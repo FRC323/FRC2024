@@ -36,7 +36,7 @@ public class ShootAuto extends SequentialCommandGroup{
         PoseEstimatorSubsystem poseEstimatorSubsystem
         ){ 
             addCommands(
-                new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE), 
+                // new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE), 
                 //Todo: Make sure filtering doesn't break robot
                 new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
                 new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed),

@@ -14,12 +14,6 @@
         {
           "type": "named",
           "data": {
-            "name": "UnfoldIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ShootAuto"
           }
         },

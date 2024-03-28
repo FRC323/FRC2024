@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
+import frc.robot.Constants.Feeder;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakeNote extends SequentialCommandGroup{
     public IntakeNote(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem,FeederSubsystem feederSubsystem){
         addCommands(
+            new SetIntakeSpeed(intakeSubsystem, Intake.INTAKE_SPEED),
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.FOLDED_POSE_INTERNAL),
             new ParallelCommandGroup(
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
@@ -36,10 +38,9 @@ public class IntakeNote extends SequentialCommandGroup{
                     new SetArmTarget(armSubsystem, Arm.ARM_HANDOFF_POSE)
                 )
             ),
-            new ParallelCommandGroup(
-                new FeedUntilNote(feederSubsystem),
-                new SetIntakeSpeed(intakeSubsystem, Intake.INTAKE_SPEED)
-            )
+            new FeedUntilNote(feederSubsystem)
+
+            
             // new SetIntakeSpeed(intakeSubsystem, Intake.OUTTAKE_SPEED),
             // new AdjustFeederNote(feederSubsystem)
         );
