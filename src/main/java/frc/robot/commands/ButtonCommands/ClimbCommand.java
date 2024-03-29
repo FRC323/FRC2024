@@ -1,6 +1,8 @@
 package frc.robot.commands.ButtonCommands;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
@@ -14,8 +16,13 @@ public class ClimbCommand extends SequentialCommandGroup{
     public ClimbCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem){
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.UNFOLDED_POSE),
-            new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
-            new SetArmTarget(armSubsystem, Arm.ARM_CLIMB_POSE)
+            new ParallelCommandGroup(
+                new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> intakeSubsystem.getWristAngleRads() > Intake.SHOOTING_POSE),
+                    new SetArmTarget(armSubsystem, Arm.ARM_CLIMB_POSE)
+                )
+            )
         );
     }
 }

@@ -21,8 +21,13 @@ public class HumanPlayerPickup extends SequentialCommandGroup{
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intake, Intake.SHOOTING_POSE),
             new SetIntakeTarget(intake, Intake.SHOOTING_POSE),
-            new SetArmTarget(armSubsystem, Arm.ARM_HUMAN_PLAYER_POSE),
-            new SetIntakeTarget(intake, Intake.FOLDED_POSE_INTERNAL),
+            new ParallelCommandGroup(
+                new SetArmTarget(armSubsystem, Arm.ARM_HUMAN_PLAYER_POSE),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() <  Arm.ARM_INTAKE_UNFOLDING_POSE),
+                    new SetIntakeTarget(intake, Intake.FOLDED_POSE_INTERNAL)
+                )
+            ),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
             new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)

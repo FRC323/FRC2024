@@ -1,5 +1,6 @@
 package frc.robot.commands.ButtonCommands;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -23,8 +24,13 @@ public class OuttakeCommand extends SequentialCommandGroup{
     public OuttakeCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, FeederSubsystem feederSubsystem, ShooterSubsystem shooterSubsystem){
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.UNFOLDED_POSE),
-            new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
-            new SetArmTarget(armSubsystem, Arm.ARM_OUTAKE_POSE),
+            new ParallelCommandGroup(
+                new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> intakeSubsystem.getWristAngleRads() > Intake.SHOOTING_POSE),
+                    new SetArmTarget(armSubsystem, Arm.ARM_OUTAKE_POSE)
+                )
+            ),
             new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_REVERSE_SPEED),
             // new SetShooterSpeed(shooterSubsystem, Constants.Shooter.REVERSE_SPEED),

@@ -4,7 +4,9 @@ import static frc.robot.Constants.MARGIN_OF_ERROR_RADS;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
@@ -17,8 +19,13 @@ public class SetIntakeUp extends SequentialCommandGroup{
     public SetIntakeUp(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem){
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.SHOOTING_POSE),
-            new SetArmTarget(armSubsystem, Arm.ARM_DOWN_POSE),
-            new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE)            
+            new ParallelCommandGroup(
+                new SetArmTarget(armSubsystem, Arm.ARM_DOWN_POSE),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(()-> armSubsystem.getArmAngleRads() > Arm.ARM_HANDOFF_POSE),
+                    new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE)            
+                )
+            )
         );
     }
 }
