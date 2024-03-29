@@ -29,8 +29,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakeNote extends SequentialCommandGroup{
     public IntakeNote(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem,FeederSubsystem feederSubsystem){
         addCommands(
-            new SetIntakeSpeed(intakeSubsystem, Intake.INTAKE_SPEED),
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.FOLDED_POSE_INTERNAL),
+            new SetIntakeSpeed(intakeSubsystem, Intake.INTAKE_SPEED),
             new ParallelCommandGroup(
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
                 new SequentialCommandGroup(
@@ -38,9 +38,7 @@ public class IntakeNote extends SequentialCommandGroup{
                     new SetArmTarget(armSubsystem, Arm.ARM_HANDOFF_POSE)
                 )
             ),
-            new FeedUntilNote(feederSubsystem)
-
-            
+            new FeedUntilNote(feederSubsystem) 
             // new SetIntakeSpeed(intakeSubsystem, Intake.OUTTAKE_SPEED),
             // new AdjustFeederNote(feederSubsystem)
         );
