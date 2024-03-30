@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Feeder;
 import frc.robot.Constants.Intake;
+import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.AlignArmForShot;
 import frc.robot.commands.Procedures.AlignWhileDriving;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
@@ -38,7 +39,11 @@ public class ShootAuto extends SequentialCommandGroup{
             addCommands(
                 // new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE), 
                 //Todo: Make sure filtering doesn't break robot
-                new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
+                new ParallelCommandGroup(
+                    new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
+                    new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
+                ),
+                new AdjustFeederNote(feederSubsystem, shooterSubsystem),
                 new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed),
                 new WaitUntilCommand(
                     shooterSubsystem::atShootSpeed

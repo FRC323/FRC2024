@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -41,7 +42,8 @@ public class IntakeNote extends SequentialCommandGroup{
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> intakeSubsystem.getWristAngleRads() > Intake.SHOOTING_POSE),
                     new SetArmTarget(armSubsystem, Arm.ARM_HANDOFF_POSE)
-                )
+                ),
+                new FeedUntilNote(feederSubsystem)
             ),
             new ConditionalCommand(
                 new SetFeederSpeed(feederSubsystem,Feeder.FEEDER_STOPED_SPEED),

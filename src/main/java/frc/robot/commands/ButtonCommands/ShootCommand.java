@@ -22,7 +22,7 @@ public class ShootCommand extends SequentialCommandGroup{
     public ShootCommand(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem, ArmSubsystem armSubsystem){
         addCommands(
             new SequentialCommandGroup(
-                new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() <= Arm.ARM_HANDOFF_POSE),
+                new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() <= Arm.ARM_HANDOFF_POSE + Arm.AT_TARGET_TOLLERANCE),
                 new AdjustFeederNote(feederSubsystem, shooterSubsystem)
             ),
             new ParallelRaceGroup(

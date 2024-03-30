@@ -172,9 +172,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
-        builder.addDoubleProperty("XPose: ",() -> poseEstimator.getEstimatedPosition().getX(), null);
-        builder.addDoubleProperty("YPose: ", () -> poseEstimator.getEstimatedPosition().getY(), null);
-        builder.addDoubleProperty("Rotation: ", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
+        builder.addDoubleProperty("XPose",() -> poseEstimator.getEstimatedPosition().getX(), null);
+        builder.addDoubleProperty("YPose", () -> poseEstimator.getEstimatedPosition().getY(), null);
+        builder.addDoubleProperty("Rotation", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
 
         builder.addDoubleProperty("Heading", () -> shotState.get_heading().getDegrees(), null);
         builder.addDoubleProperty("Arm Angle", () -> shotState.get_armAngle().getRadians(), null);

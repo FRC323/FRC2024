@@ -265,19 +265,28 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads,boolean fieldRelative){
-    rotController.setSetpoint(0.0);
-
-    var rotation = new Rotation2d(this.getPose().getRotation().getRadians() % 360.0);
-    var error = targetHeadingRads.plus(rotation);
-
+    rotController.setSetpoint(targetHeadingRads.getRadians());
     
     drive(
       xSpeed,
       ySpeed,
       rotController.calculate(
-        error.getRadians()
+        this.getPose().getRotation().getRadians() % (Math.PI * 2)
       ) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
       fieldRelative
+    );
+  }
+
+  public void turnToHeading(Rotation2d targeRotation2d){
+    rotController.setSetpoint(targeRotation2d.getRadians());
+
+    drive(
+      0.0,
+      0.0,
+      rotController.calculate(
+        this.getPose().getRotation().getRadians() % (Math.PI * 2)
+      ) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
+      false
     );
   }
 
@@ -303,6 +312,10 @@ public class DriveSubsystem extends SubsystemBase {
     frontRight.setDesiredState(desiredStates[1]);
     rearLeft.setDesiredState(desiredStates[2]);
     rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  public boolean atHeading(){
+    return this.rotController.atSetpoint();
   }
 
   private boolean mirrorForRedAlliance() {

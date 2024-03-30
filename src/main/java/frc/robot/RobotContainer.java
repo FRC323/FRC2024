@@ -183,7 +183,7 @@ public class RobotContainer {
         .whileTrue(
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
-                    // alignWhileDriving,
+                    alignWhileDriving,
                 new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem))
             )
         .onFalse(
