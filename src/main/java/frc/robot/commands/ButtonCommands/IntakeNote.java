@@ -32,7 +32,7 @@ public class IntakeNote extends SequentialCommandGroup{
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.FOLDED_POSE_INTERNAL),
             new SetIntakeSpeed(intakeSubsystem, Intake.INTAKE_SPEED),
             new ConditionalCommand(
-                new InstantCommand(),
+                new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
                 new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_INTAKE_SPEED),
                 feederSubsystem::isHoldingNote
             ),
@@ -43,7 +43,12 @@ public class IntakeNote extends SequentialCommandGroup{
                     new SetArmTarget(armSubsystem, Arm.ARM_HANDOFF_POSE)
                 )
             ),
-            new FeedUntilNote(feederSubsystem) 
+            new ConditionalCommand(
+                new SetFeederSpeed(feederSubsystem,Feeder.FEEDER_STOPED_SPEED),
+                new FeedUntilNote(feederSubsystem), 
+                feederSubsystem::isHoldingNote
+            ),
+            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
             // new SetIntakeSpeed(intakeSubsystem, Intake.OUTTAKE_SPEED),
             // new AdjustFeederNote(feederSubsystem)
         );

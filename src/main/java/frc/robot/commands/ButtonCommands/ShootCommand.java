@@ -8,37 +8,41 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.Arm;
 import frc.robot.Constants.Shooter;
+import frc.robot.commands.Procedures.AdjustFeederNote;
+import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.commands.SetCommands.SetShooterSpeed;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootCommand extends SequentialCommandGroup{
-    public ShootCommand(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem){
+    public ShootCommand(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem, ArmSubsystem armSubsystem){
         addCommands(
+            new SequentialCommandGroup(
+                new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() <= Arm.ARM_HANDOFF_POSE),
+                new AdjustFeederNote(feederSubsystem, shooterSubsystem)
+            ),
             new ParallelRaceGroup(
                 new ConditionalCommand(    
-                    new InstantCommand(),
+                    new WaitUntilCommand(shooterSubsystem::atShootSpeed),
                     new ScheduleCommand(
                         new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED)
                     ),
                     () -> shooterSubsystem.isRunning()
                 ),
-                new WaitCommand(1.5)
+                new WaitCommand(10.5)
             ),
-            new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
-            new ParallelRaceGroup(
-                new WaitUntilCommand(()-> !feederSubsystem.isHoldingNote()),
-                new WaitCommand(0.25)
-            ),
+            new WaitUntilCommand(shooterSubsystem::atShootSpeed),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(feederSubsystem::isHoldingNote),
                     new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
                 ),
-                new WaitCommand(0.25)
+                new WaitCommand(1.25)
             )
         );
     }

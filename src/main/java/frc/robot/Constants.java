@@ -240,7 +240,7 @@ public final class Constants {
 
     // Profiled PID Constants 
     public static final double kP = 18.0;
-    public static final double kI = 4.0;
+    public static final double kI = 6.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
     public static final String OFFSET_KEY = "Arm_Offset";
@@ -282,7 +282,8 @@ public final class Constants {
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
     public static final double FEEDER_REVERSE_SPEED = 0.75;
-    public static final double FEEDER_ADJUST_SPEED = 0.3;
+    public static final double FEEDER_REVERSE_ADJUST = 0.3;
+    public static final double FEEDER_ADJUST_SPEED = -0.3;
     public static final double FEEDER_STOPED_SPEED = 0.0;
 
     public static final double FEEDER_ADJUST_TIME = 0.15;
@@ -299,8 +300,8 @@ public final class Constants {
       public static final double kD = 0.0;
 
       public static final double SHOOTER_SPEED = 5000;
-      public static final double AMP_SPEED = SHOOTER_SPEED * 0.3;
-      public static final double REVERSE_SPEED = -0.2;
+      public static final double AMP_SPEED = 2500;
+      public static final double REVERSE_SPEED = -400;
     }
 
   public static class Intake {

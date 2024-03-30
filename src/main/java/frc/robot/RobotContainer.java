@@ -184,7 +184,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
                     // alignWhileDriving,
-                new AlignArmForShot(armSubsystem, shooterSubsystem, intakeSubsystem, poseEstimatorSubsystem))
+                new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem))
             )
         .onFalse(
             new SetIntakeUp(armSubsystem, intakeSubsystem)
@@ -194,7 +194,7 @@ public class RobotContainer {
     m_driveJoystick
         .button(DriveStick.LEFT_SIDE_BUTTON)
         .toggleOnTrue(
-            new ShootCommand(feederSubsystem,shooterSubsystem)
+            new ShootCommand(feederSubsystem,shooterSubsystem,armSubsystem)
         );
     // // Intake Button
     m_driveJoystick
