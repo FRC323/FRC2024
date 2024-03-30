@@ -34,6 +34,7 @@ import frc.robot.Constants.DriverConstants.SteerStick;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.*;
+import frc.robot.commands.AutoCommands.EjectNote;
 import frc.robot.commands.AutoCommands.ResetOdomFromLimelight;
 import frc.robot.commands.AutoCommands.ShootAuto;
 import frc.robot.commands.ButtonCommands.ClimbCommand;
@@ -331,6 +332,7 @@ public class RobotContainer {
         "UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
     NamedCommands.registerCommand(
         "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, poseEstimatorSubsystem));
+    NamedCommands.registerCommand("EjectNote", new EjectNote(shooterSubsystem, feederSubsystem, intakeSubsystem, armSubsystem));
   }
 
   /**

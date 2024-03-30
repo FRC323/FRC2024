@@ -1,0 +1,87 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 15.8012920014444,
+      "y": 4.549026078109137
+    },
+    "rotation": -120.68895873739359
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Reset Odom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "EjectNote"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Red Disrupt 1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Red Disrupt 2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "HandoffProc"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Red Disrupt 3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Reset Odom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

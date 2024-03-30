@@ -1,0 +1,58 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 15.801292001447118,
+        "y": 4.549026078115117
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 14.655264866088002,
+        "y": 3.7304352671443217
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.644469482671159,
+        "y": 0.7367317298737166
+      },
+      "prevControl": {
+        "x": 9.100541505926316,
+        "y": -0.04677661776976055
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red Disrupt Note 1"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.55,
+      "rotationDegrees": 149.62470742641548,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 171.4692343900519,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Disrupter Red",
+  "previewStartingState": {
+    "rotation": -120.1413855520755,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
