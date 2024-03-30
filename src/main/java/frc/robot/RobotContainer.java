@@ -181,6 +181,7 @@ public class RobotContainer {
     m_steerJoystick
         .trigger()
         .whileTrue(
+            //Todo: Maybe add repeat command to fix error when pressing buttons too fast
             new ParallelCommandGroup(
                     // TODO: Bring this back in but post verifying functionality
                     alignWhileDriving,
@@ -224,13 +225,13 @@ public class RobotContainer {
 
     // //Human Player Pickup 
     m_steerJoystick
-        .button(SteerStick.RIGHT)
+        .button(SteerStick.MIDDLE)
         .onTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem))
         .onFalse(new SetIntakeUp(armSubsystem, intakeSubsystem));
 
     // Safe Zone Shot
     m_steerJoystick
-        .button(SteerStick.MIDDLE)
+        .button(SteerStick.RIGHT)
         .onTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem))
         .onFalse(
             new SetIntakeUp(armSubsystem, intakeSubsystem)
