@@ -31,6 +31,11 @@ public class IntakeNote extends SequentialCommandGroup{
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.FOLDED_POSE_INTERNAL),
             new SetIntakeSpeed(intakeSubsystem, Intake.INTAKE_SPEED),
+            new ConditionalCommand(
+                new InstantCommand(),
+                new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_INTAKE_SPEED),
+                feederSubsystem::isHoldingNote
+            ),
             new ParallelCommandGroup(
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
                 new SequentialCommandGroup(
