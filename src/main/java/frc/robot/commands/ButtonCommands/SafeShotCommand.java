@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
+import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
@@ -23,6 +24,7 @@ public class SafeShotCommand extends SequentialCommandGroup{
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.SHOOTING_POSE),
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
             new SetArmTarget(armSubsystem, Arm.ARM_INTAKE_UNFOLDING_POSE),
+            new AdjustFeederNote(feederSubsystem, shooterSubsystem),
             new ParallelCommandGroup(
                 new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
                 new SequentialCommandGroup(

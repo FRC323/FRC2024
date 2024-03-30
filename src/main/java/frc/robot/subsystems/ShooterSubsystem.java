@@ -66,6 +66,10 @@ public class ShooterSubsystem extends SubsystemBase{
       && (rightShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95);
   }
 
+  public double getShootSpeedTarget(){
+    return targetShooterVelocity;
+  }
+
   private boolean initSparks() {
     int errors = 0;
     errors += check(leftShooterSpark.restoreFactoryDefaults());

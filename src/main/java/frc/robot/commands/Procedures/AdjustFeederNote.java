@@ -22,15 +22,12 @@ public class AdjustFeederNote extends SequentialCommandGroup{
         addCommands(
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            new PrintCommand("1"),
             // new SetShooterSpeed(shooterSubsystem, Shooter.REVERSE_SPEED),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_REVERSE_ADJUST),
             new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
-            new PrintCommand("2"),
             // new SetShooterSpeed(shooterSubsystem, 0.0),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            new PrintCommand("3"),
             new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
         );
     }
