@@ -97,6 +97,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public void enableCoast(){
     wristSpark.setIdleMode(IdleMode.kCoast);
   }
+  
+  public void enableBrake(){
+    wristSpark.setIdleMode(IdleMode.kBrake);
+  }
 
   public boolean initSparks() {
     int errors = 0;
