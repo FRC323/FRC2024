@@ -28,10 +28,18 @@ public class ShootCommand extends SequentialCommandGroup{
                 new WaitCommand(1.5)
             ),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
-            new WaitUntilCommand(()-> !feederSubsystem.isHoldingNote()),
+            new ParallelRaceGroup(
+                new WaitUntilCommand(()-> !feederSubsystem.isHoldingNote()),
+                new WaitCommand(0.25)
+            ),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
-            new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
+            new ParallelRaceGroup(
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(feederSubsystem::isHoldingNote),
+                    new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
+                ),
+                new WaitCommand(0.25)
+            )
         );
     }
 }
