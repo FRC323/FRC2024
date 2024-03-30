@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
+import frc.robot.commands.SetCommands.SetArmNoBlock;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.commands.SetCommands.SetShooterSpeed;
@@ -39,7 +40,7 @@ public class AlignArmForShot extends SequentialCommandGroup{
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> intakeSubsystem.getWristAngleRads() > Intake.SHOOTING_POSE),
                     new RepeatCommand(
-                        new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
+                        new SetArmNoBlock(armSubsystem, poseEstimatorSubsystem::get_armAngle)
                     )
                 )
             )

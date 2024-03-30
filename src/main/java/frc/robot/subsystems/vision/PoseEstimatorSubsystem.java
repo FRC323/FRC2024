@@ -157,7 +157,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         var robotVelocity = this.driveSubsystem.getChassisSpeed();
 
         //dt (Todo: find actual dt)
-        var dt = 0.75;
+        var dt = 0.5;
 
         this.shotState =  ShotState.computedFromPose(
             shotTarget,
