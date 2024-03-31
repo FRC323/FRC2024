@@ -28,7 +28,7 @@ public class SafeShotCommand extends SequentialCommandGroup{
             new ParallelCommandGroup(
                 new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
                 new SequentialCommandGroup(
-                    new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE),
+                    new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE + Arm.AT_TARGET_TOLLERANCE),
                     new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL),
                     new SetArmTarget(armSubsystem, Arm.ARM_SAFE_ZONE_SHOT)
                 )
