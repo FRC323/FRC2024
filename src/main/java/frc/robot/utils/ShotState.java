@@ -88,13 +88,13 @@ public class ShotState {
     armAngleInterpolation.put(0.0, 0.0);
     armAngleInterpolation.put(0.75, -0.12);
     armAngleInterpolation.put(0.9,-0.25);
-    armAngleInterpolation.put(2.0, -0.44);
+    armAngleInterpolation.put(1.5, -0.34);
+    armAngleInterpolation.put(2.0, -0.47);
     armAngleInterpolation.put(2.5,-0.54);
-    armAngleInterpolation.put(3.0,-0.64);
-    armAngleInterpolation.put(3.5,-0.67);
-    armAngleInterpolation.put(4.0, -0.71);
-    armAngleInterpolation.put(4.5, -0.75);
-    armAngleInterpolation.put(5.0, -0.76);
+    armAngleInterpolation.put(3.0,-0.68);
+    armAngleInterpolation.put(3.5,-0.71);
+    armAngleInterpolation.put(4.0, -0.765);
+    armAngleInterpolation.put(4.5, -0.77);
     return armAngleInterpolation;
   }
 }
