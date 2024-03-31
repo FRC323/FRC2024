@@ -260,12 +260,23 @@ public class RobotContainer {
         .button(DriveStick.UP_DIRECTIONAL)
         .whileTrue(
             new SequentialCommandGroup(
-                new ManualArmControl(armSubsystem, true)));
+                new ManualArmControl(armSubsystem, -0.1)));
     m_driveJoystick
         .button(DriveStick.DOWN_DIRECTIONAL)
         .whileTrue(
             new SequentialCommandGroup(
-                new ManualArmControl(armSubsystem, false)));
+                new ManualArmControl(armSubsystem, 0.1)));
+
+    m_driveJoystick
+        .button(DriveStick.LEFT_DIRECTIONAL)
+        .whileTrue(
+            new SequentialCommandGroup(
+                new ManualArmControl(armSubsystem, -0.02)));
+    m_driveJoystick
+        .button(DriveStick.RIGHT_DIRECTIONAL)
+        .whileTrue(
+            new SequentialCommandGroup(
+                new ManualArmControl(armSubsystem, 0.01)));
     //Manual Intake
     m_driveJoystick
         .povUp()

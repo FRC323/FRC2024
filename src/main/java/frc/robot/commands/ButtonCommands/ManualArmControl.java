@@ -6,18 +6,18 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ManualArmControl extends Command{
 
     private ArmSubsystem armSubsystem;
-    private boolean direction;
+    private double speed;
     private double angle = 0.0;
 
-    public ManualArmControl(ArmSubsystem armSubsystem,boolean direction){
+    public ManualArmControl(ArmSubsystem armSubsystem, double speed){
         this.armSubsystem = armSubsystem;
-        this.direction = direction;        
+        this.speed = speed;
     }
 
     @Override
     public void execute(){
         armSubsystem.setTargetRads(
-            armSubsystem.getArmAngleRads() + (direction ? -0.01 : 0.01)
+            armSubsystem.getArmAngleRads() + speed
         );
         
     }
