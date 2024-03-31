@@ -32,6 +32,7 @@ public class OuttakeCommand extends SequentialCommandGroup{
                 )
             ),
             new SetIntakeSpeed(intakeSubsystem, Constants.Intake.OUTTAKE_SPEED),
+            new WaitCommand(0.5),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_REVERSE_SPEED),
             new SetShooterSpeed(shooterSubsystem, Constants.Shooter.REVERSE_SPEED),
             new WaitUntilCommand(() -> false)
