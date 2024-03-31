@@ -3,6 +3,8 @@ package frc.robot.commands.ButtonCommands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -29,9 +31,7 @@ public class ShootCommand extends SequentialCommandGroup{
             new ParallelRaceGroup(
                 new ConditionalCommand(    
                     new WaitUntilCommand(shooterSubsystem::atShootSpeed),
-                    new ScheduleCommand(
-                        new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED)
-                    ),
+                    new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
                     () -> shooterSubsystem.isRunning()
                 ),
                 new WaitCommand(10.5)

@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.644469482671159,
+        "y": 5.695053213468251
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.714634409325798,
+        "y": 6.057572001183889
+      },
+      "isLocked": false,
+      "linkedName": "Red Disrupt End 2"
+    },
+    {
+      "anchor": {
+        "x": 8.515833783804318,
+        "y": 7.110045901003483
+      },
+      "prevControl": {
+        "x": 8.597692864901395,
+        "y": 6.186207700050727
+      },
+      "nextControl": {
+        "x": 8.433974702707241,
+        "y": 8.03388410195624
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 13.509237730726174,
+        "y": 6.314843398917567
+      },
+      "prevControl": {
+        "x": 10.88974713561963,
+        "y": 7.115892978224704
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 161.96571443287013,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Disrupter Red",
+  "previewStartingState": {
+    "rotation": 132.27368900609375,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

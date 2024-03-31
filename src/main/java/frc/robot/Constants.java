@@ -239,8 +239,8 @@ public final class Constants {
     public static final int Arm_Actuation_R = 42;
 
     // Profiled PID Constants 
-    public static final double kP = 20.0;
-    public static final double kI = 8.0;
+    public static final double kP = 40.0;
+    public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final int ENCODER_PORT = 0;
     public static final String OFFSET_KEY = "Arm_Offset";
@@ -302,6 +302,7 @@ public final class Constants {
       public static final double SHOOTER_SPEED = 5000;
       public static final double AMP_SPEED = 2500;
       public static final double REVERSE_SPEED = -400;
+      public static final double EJECT_SPEED = 600;
     }
 
   public static class Intake {
