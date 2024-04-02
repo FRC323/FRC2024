@@ -1,17 +1,22 @@
 {
-  "robotWidth": 0.66,
-  "robotLength": 0.66,
+  "robotWidth": 0.81,
+  "robotLength": 0.99,
   "holonomicMode": true,
   "pathFolders": [
     "Blue 5 Note Paths",
+    "Blue Middle Line Paths",
     "Drive Away Paths",
-    "Middle Line Blue Paths",
-    "Middle Line Red Paths",
+    "Red Middle Line Paths",
     "Misc",
-    "Disrupter Red",
-    "Red 5 Note Paths"
+    "Red 2 Note Paths",
+    "Red 5 Note Paths",
+    "Red Disrupter"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "2 Note Reds",
+    "Blue",
+    "Red"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

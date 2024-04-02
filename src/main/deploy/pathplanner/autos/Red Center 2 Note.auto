@@ -1,0 +1,50 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 15.310137514861925,
+      "y": 5.5196408968316515
+    },
+    "rotation": -179.56921278299137
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Reset Odom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Red Center 2 Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HandoffProc"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": "2 Note Reds",
+  "choreoAuto": false
+}

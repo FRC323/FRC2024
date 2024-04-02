@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 15.766209538117081,
+      "y": 6.770915422172725
+    },
+    "rotation": 122.13920694090545
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -9,6 +15,12 @@
           "type": "named",
           "data": {
             "name": "Reset Odom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
           }
         },
         {
@@ -24,21 +36,15 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Test Path"
+                  "pathName": "Red Right 2 Note"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootAuto"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "2 Note Reds",
   "choreoAuto": false
 }

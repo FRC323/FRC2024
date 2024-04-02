@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.644469482671159,
-        "y": 5.695053213468251
+        "x": 15.766209538117081,
+        "y": 6.770915422172725
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.714634409325798,
-        "y": 6.057572001183889
-      },
-      "isLocked": false,
-      "linkedName": "Red Disrupt End 2"
-    },
-    {
-      "anchor": {
-        "x": 8.515833783804318,
-        "y": 7.110045901003483
-      },
-      "prevControl": {
-        "x": 8.597692864901395,
-        "y": 6.186207700050727
-      },
-      "nextControl": {
-        "x": 8.433974702707241,
-        "y": 8.03388410195624
+        "x": 14.935924572703842,
+        "y": 7.133434209888363
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 13.509237730726174,
-        "y": 6.314843398917567
+        "x": 13.87175651844181,
+        "y": 6.946327738809324
       },
       "prevControl": {
-        "x": 10.88974713561963,
-        "y": 7.115892978224704
+        "x": 14.620182402757965,
+        "y": 7.063269283233724
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 161.96571443287013,
+    "rotation": 156.58788583069733,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Red Disrupter",
+  "folder": "Red 2 Note Paths",
   "previewStartingState": {
-    "rotation": 132.27368900609375,
+    "rotation": 124.07719528013087,
     "velocity": 0
   },
   "useDefaultConstraints": true

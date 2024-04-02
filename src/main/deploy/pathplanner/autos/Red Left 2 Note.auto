@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.298443360419483,
-      "y": 5.5430292057165325
+      "x": 15.777903692559525,
+      "y": 4.373613761472538
     },
-    "rotation": -169.99
+    "rotation": -120.6820686368722
   },
   "command": {
     "type": "sequential",
@@ -30,20 +30,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Second Note Red"
+                  "pathName": "Red Left 2 Note"
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "HandoffProc"
-                      }
-                    }
-                  ]
+                  "name": "HandoffProc"
                 }
               }
             ]
@@ -58,6 +51,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "2 Note Reds",
   "choreoAuto": false
 }
