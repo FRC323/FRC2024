@@ -2,15 +2,21 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.333525823746804,
-      "y": 7.308846526524962
+      "x": 15.34521997818924,
+      "y": 3.2158924716709834
     },
-    "rotation": -60.094062825036524
+    "rotation": -112.61986494804034
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Reset Odom"
+          }
+        },
         {
           "type": "named",
           "data": {
