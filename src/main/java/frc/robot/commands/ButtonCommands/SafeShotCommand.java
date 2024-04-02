@@ -23,7 +23,13 @@ public class SafeShotCommand extends SequentialCommandGroup{
         addCommands(
             new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.SHOOTING_POSE),
             new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
-            new SetArmTarget(armSubsystem, Arm.ARM_INTAKE_UNFOLDING_POSE),
+            new ParallelCommandGroup(
+                new SetArmTarget(armSubsystem, Arm.ARM_INTAKE_UNFOLDING_POSE),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE),
+                    new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
+                )
+            ),
             new AdjustFeederNote(feederSubsystem, shooterSubsystem),
             new ParallelCommandGroup(
                 new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
