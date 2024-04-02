@@ -34,7 +34,7 @@ public class ShootCommand extends SequentialCommandGroup{
                     new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
                     () -> shooterSubsystem.isRunning()
                 ),
-                new WaitCommand(10.5)
+                new WaitCommand(2.5)
             ),
             new WaitUntilCommand(shooterSubsystem::atShootSpeed),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),

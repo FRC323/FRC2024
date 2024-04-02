@@ -62,8 +62,9 @@ public class ShooterSubsystem extends SubsystemBase{
 
   public boolean atShootSpeed(){
     return 
-      (leftShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95) 
-      && (rightShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95);
+      ((leftShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95) 
+      && (rightShooterEncoder.getVelocity() >= targetShooterVelocity * 0.95))
+      || (targetShooterVelocity == 0.0);
   }
 
   public double getShootSpeedTarget(){

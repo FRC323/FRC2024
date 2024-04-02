@@ -187,6 +187,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         builder.addDoubleProperty("XPose",() -> poseEstimator.getEstimatedPosition().getX(), null);
         builder.addDoubleProperty("YPose", () -> poseEstimator.getEstimatedPosition().getY(), null);
+        builder.addDoubleProperty("Filtered X", () -> estimatedPose.getX(), null);
         builder.addDoubleProperty("Rotation", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
 
         builder.addDoubleProperty("Heading", () -> shotState.get_heading().getDegrees(), null);
