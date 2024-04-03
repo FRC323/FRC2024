@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 11.263960077777703,
-        "y": 6.232984317820488
+        "x": 13.886117273422194,
+        "y": 5.537862667174266
       },
       "prevControl": {
-        "x": 10.655864046770827,
-        "y": 6.3850083255722065
+        "x": 13.278021242415317,
+        "y": 5.689886674925984
       },
       "nextControl": null,
       "isLocked": false,
@@ -61,14 +61,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 173.65980825409005,
+    "rotation": 177.99044618697874,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Red 5 Note Paths",
   "previewStartingState": {
-    "rotation": 148.6269948598916,
+    "rotation": 152.26915011525233,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
