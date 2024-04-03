@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 12.413903782676924,
+        "y": 7.614561167364615
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 11.468177235641884,
+        "y": 7.380566970160069
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.397003397332211,
+        "y": 5.869354446547374
+      },
+      "prevControl": {
+        "x": 9.05023719786157,
+        "y": 6.044850094450783
+      },
+      "nextControl": {
+        "x": 7.743769596802853,
+        "y": 5.693858798643965
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 12.413903782676924,
+        "y": 7.614561167364615
+      },
+      "prevControl": {
+        "x": 10.546825084148981,
+        "y": 6.663959741221145
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.7,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -177.1375947738882,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red Amp Pass Paths",
+  "previewStartingState": {
+    "rotation": -174.72135393658112,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

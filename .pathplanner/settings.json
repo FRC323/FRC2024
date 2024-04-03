@@ -6,11 +6,13 @@
     "Blue 5 Note Paths",
     "Blue Middle Line Paths",
     "Drive Away Paths",
-    "Red Middle Line Paths",
     "Misc",
+    "Red 1 + MidLine",
     "Red 2 Note Paths",
     "Red 5 Note Paths",
-    "Red Disrupter"
+    "Red Amp Pass Paths",
+    "Red Disrupter",
+    "Red Middle Line Paths"
   ],
   "autoFolders": [
     "Red 2 Notes",
