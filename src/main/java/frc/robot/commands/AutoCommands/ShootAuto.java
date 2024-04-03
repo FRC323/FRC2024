@@ -40,8 +40,8 @@ public class ShootAuto extends SequentialCommandGroup{
             addCommands(
                 // new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE), 
                 //Todo: Make sure filtering doesn't break robot
-                new ConditionalCommand(
                 new SequentialCommandGroup(
+                    new ParallelRaceGroup(
                     new ParallelCommandGroup(
                         new SequentialCommandGroup(
                             new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
@@ -54,12 +54,11 @@ public class ShootAuto extends SequentialCommandGroup{
                         )
                         // new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
                     ),
+                        new WaitCommand(1.5)
+                    ),
                     new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
                     new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
                     new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
-                ),
-                new InstantCommand(),
-                feederSubsystem::isHoldingNote
                 )
             );
     }

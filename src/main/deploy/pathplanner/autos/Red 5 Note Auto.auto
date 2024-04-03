@@ -208,6 +208,12 @@
                       "data": {
                         "name": "HandoffProc"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignArm"
+                      }
                     }
                   ]
                 }
