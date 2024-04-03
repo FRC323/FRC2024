@@ -148,7 +148,7 @@ public class RobotContainer {
                 driveSubsystem.drive(
                     invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
                     invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
-                    Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()),
+                    Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()) * (m_steerJoystick.trigger().getAsBoolean() ? 0.0 : 1.0),
                     true) // !m_steerJoystick.trigger().getAsBoolean())
             ,
             driveSubsystem));
@@ -344,6 +344,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, poseEstimatorSubsystem));
     NamedCommands.registerCommand("EjectNote", new EjectNote(shooterSubsystem, feederSubsystem, intakeSubsystem, armSubsystem));
+    NamedCommands.registerCommand("AlignArm", new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem));
   }
 
   /**

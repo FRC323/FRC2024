@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.298443360419483,
-      "y": 5.5430292057165325
+      "x": 0.7434431971001721,
+      "y": 6.561587279944157
     },
-    "rotation": -169.99
+    "rotation": 58.736268305622566
   },
   "command": {
     "type": "sequential",
@@ -28,22 +28,40 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Second Note Red"
+                  "name": "HandoffProc"
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "HandoffProc"
-                      }
-                    }
-                  ]
+                  "pathName": "Amp Pick 1 Blue"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "HandoffProc"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp Pick 2 Blue"
                 }
               }
             ]
@@ -58,6 +76,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Blue",
   "choreoAuto": false
 }

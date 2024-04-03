@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 15.766209538117081,
+      "y": 6.770915422172725
+    },
+    "rotation": 121.7014296695061
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -9,6 +15,18 @@
           "type": "named",
           "data": {
             "name": "Reset Odom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAuto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "UnfoldIntake"
           }
         },
         {
@@ -24,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Test Path"
+                  "pathName": "Red Right 2 Note"
                 }
               }
             ]
@@ -39,6 +57,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Red 2 Notes",
   "choreoAuto": false
 }

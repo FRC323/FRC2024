@@ -70,18 +70,12 @@
         {
           "type": "named",
           "data": {
-            "name": "Reset Odom"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ShootAuto"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Red",
   "choreoAuto": false
 }

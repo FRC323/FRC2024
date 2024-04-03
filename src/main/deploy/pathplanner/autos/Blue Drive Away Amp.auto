@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.333525823746804,
-      "y": 7.308846526524962
+      "x": 1.4408703461281565,
+      "y": 7.0398809743488435
     },
-    "rotation": -60.094062825036524
+    "rotation": 84.23
   },
   "command": {
     "type": "sequential",
@@ -20,12 +20,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Drive Away Source Red"
+            "pathName": "Drive Away Amp Blue"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Blue",
   "choreoAuto": false
 }

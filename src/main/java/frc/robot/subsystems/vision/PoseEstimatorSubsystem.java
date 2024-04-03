@@ -6,6 +6,7 @@ import java.util.OptionalDouble;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,11 +36,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     private final Limelight limelight = new Limelight();
     
-    private SlewRateLimiter headingLimiter = new SlewRateLimiter(4.0 * Math.PI);
-    private SlewRateLimiter armAngleLimiter = new SlewRateLimiter(4.0 * Math.PI);
-    private SlewRateLimiter shooterSpeedLimiter = new SlewRateLimiter(1.0);
+    private LinearFilter xFilter = LinearFilter.singlePoleIIR(0.2,0.02); //new SlewRateLimiter(1.0);
+    private LinearFilter yFilter = LinearFilter.singlePoleIIR(0.2,0.02);// new SlewRateLimiter(1.0);
+    private LinearFilter rotFilter = LinearFilter.singlePoleIIR(0.2,0.02);// new SlewRateLimiter(Math.PI);
 
     private static ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
+
+    private Pose2d estimatedPose = new Pose2d();
 
     public PoseEstimatorSubsystem(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
@@ -53,12 +56,21 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
                 visionMeasurementStdDevs);
     }
 
+    public Pose2d getEstimatedPosition(){
+        return poseEstimator.getEstimatedPosition();
+    }
+
     public double getTimestampSeconds(double latencyMillis) {
         return Timer.getFPGATimestamp() - (latencyMillis / 1000d);
     }
 
-    public Pose2d getEstimatedPosition(){
-        return poseEstimator.getEstimatedPosition();
+    public Pose2d filterVisionPose(Pose2d estimatedPose){
+        var x = xFilter.calculate(estimatedPose.getX());
+        var y = yFilter.calculate(estimatedPose.getY());
+        var rot = rotFilter.calculate(estimatedPose.getRotation().getRadians());
+        return new Pose2d(
+            x,y,new Rotation2d(rot)
+        );
     }
 
     @Override
@@ -87,7 +99,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
         }
 
-        this.computeShotState(driveSubsystem, getEstimatedPosition());
+        estimatedPose = filterVisionPose(poseEstimator.getEstimatedPosition());
+
+        this.computeShotState(driveSubsystem, estimatedPose); 
 
         // publisher.set(capture.botpose());
     }
@@ -157,7 +171,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         var robotVelocity = this.driveSubsystem.getChassisSpeed();
 
         //dt (Todo: find actual dt)
-        var dt = 0.5;
+        var dt = DriverStation.isAutonomous() ? 0.0 : 0.5;
 
         this.shotState =  ShotState.computedFromPose(
             shotTarget,
@@ -174,6 +188,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         builder.addDoubleProperty("XPose",() -> poseEstimator.getEstimatedPosition().getX(), null);
         builder.addDoubleProperty("YPose", () -> poseEstimator.getEstimatedPosition().getY(), null);
+        builder.addDoubleProperty("Filtered X", () -> estimatedPose.getX(), null);
         builder.addDoubleProperty("Rotation", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
 
         builder.addDoubleProperty("Heading", () -> shotState.get_heading().getDegrees(), null);

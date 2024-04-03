@@ -2,15 +2,21 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.382399573915957,
-      "y": 2.8884561472826653
+      "x": 15.333525823746804,
+      "y": 7.308846526524962
     },
-    "rotation": -68.28606491822356
+    "rotation": -60.094062825036524
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Reset Odom"
+          }
+        },
         {
           "type": "named",
           "data": {
@@ -20,12 +26,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Drive Away Source Blue"
+            "pathName": "Drive Away Amp Red"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Red",
   "choreoAuto": false
 }

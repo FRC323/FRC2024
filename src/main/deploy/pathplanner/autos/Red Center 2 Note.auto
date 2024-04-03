@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.321831669304363,
-      "y": 3.4029989427500227
+      "x": 15.132974399184826,
+      "y": 5.5196408968316515
     },
-    "rotation": -117.13768312808875
+    "rotation": -179.56921278299137
   },
   "command": {
     "type": "sequential",
@@ -24,28 +24,9 @@
           }
         },
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "HandoffProc"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Red Middle Line 1"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "ShootAuto"
+            "name": "UnfoldIntake"
           }
         },
         {
@@ -53,15 +34,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "HandoffProc"
+                  "pathName": "Red Center 2 Note"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Red Middle Line 2"
+                  "name": "HandoffProc"
                 }
               }
             ]
@@ -76,6 +57,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Red 2 Notes",
   "choreoAuto": false
 }

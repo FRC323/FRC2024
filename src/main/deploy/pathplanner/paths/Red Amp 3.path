@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4408703461281565,
-        "y": 7.0398809743488435
+        "x": 12.05316272865325,
+        "y": 7.536563101629767
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7916949794013546,
-        "y": 7.987107484186478
+        "x": 11.234183038437337,
+        "y": 7.010076157919538
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.165608331216663,
-        "y": 7.70644777756792
+        "x": 8.523750254151341,
+        "y": 4.172896516814411
       },
       "prevControl": {
-        "x": 3.7095363079615056,
-        "y": 7.4842588431615615
+        "x": 9.635222690872935,
+        "y": 5.635360249342828
+      },
+      "nextControl": {
+        "x": 7.977265638684077,
+        "y": 3.4538378122522193
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 13.037888308555715,
+        "y": 7.682809474882608
+      },
+      "prevControl": {
+        "x": 11.702171432846427,
+        "y": 8.22879593502655
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -177.6140559696112,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Drive Away Paths",
+  "folder": "Red Amp Pass Paths",
   "previewStartingState": {
-    "rotation": 53.530765609948155,
+    "rotation": 175.13548556223958,
     "velocity": 0
   },
   "useDefaultConstraints": true

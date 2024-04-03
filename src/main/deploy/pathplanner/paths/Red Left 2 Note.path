@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4408703461281565,
-        "y": 7.0398809743488435
+        "x": 15.777903692559525,
+        "y": 4.373613761472538
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7916949794013546,
-        "y": 7.987107484186478
+        "x": 14.818983028279451,
+        "y": 4.081259900411539
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.165608331216663,
-        "y": 7.70644777756792
+        "x": 14.022613888458181,
+        "y": 4.373613761472538
       },
       "prevControl": {
-        "x": 3.7095363079615056,
-        "y": 7.4842588431615615
+        "x": 14.829510544986539,
+        "y": 4.338531298145218
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -152.74938315272558,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Drive Away Paths",
+  "folder": "Red 2 Note Paths",
   "previewStartingState": {
-    "rotation": 53.530765609948155,
+    "rotation": -119.05460409907732,
     "velocity": 0
   },
   "useDefaultConstraints": true
