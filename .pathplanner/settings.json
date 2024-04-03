@@ -3,12 +3,13 @@
   "robotLength": 0.99,
   "holonomicMode": true,
   "pathFolders": [
+    "Blue 1 + Midline",
     "Blue 5 Note Paths",
     "Blue Disrupt",
     "Blue Middle Line Paths",
     "Drive Away Paths",
     "Misc",
-    "Blue 1 + Midline",
+    "Blue 2 Note Paths",
     "Red 1 + MidLine",
     "Red 2 Note Paths",
     "Red 5 Note Paths",
@@ -17,9 +18,10 @@
     "Red Middle Line Paths"
   ],
   "autoFolders": [
-    "Red 2 Notes",
     "Blue",
-    "Red"
+    "Blue 2 Notes",
+    "Red",
+    "Red 2 Notes"
   ],
   "defaultMaxVel": 4.7,
   "defaultMaxAccel": 3.0,
