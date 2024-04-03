@@ -43,15 +43,16 @@ public class ShootAuto extends SequentialCommandGroup{
                 new ConditionalCommand(
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
+                        new SequentialCommandGroup(
+                            new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
+                            new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
+                            new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
+                        ),
+                        new SequentialCommandGroup(
+                            new AdjustFeederNote(feederSubsystem, shooterSubsystem),
+                            new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed)
+                        )
                         // new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
-                    ),
-                    new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
-                    new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
-                    new AdjustFeederNote(feederSubsystem, shooterSubsystem),
-                    new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed),
-                    new WaitUntilCommand(
-                        shooterSubsystem::atShootSpeed
                     ),
                     new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
                     new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),

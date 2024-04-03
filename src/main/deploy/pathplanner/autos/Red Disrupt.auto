@@ -70,12 +70,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Reset Odom"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ShootAuto"
           }
         }

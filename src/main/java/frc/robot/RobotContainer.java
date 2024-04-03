@@ -344,6 +344,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, poseEstimatorSubsystem));
     NamedCommands.registerCommand("EjectNote", new EjectNote(shooterSubsystem, feederSubsystem, intakeSubsystem, armSubsystem));
+    NamedCommands.registerCommand("AlignArm", new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem));
   }
 
   /**
