@@ -1,5 +1,6 @@
 package frc.robot.commands.AutoCommands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -39,18 +40,24 @@ public class ShootAuto extends SequentialCommandGroup{
             addCommands(
                 // new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE), 
                 //Todo: Make sure filtering doesn't break robot
-                new ParallelCommandGroup(
-                    new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
-                    // new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
+                new ConditionalCommand(
+                new SequentialCommandGroup(
+                    new ParallelCommandGroup(
+                        new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
+                        // new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
+                    ),
+                    new AdjustFeederNote(feederSubsystem, shooterSubsystem),
+                    new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed),
+                    new WaitUntilCommand(
+                        shooterSubsystem::atShootSpeed
+                    ),
+                    new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
+                    new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
+                    new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
                 ),
-                new AdjustFeederNote(feederSubsystem, shooterSubsystem),
-                new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed),
-                new WaitUntilCommand(
-                    shooterSubsystem::atShootSpeed
-                ),
-                new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
-                new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
-                new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
+                new InstantCommand(),
+                feederSubsystem::isHoldingNote
+                )
             );
     }
 }
