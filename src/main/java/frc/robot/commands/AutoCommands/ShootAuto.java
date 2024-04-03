@@ -46,6 +46,8 @@ public class ShootAuto extends SequentialCommandGroup{
                         new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
                         // new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
                     ),
+                    new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
+                    new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
                     new AdjustFeederNote(feederSubsystem, shooterSubsystem),
                     new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed),
                     new WaitUntilCommand(

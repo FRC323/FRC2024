@@ -6,6 +6,7 @@ import java.util.OptionalDouble;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,9 +36,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     private final Limelight limelight = new Limelight();
     
-    private SlewRateLimiter xFilter = new SlewRateLimiter(1.0);
-    private SlewRateLimiter yFilter = new SlewRateLimiter(1.0);
-    private SlewRateLimiter rotFilter = new SlewRateLimiter(Math.PI);
+    private LinearFilter xFilter = LinearFilter.singlePoleIIR(0.2,0.02); //new SlewRateLimiter(1.0);
+    private LinearFilter yFilter = LinearFilter.singlePoleIIR(0.2,0.02);// new SlewRateLimiter(1.0);
+    private LinearFilter rotFilter = LinearFilter.singlePoleIIR(0.2,0.02);// new SlewRateLimiter(Math.PI);
 
     private static ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
 

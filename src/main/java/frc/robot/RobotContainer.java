@@ -148,7 +148,7 @@ public class RobotContainer {
                 driveSubsystem.drive(
                     invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
                     invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
-                    Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()),
+                    Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()) * (m_steerJoystick.trigger().getAsBoolean() ? 0.0 : 1.0),
                     true) // !m_steerJoystick.trigger().getAsBoolean())
             ,
             driveSubsystem));
