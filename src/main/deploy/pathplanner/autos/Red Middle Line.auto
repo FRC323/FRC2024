@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.758070851058566,
-      "y": 4.270394098982973
+      "x": 15.728821576407999,
+      "y": 4.3386424065009646
     },
     "rotation": -117.13768312808875
   },
@@ -42,7 +42,27 @@
                       "data": {
                         "name": "HandoffProc"
                       }
-                    },
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Red Middle Line 2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
                     {
                       "type": "named",
                       "data": {
@@ -68,7 +88,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Red Middle Line 2"
+                  "pathName": "Red Middle Line 3"
                 }
               },
               {
@@ -80,7 +100,27 @@
                       "data": {
                         "name": "HandoffProc"
                       }
-                    },
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Red Middle Line 4"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
                     {
                       "type": "named",
                       "data": {
