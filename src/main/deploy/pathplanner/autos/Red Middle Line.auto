@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.321831669304363,
-      "y": 3.4029989427500227
+      "x": 15.758070851058566,
+      "y": 4.270394098982973
     },
     "rotation": -117.13768312808875
   },
@@ -34,9 +34,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "HandoffProc"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HandoffProc"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignArm"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -59,9 +72,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "HandoffProc"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HandoffProc"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignArm"
+                      }
+                    }
+                  ]
                 }
               }
             ]
