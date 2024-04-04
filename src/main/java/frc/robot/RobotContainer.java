@@ -332,6 +332,9 @@ public class RobotContainer {
 
     Shuffleboard.getTab("Buttons").add("Auto Chooser", autoChooser);
 
+    Shuffleboard.getTab("Buttons").add("Disable Encoder Control", new InstantCommand(() -> armSubsystem.disableEncoderControl(true)));
+    Shuffleboard.getTab("Buttons").add("Enable Encoder Control", new InstantCommand(() -> armSubsystem.disableEncoderControl(false)));
+
     // SmartDashboard.putData("Pick Note",new FireNoteAuto(driveSubsystem, intakeSubsystem,
     // armSubsystem));
   }

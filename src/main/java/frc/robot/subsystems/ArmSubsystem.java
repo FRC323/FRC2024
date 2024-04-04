@@ -43,6 +43,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DutyCycleEncoder armAbsoluteEncoder;
   private double commandedVoltage = 0.0;
   private boolean voltageOveride = false;
+  private boolean encoderControlDisabled = false;
   //    private AbsoluteEncoderChecker encoderChecker;
 
   public ArmSubsystem() {
@@ -73,7 +74,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(!voltageOveride){
+    if(!voltageOveride && !encoderControlDisabled){
       commandedVoltage = armController.calculate(getArmAngleRads())
                 + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity);
     }
@@ -88,6 +89,11 @@ public class ArmSubsystem extends SubsystemBase {
   public void setArmPower(double power){
     voltageOveride = true;
     leftSpark.set(power);
+  }
+
+  public void disableEncoderControl(boolean value){
+    encoderControlDisabled = value;
+    commandedVoltage = 0.0;
   }
 
   public double getArmTarget(){

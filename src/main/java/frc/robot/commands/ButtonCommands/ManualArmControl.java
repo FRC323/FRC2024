@@ -16,9 +16,11 @@ public class ManualArmControl extends Command{
 
     @Override
     public void execute(){
-        armSubsystem.setTargetRads(
-            armSubsystem.getArmAngleRads() + speed
-        );
+        // armSubsystem.setTargetRads(
+        //     armSubsystem.getArmAngleRads() + speed
+        // );
+
+        armSubsystem.setArmPower(0.5 * ((speed)/Math.abs(speed)));
         
     }
 
