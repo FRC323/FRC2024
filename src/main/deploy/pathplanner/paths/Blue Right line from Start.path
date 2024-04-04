@@ -48,16 +48,16 @@
     },
     {
       "anchor": {
-        "x": 1.8384715971711143,
-        "y": 3.6251878771563812
+        "x": 2.271155311541392,
+        "y": 3.85907096600518
       },
       "prevControl": {
-        "x": 2.6453682536994707,
-        "y": 3.262669089440744
+        "x": 2.586897481487271,
+        "y": 3.2626690894407426
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Back From Line 1 Blue"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
@@ -70,7 +70,7 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
+    "maxVelocity": 5.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0

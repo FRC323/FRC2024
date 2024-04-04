@@ -24,19 +24,32 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "HandoffProc"
-                }
-              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "Blue Right line from Start"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HandoffProc"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignArm"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -49,19 +62,32 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "HandoffProc"
-                }
-              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "Blue Mid Line 2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HandoffProc"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignArm"
+                      }
+                    }
+                  ]
                 }
               }
             ]
