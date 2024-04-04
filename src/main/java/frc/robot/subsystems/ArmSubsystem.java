@@ -176,6 +176,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Arm Current R", rightSpark::getOutputCurrent, null);
     builder.addBooleanProperty("Arm Encoder Plugged In", armAbsoluteEncoder::isConnected, null);
     builder.addBooleanProperty("At Target", this::armIsAtTarget, null);
+    builder.addDoubleProperty("Offset", () -> armAbsoluteEncoder.getPositionOffset(), null);
 
 
   }
