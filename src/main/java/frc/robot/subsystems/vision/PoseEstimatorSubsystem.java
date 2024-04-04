@@ -109,18 +109,19 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         // publisher.set(capture.botpose());
     }
 
-    public void updateOdometry(){
+    public boolean updateOdometry(){
         System.out.println("updating odometry");
-        if(!limelightCapture.isPresent()) return;
+        if(!limelightCapture.isPresent()) return false;
         var capture = limelightCapture.get();
         System.out.println("Has Capture");
         // if(capture.aprilTagId() == 4.0){
             // System.out.println("Has Target");
-
+        if(!capture.hasTarget()) return false;
             // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians() + Math.PI);
             driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
             driveSubsystem.resetOdometry(poseEstimator.getEstimatedPosition());
             System.out.println("Updated Odometry From Limelight");
+        return true;
         // }
     }
 
