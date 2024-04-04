@@ -35,6 +35,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private Optional<LimelightCaptureDetail> limelightCapture = Optional.empty();
 
     private final Limelight limelight = new Limelight();
+    private boolean hasVisionTarget = false;
     
     private LinearFilter xFilter = LinearFilter.singlePoleIIR(0.2,0.02); //new SlewRateLimiter(1.0);
     private LinearFilter yFilter = LinearFilter.singlePoleIIR(0.2,0.02);// new SlewRateLimiter(1.0);
@@ -98,6 +99,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             driveSubsystem.resetOdometry(poseEstimator.getEstimatedPosition());
             // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
         }
+
+        hasVisionTarget = capture.hasTarget();
 
         estimatedPose = filterVisionPose(poseEstimator.getEstimatedPosition());
 
@@ -195,6 +198,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         builder.addDoubleProperty("Arm Angle", () -> shotState.get_armAngle().getRadians(), null);
 
         builder.addDoubleProperty("Shooter Speed", () -> shotState.get_shooterSpeed(), null);
+
+        builder.addBooleanProperty("HasVisionTarget",() -> hasVisionTarget, null);
     }
 
 }
