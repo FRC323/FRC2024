@@ -8,7 +8,6 @@ public class ManualIntakeControl extends Command{
 
     private IntakeSubsystem intakeSubsystem;
     private boolean direction;
-    private double angle = 0.0;
 
     public ManualIntakeControl(IntakeSubsystem intakeSubsystem,boolean direction){
         this.intakeSubsystem = intakeSubsystem;
@@ -17,11 +16,12 @@ public class ManualIntakeControl extends Command{
 
     @Override
     public void execute(){
-        intakeSubsystem
-        .setTargetRads(
-            intakeSubsystem.getWristAngleRads() + (direction ? -0.20 : 0.20)
-        );
+        // intakeSubsystem
+        // .setTargetRads(
+        //     intakeSubsystem.getWristAngleRads() + (direction ? -0.20 : 0.20)
+        // );
         
+        intakeSubsystem.setWristPower(0.5 * (direction ? -1.0 : 1.0));
     }
 
 }

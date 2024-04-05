@@ -31,7 +31,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private DutyCycleEncoder wristAbsoluteEncoder;
   private double commandedVoltage = 0;
-  private double armOffset;
+  private double wristOffset = 0.0;
+  private boolean voltageOveride = false;
 
   private ProfiledPIDController wristController;
   private ArmFeedforward wristFeedForward;
@@ -56,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void storeWristOffset() {
     wristAbsoluteEncoder.reset();
-    Preferences.setDouble(Intake.OFFSET_KEY, wristAbsoluteEncoder.getPositionOffset());
+    Preferences.setDouble(Intake.OFFSET_KEY, wristAbsoluteEncoder.getPositionOffset()); 
   }
 
   public double getWristAngleRads() {
@@ -65,13 +66,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    commandedVoltage = wristController.calculate(getWristAngleRads());
-    this.wristSpark.set(
-        commandedVoltage
-            + wristFeedForward.calculate(getWristAngleRads(),wristController.getSetpoint().velocity)
-            // + (Intake.kG * Math.cos(getWristAngleRads()))
-            );
+    if(!voltageOveride){
+      commandedVoltage = wristController.calculate(getWristAngleRads());
+      this.wristSpark.set(
+          commandedVoltage
+              + wristFeedForward.calculate(getWristAngleRads(),wristController.getSetpoint().velocity)
+              // + (Intake.kG * Math.cos(getWristAngleRads()))
+              );
+    }
   }
 
   public void setIntakeSpeed(double vel) {
@@ -81,6 +83,12 @@ public class IntakeSubsystem extends SubsystemBase {
   public void setTargetRads(double rads) {
     this.wristController.setGoal(
         MathUtil.clamp(rads, Intake.SOFT_LIMIT_MIN, Intake.SOFT_LIMIT_MAX));
+    voltageOveride = false;
+  }
+
+  public void setWristPower(double speed){
+    voltageOveride = true;
+    wristSpark.set(speed);
   }
 
   public boolean wristIsAtTarget() {

@@ -281,13 +281,17 @@ public class RobotContainer {
     m_driveJoystick
         .povUp()
         .whileTrue(
-            new ManualIntakeControl(intakeSubsystem, true)
+            new ManualIntakeControl(intakeSubsystem, true).handleInterrupt(
+           () -> intakeSubsystem.setWristPower(0.0)
+            )
         );
     
     m_driveJoystick
         .povDown()
         .whileTrue(
-            new ManualIntakeControl(intakeSubsystem, false)
+            new ManualIntakeControl(intakeSubsystem, false).handleInterrupt(
+           () -> intakeSubsystem.setWristPower(0.0)
+            )
         );
     
     // m_driveJoystick
