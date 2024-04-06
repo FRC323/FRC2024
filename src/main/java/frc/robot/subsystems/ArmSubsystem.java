@@ -66,7 +66,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void storeArmOffset() {
     // armAbsoluteEncoder.reset();
-    armOffset = armAbsoluteEncoder.getAbsolutePosition();
+    armOffset = armAbsoluteEncoder.getAbsolutePosition() - Arm.OFFSET_FROM_ZERO_POSITION;
     Preferences.setDouble(Arm.OFFSET_KEY, armOffset);
   }
 
