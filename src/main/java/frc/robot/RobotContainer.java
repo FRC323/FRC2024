@@ -281,13 +281,17 @@ public class RobotContainer {
     m_driveJoystick
         .povUp()
         .whileTrue(
-            new ManualIntakeControl(intakeSubsystem, true)
+            new ManualIntakeControl(intakeSubsystem, true).handleInterrupt(
+           () -> intakeSubsystem.setWristPower(0.0)
+            )
         );
     
     m_driveJoystick
         .povDown()
         .whileTrue(
-            new ManualIntakeControl(intakeSubsystem, false)
+            new ManualIntakeControl(intakeSubsystem, false).handleInterrupt(
+           () -> intakeSubsystem.setWristPower(0.0)
+            )
         );
     
     // m_driveJoystick
@@ -331,6 +335,9 @@ public class RobotContainer {
         .add("ResetPose", new ResetOdomFromLimelight(poseEstimatorSubsystem));
 
     Shuffleboard.getTab("Buttons").add("Auto Chooser", autoChooser);
+
+    Shuffleboard.getTab("Buttons").add("Disable Encoder Control", new InstantCommand(() -> armSubsystem.disableEncoderControl(true)));
+    Shuffleboard.getTab("Buttons").add("Enable Encoder Control", new InstantCommand(() -> armSubsystem.disableEncoderControl(false)));
 
     // SmartDashboard.putData("Pick Note",new FireNoteAuto(driveSubsystem, intakeSubsystem,
     // armSubsystem));

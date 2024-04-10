@@ -15,8 +15,7 @@ public class ResetOdomFromLimelight extends Command{
     @Override
     public void execute(){
         // if(poseEstimatorSubsystem.getEstimatedPosition().getRotation().getRadians() != 0.0){
-            poseEstimatorSubsystem.updateOdometry();
-            finished = true;
+            finished = poseEstimatorSubsystem.updateOdometry();
         // }
     }
 

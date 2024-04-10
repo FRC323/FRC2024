@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5344235816676761,
-      "y": 3.3679164794227034
+      "x": 1.3239288017037572,
+      "y": 3.438081406077343
     },
     "rotation": -54.462322208025626
   },
@@ -24,19 +24,32 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "HandoffProc"
-                }
-              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "Blue Right line from Start"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HandoffProc"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignArm"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -49,19 +62,32 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "HandoffProc"
-                }
-              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "Blue Mid Line 2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HandoffProc"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignArm"
+                      }
+                    }
+                  ]
                 }
               }
             ]

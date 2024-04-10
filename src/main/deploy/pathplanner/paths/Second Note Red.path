@@ -3,32 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 15.192584874480913,
-        "y": 5.547612425391122
+        "x": 15.134086325179776,
+        "y": 5.596361216475402
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.865148550092593,
-        "y": 5.103234556578403
+        "x": 14.806650000791457,
+        "y": 5.151983347662683
       },
       "isLocked": false,
       "linkedName": "Start"
     },
     {
       "anchor": {
-        "x": 14.00311437202447,
-        "y": 4.270394098982973
+        "x": 14.023780526191523,
+        "y": 4.244978062608944
       },
       "prevControl": {
-        "x": 14.611210403031345,
-        "y": 4.317170716752733
+        "x": 14.573405784986196,
+        "y": 4.350225452590903
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Second Note"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -146.13200309275948,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [
     {
       "name": "New Constraints Zone",
@@ -51,13 +57,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -155.6375469846879,
+    "rotation": -151.0735741647464,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Red 5 Note Paths",
   "previewStartingState": {
-    "rotation": -179.33380002981679,
+    "rotation": 180.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

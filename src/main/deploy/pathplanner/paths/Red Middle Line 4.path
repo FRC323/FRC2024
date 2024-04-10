@@ -3,59 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.406753155549067,
-        "y": 2.17419608235891
+        "x": 8.153314996088682,
+        "y": 2.502549050682148
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.991738648560434,
-        "y": 1.842704302985804
+        "x": 8.738300489100048,
+        "y": 2.1710572713090417
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "End Red Midline 3"
     },
     {
       "anchor": {
-        "x": 12.033663212223889,
-        "y": 1.7842057536846667
+        "x": 12.11763335207582,
+        "y": 1.6839582397113522
       },
       "prevControl": {
-        "x": 10.259207216756078,
-        "y": 1.179720744239588
+        "x": 10.462151444328581,
+        "y": 0.8044834762206319
       },
       "nextControl": {
-        "x": 13.8081192076917,
-        "y": 2.3886907631297447
+        "x": 13.614485120708133,
+        "y": 2.479160741797268
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 14.432103733570491,
-        "y": 3.568411507366102
+        "x": 14.316134387254532,
+        "y": 3.4263872516349028
       },
       "prevControl": {
-        "x": 14.05186316310875,
-        "y": 3.1199226293939524
+        "x": 13.941921445096453,
+        "y": 2.7832087573007067
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.0,
-      "rotationDegrees": 155.7454330476313,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 2.0,
-      "rotationDegrees": -134.61,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {

@@ -41,8 +41,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   //    private AbsoluteEncoder armEncoder;
   private DutyCycleEncoder armAbsoluteEncoder;
+  private double armOffset = 0.0;
+
   private double commandedVoltage = 0.0;
   private boolean voltageOveride = false;
+  private boolean encoderControlDisabled = false;
   //    private AbsoluteEncoderChecker encoderChecker;
 
   public ArmSubsystem() {
@@ -53,7 +56,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     armFeedForward = new ArmFeedforward(0, Arm.kG, Arm.kV);
     armAbsoluteEncoder = new DutyCycleEncoder(Arm.ENCODER_PORT);
-    armAbsoluteEncoder.setPositionOffset(Preferences.getDouble(Arm.OFFSET_KEY, 0.0));
+    armAbsoluteEncoder.setPositionOffset(0.0);
+    armOffset = Preferences.getDouble(Arm.OFFSET_KEY, 0.0);
 
 
     initWithRetry(this::initSparks, 5);
@@ -61,19 +65,20 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void storeArmOffset() {
-    armAbsoluteEncoder.reset();
-    Preferences.setDouble(Arm.OFFSET_KEY, armAbsoluteEncoder.getPositionOffset());
+    // armAbsoluteEncoder.reset();
+    armOffset = armAbsoluteEncoder.getAbsolutePosition() - Arm.OFFSET_FROM_ZERO_POSITION;
+    Preferences.setDouble(Arm.OFFSET_KEY, armOffset);
   }
 
   
 
   public double getArmAngleRads() {
-    return armAbsoluteEncoder.get() * (2 * Math.PI);
+    return (armAbsoluteEncoder.getAbsolutePosition() - armOffset) * (2 * Math.PI);
   }
 
   @Override
   public void periodic() {
-    if(!voltageOveride){
+    if(!voltageOveride && !encoderControlDisabled){
       commandedVoltage = armController.calculate(getArmAngleRads())
                 + armFeedForward.calculate(getArmAngleRads(), armController.getSetpoint().velocity);
     }
@@ -88,6 +93,11 @@ public class ArmSubsystem extends SubsystemBase {
   public void setArmPower(double power){
     voltageOveride = true;
     leftSpark.set(power);
+  }
+
+  public void disableEncoderControl(boolean value){
+    encoderControlDisabled = value;
+    commandedVoltage = 0.0;
   }
 
   public double getArmTarget(){
@@ -170,6 +180,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Arm Current R", rightSpark::getOutputCurrent, null);
     builder.addBooleanProperty("Arm Encoder Plugged In", armAbsoluteEncoder::isConnected, null);
     builder.addBooleanProperty("At Target", this::armIsAtTarget, null);
+    builder.addDoubleProperty("Offset", () -> armAbsoluteEncoder.getPositionOffset(), null);
 
 
   }
