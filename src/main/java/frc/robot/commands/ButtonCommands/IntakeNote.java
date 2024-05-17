@@ -35,7 +35,7 @@ public class IntakeNote extends SequentialCommandGroup{
             new ConditionalCommand(
                 new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
                 new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_INTAKE_SPEED),
-                feederSubsystem::isHoldingNote
+                feederSubsystem::isIntialBeamTriggered
             ),
             new ParallelCommandGroup(
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE),
@@ -48,7 +48,7 @@ public class IntakeNote extends SequentialCommandGroup{
             new ConditionalCommand(
                 new SetFeederSpeed(feederSubsystem,Feeder.FEEDER_STOPED_SPEED),
                 new FeedUntilNote(feederSubsystem), 
-                feederSubsystem::isHoldingNote
+                feederSubsystem::isIntialBeamTriggered
             ),
             new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
             // new SetIntakeSpeed(intakeSubsystem, Intake.OUTTAKE_SPEED),
