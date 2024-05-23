@@ -57,7 +57,7 @@ public class ShootAuto extends SequentialCommandGroup{
                         new WaitCommand(1.5)
                     ),
                     new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
-                    new WaitUntilCommand(() -> !(feederSubsystem.isIntialBeamTriggered() | feederSubsystem.isFinalBeamTriggered())),
+                    new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
                     new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
                 )
             );

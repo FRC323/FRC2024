@@ -15,10 +15,10 @@ public class FeedUntilNote extends SequentialCommandGroup{
                 new InstantCommand(),
                 new SequentialCommandGroup(
                     new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_INTAKE_SPEED),
-                    new WaitUntilCommand(feederSubsystem::isIntialBeamTriggered),
+                    new WaitUntilCommand(feederSubsystem::isHoldingNote),
                     new SetFeederSpeed(feederSubsystem, 0.0)
                 ),
-                feederSubsystem::isIntialBeamTriggered
+                feederSubsystem::isHoldingNote
             )
         );
     }

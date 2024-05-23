@@ -45,7 +45,7 @@ public class GotoAmpPose extends SequentialCommandGroup{
                     new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
                 )
             ),
-            new WaitUntilCommand(() -> !(feederSubsystem.isIntialBeamTriggered() | feederSubsystem.isFinalBeamTriggered())),
+            new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote()),
             new WaitCommand(0.5),
             new SetShooterSpeed(shooterSubsystem, 0.0),
             new SetIntakeUp(armSubsystem, intakeSubsystem)

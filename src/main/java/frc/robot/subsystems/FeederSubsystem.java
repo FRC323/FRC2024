@@ -18,20 +18,18 @@ import frc.robot.subsystems.vision.LimelightHelpers;
 
 public class FeederSubsystem extends SubsystemBase{  
     private CANSparkMax feederSpark;
-    private DigitalInput intialBeamBreakSensor;
-    private DigitalInput finalBeamBreakSensor;
+    private DigitalInput beamBreakSensor;
 
     public FeederSubsystem(){
         feederSpark = new CANSparkMax(Feeder.Feeder_CAN_Id, MotorType.kBrushless);
-        intialBeamBreakSensor = new DigitalInput(Feeder.INTIAL_BEAM_BREAK_PORT);
-        finalBeamBreakSensor = new DigitalInput(Feeder.FINAL_BEAM_BREAK_PORT);
+        beamBreakSensor = new DigitalInput(Feeder.BEAM_BREAK_PORT);
 
         initSparks();
     }
 
     @Override
     public void periodic(){
-        if(isIntialBeamTriggered()){
+        if(isHoldingNote()){
             // PhotonPoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
             LimelightHelpers.setLEDMode_ForceBlink(Limelight._name);
         }else{
@@ -43,12 +41,8 @@ public class FeederSubsystem extends SubsystemBase{
         feederSpark.set(vel);
     }
 
-    public boolean isIntialBeamTriggered(){
-        return intialBeamBreakSensor.get();
-    }
-
-    public boolean isFinalBeamTriggered(){
-        return finalBeamBreakSensor.get();
+    public boolean isHoldingNote(){
+        return beamBreakSensor.get();
     }
 
     private boolean initSparks(){
@@ -62,10 +56,8 @@ public class FeederSubsystem extends SubsystemBase{
     public void initSendable(SendableBuilder builder){
         super.initSendable(builder);
 
-        builder.addBooleanProperty("Intial Beam Blocked", ()-> intialBeamBreakSensor.get(), null);
-        builder.addBooleanProperty("Final beam Blocked", ()-> finalBeamBreakSensor.get(), null);
-        builder.addBooleanProperty("Is intial Beam Triggered", this::isIntialBeamTriggered, null);
-        builder.addBooleanProperty("Is final Beam Triggered", this::isFinalBeamTriggered, null);
+        builder.addBooleanProperty("Beam Blocked", ()-> beamBreakSensor.get(), null);
+        builder.addBooleanProperty("Is Holding Note", this::isHoldingNote, null);
  
         builder.addDoubleProperty("Feeder Current", feederSpark::getOutputCurrent, null);
     }

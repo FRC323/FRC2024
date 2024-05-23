@@ -1,8 +1,6 @@
 package frc.robot.commands.Procedures;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -22,19 +20,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class AdjustFeederNote extends SequentialCommandGroup{
     public AdjustFeederNote(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem){
         addCommands(
-
-            new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
-            new WaitUntilCommand(feederSubsystem::isIntialBeamTriggered),
-
-            new ConditionalCommand(
-                new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_REVERSE_ADJUST),
-                new InstantCommand(),
-                feederSubsystem::isFinalBeamTriggered
-            )
-
-            // Need to test this - Eli
-
-        /*
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
             // new SetShooterSpeed(shooterSubsystem, Shooter.REVERSE_SPEED),
@@ -44,8 +29,6 @@ public class AdjustFeederNote extends SequentialCommandGroup{
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
             new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
-        */
-
         );
     }
 }
