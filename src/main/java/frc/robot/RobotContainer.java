@@ -324,8 +324,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Buttons").add("Align While Driving", alignWhileDriving);
     Shuffleboard.getTab("Buttons").add("Feed Note", new SequentialCommandGroup(
         new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
-        new WaitUntilCommand(feederSubsystem::isIntialBeamTriggered),
-        new WaitUntilCommand(feederSubsystem::isFinalBeamTriggered),
+        new WaitUntilCommand(feederSubsystem::isHoldingNote),
         new SetFeederSpeed(feederSubsystem, 0.0)
     ));
 

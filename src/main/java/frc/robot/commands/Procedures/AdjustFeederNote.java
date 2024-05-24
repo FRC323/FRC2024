@@ -15,6 +15,7 @@ import frc.robot.Constants.Shooter;
 import frc.robot.commands.SetCommands.SetLimelightBlink;
 import frc.robot.commands.SetCommands.SetShooterSpeed;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.adjustNote; //TODO Not sure why this doesn't work - eli
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -23,16 +24,11 @@ public class AdjustFeederNote extends SequentialCommandGroup{
     public AdjustFeederNote(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem){
         addCommands(
 
-            new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
-            new WaitUntilCommand(feederSubsystem::isIntialBeamTriggered),
+            //This should be like one command. TODO Probally needs a timeout
 
-            new ConditionalCommand(
-                new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_REVERSE_ADJUST),
-                new InstantCommand(),
-                feederSubsystem::isFinalBeamTriggered
-            )
+            new adjustNote()
 
-            // Need to test this - Eli
+            // TODO: Test this
 
         /*
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),

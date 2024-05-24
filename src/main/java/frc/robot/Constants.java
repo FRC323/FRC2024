@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.function.DoubleSupplier;
-
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -280,6 +277,7 @@ public final class Constants {
     public static final int Feeder_CAN_Id = 51;
     public static final int INTIAL_BEAM_BREAK_PORT = 8;
     public static final int FINAL_BEAM_BREAK_PORT = 9; // TODO: Make sure the wiring can be here
+    public static final int ENCODER_PORT = 10; // TODO: Make sure the wiring can be here
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
@@ -289,6 +287,18 @@ public final class Constants {
     public static final double FEEDER_STOPED_SPEED = 0.0;
 
     public static final double FEEDER_ADJUST_TIME = 0.15;
+
+    public static final double FEEDER_DISTANCE_PER_REV = 2*3.141*15; //TODO: get this number from robot. Units should be inches
+
+    //TODO: Copied these values from arm. So probally not correct
+    public static final double kP = 40.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double MAX_VELOCITY = Units.degreesToRadians(2048);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(18096);
+
+    public static final TrapezoidProfile.Constraints FEEDER_CONSTRAINTS =
+        new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
  
   }
 

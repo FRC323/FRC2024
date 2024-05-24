@@ -11,6 +11,7 @@ import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.resetDistanceFromBeamBreak; //TODO: figure out why there are errors - eli
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
@@ -30,6 +31,7 @@ public class HumanPlayerPickup extends SequentialCommandGroup{
             ),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
+            new resetDistanceFromBeamBreak(),
             new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
             // new AdjustFeederNote(feederSubsystem)
         );
