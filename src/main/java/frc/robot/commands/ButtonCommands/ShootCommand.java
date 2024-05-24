@@ -40,10 +40,8 @@ public class ShootCommand extends SequentialCommandGroup{
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
             new ParallelRaceGroup( // I'm not sure what this is doing - Eli H.
                 new SequentialCommandGroup(
-                    //new WaitUntilCommand(feederSubsystem::isHoldingNote),
-                    //new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
-                    new WaitUntilCommand(feederSubsystem::isIntialBeamTriggered),
-                    new WaitUntilCommand(() -> !(feederSubsystem.isIntialBeamTriggered() | feederSubsystem.isFinalBeamTriggered()))
+                    new WaitUntilCommand(feederSubsystem::isHoldingNote),
+                    new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
                 ),
                 new WaitCommand(1.25)
             )

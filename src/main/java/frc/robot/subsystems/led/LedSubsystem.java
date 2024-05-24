@@ -53,7 +53,7 @@ public class LedSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setToNote(feederSubsystem.isIntialBeamTriggered());
+        setToNote(feederSubsystem.isHoldingNote());
         _controller.set(this._color.get());
     }
 }

@@ -39,7 +39,7 @@ public class SafeShotCommand extends SequentialCommandGroup{
                     new SetArmTarget(armSubsystem, Arm.ARM_SAFE_ZONE_SHOT)
                 )
             ),
-            new WaitUntilCommand(() -> !(feederSubsystem.isIntialBeamTriggered() | feederSubsystem.isFinalBeamTriggered()))
+            new WaitUntilCommand(() -> !(feederSubsystem.isHoldingNote()))
         );
     }
 }

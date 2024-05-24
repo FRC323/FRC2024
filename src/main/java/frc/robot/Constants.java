@@ -279,7 +279,7 @@ public final class Constants {
   public static class Feeder{
     public static final int Feeder_CAN_Id = 51;
     public static final int INTIAL_BEAM_BREAK_PORT = 8;
-    public static final int FINAL_BEAM_BREAK_PORT = 9; // Not sure if this is right
+    public static final int FINAL_BEAM_BREAK_PORT = 9; // TODO: Make sure the wiring can be here
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;

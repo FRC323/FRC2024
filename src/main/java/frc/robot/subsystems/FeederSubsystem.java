@@ -31,7 +31,7 @@ public class FeederSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        if(isIntialBeamTriggered()){
+        if(isHoldingNote()){
             // PhotonPoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
             LimelightHelpers.setLEDMode_ForceBlink(Limelight._name);
         }else{
@@ -51,6 +51,10 @@ public class FeederSubsystem extends SubsystemBase{
         return finalBeamBreakSensor.get();
     }
 
+    public boolean isHoldingNote(){
+        return finalBeamBreakSensor.get() || intialBeamBreakSensor.get();
+    }
+
     private boolean initSparks(){
         int errors = 0;
         errors += check(feederSpark.restoreFactoryDefaults());
@@ -62,8 +66,6 @@ public class FeederSubsystem extends SubsystemBase{
     public void initSendable(SendableBuilder builder){
         super.initSendable(builder);
 
-        builder.addBooleanProperty("Intial Beam Blocked", ()-> intialBeamBreakSensor.get(), null);
-        builder.addBooleanProperty("Final beam Blocked", ()-> finalBeamBreakSensor.get(), null);
         builder.addBooleanProperty("Is intial Beam Triggered", this::isIntialBeamTriggered, null);
         builder.addBooleanProperty("Is final Beam Triggered", this::isFinalBeamTriggered, null);
  
