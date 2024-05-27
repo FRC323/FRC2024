@@ -36,7 +36,7 @@ public class ShooterSubsystem extends SubsystemBase{
     leftShooterController = leftShooterSpark.getPIDController();
     rightShooterController = rightShooterSpark.getPIDController();
 
-    leftShooterEncoder = leftShooterSpark.getEncoder ();
+    leftShooterEncoder = leftShooterSpark.getEncoder();
     rightShooterEncoder = rightShooterSpark.getEncoder();
 
     initSparks();

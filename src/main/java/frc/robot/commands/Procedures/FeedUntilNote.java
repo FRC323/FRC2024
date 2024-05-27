@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.Feeder;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
-import frc.robot.commands.SetCommands.resetDistanceFromBeamBreak; //TODO: Figure out why this doesn't work
 import frc.robot.subsystems.FeederSubsystem;
 
 public class FeedUntilNote extends SequentialCommandGroup{
@@ -17,8 +16,7 @@ public class FeedUntilNote extends SequentialCommandGroup{
                 new SequentialCommandGroup(
                     new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_INTAKE_SPEED),
                     new WaitUntilCommand(feederSubsystem::isHoldingNote),
-                    new SetFeederSpeed(feederSubsystem, 0.0),
-                    new resetDistanceFromBeamBreak()
+                    new SetFeederSpeed(feederSubsystem, 0.0)
                 ),
                 feederSubsystem::isHoldingNote
             )

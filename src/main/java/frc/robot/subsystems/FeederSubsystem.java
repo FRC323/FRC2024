@@ -2,9 +2,14 @@ package frc.robot.subsystems;
 
 import static frc.robot.utils.SparkMaxUtils.check;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -23,19 +28,17 @@ public class FeederSubsystem extends SubsystemBase{
     private DigitalInput beamBreakSensor;
     //private DigitalInput finalBeamBreakSensor;
 
-    private DutyCycleEncoder feederEncoder;
-    private ProfiledPIDController feederController;
+    private RelativeEncoder feederEncoder;
+    private SparkPIDController feederController;
+
+    private boolean hasNoteFlag = false;
+    private double feederPositionTarget = 0.0;
 
     public FeederSubsystem(){
         feederSpark = new CANSparkMax(Feeder.Feeder_CAN_Id, MotorType.kBrushless);
         beamBreakSensor = new DigitalInput(Feeder.INTIAL_BEAM_BREAK_PORT);
         //finalBeamBreakSensor = new DigitalInput(Feeder.FINAL_BEAM_BREAK_PORT);
-        feederEncoder = new DutyCycleEncoder(Feeder.ENCODER_PORT);
-        feederEncoder.setDistancePerRotation(Feeder.FEEDER_DISTANCE_PER_REV);
-        feederEncoder.reset();
-
-        feederController = new ProfiledPIDController(Feeder.kP, Feeder.kI, Feeder.kD, Feeder.FEEDER_CONSTRAINTS);
-        feederController.setTolerance(0.01);
+        
 
         initSparks();
     }
@@ -48,6 +51,13 @@ public class FeederSubsystem extends SubsystemBase{
         }else{
             LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
         }
+
+        if(beamBreakSensor.get() && !hasNoteFlag){
+            resetDistanceFromBeamBreak();
+        }
+
+        hasNoteFlag = beamBreakSensor.get();
+
     }
 
     public void setFeederSpeed(double vel) {
@@ -59,20 +69,40 @@ public class FeederSubsystem extends SubsystemBase{
     }
 
     public void resetDistanceFromBeamBreak(){
-        feederEncoder.reset();
+        feederEncoder.setPosition(0.0);
     }
 
     public double getDistanceFromBeamBreak(){ // Recorded in inches, not angle
-        return feederEncoder.getDistance();
+        return feederEncoder.getPosition();
     }
 
     public void adjustNote(){
-        this.feederController.setGoal(getDistanceFromBeamBreak());
+        // this.feederController.setGoal(getDistanceFromBeamBreak());
+    }
+
+    public boolean atFeederPosition(){
+        return Math.abs(feederEncoder.getPosition() - feederPositionTarget) < Feeder.POSITION_TOLLERANCE;
+    }
+
+    public void setFeederPoseTarget(double position) {
+        feederPositionTarget = position;
+        feederController.setReference(position, ControlType.kPosition);
     }
 
     private boolean initSparks(){
         int errors = 0;
         errors += check(feederSpark.restoreFactoryDefaults());
+
+        feederEncoder =  feederSpark.getEncoder();
+        errors += check(feederEncoder.setPositionConversionFactor(Feeder.FEEDER_DISTANCE_PER_REV));
+
+        feederController = feederSpark.getPIDController();
+        feederController.setP(Feeder.kP);
+        feederController.setI(Feeder.kI);
+        feederController.setD(Feeder.kD);
+
+        feederEncoder.setPosition(0.0);
+        feederSpark.setSmartCurrentLimit(20);
         feederSpark.setIdleMode(IdleMode.kBrake);
         return errors == 0;
     }
@@ -85,5 +115,15 @@ public class FeederSubsystem extends SubsystemBase{
         //builder.addBooleanProperty("Is final Beam Triggered", this::isFinalBeamTriggered, null);
  
         builder.addDoubleProperty("Feeder Current", feederSpark::getOutputCurrent, null);
+        builder.addDoubleProperty("Feeder Pose", this::getDistanceFromBeamBreak, null);
+        builder.addDoubleProperty("Target", () -> this.feederPositionTarget, null);
+        builder.addBooleanProperty("At Position", this::atFeederPosition, null);
+        builder.addDoubleProperty("Applied Output", feederSpark::getAppliedOutput, null);
+
+        builder.addDoubleProperty("P Internal",() -> feederSpark.getPIDController().getP(), null);
+        builder.addDoubleProperty("P External",() -> feederController.getP(), null);
+        
     }
+
+    
 }
