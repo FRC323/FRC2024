@@ -278,8 +278,7 @@ public final class Constants {
   public static class Feeder{
     public static final int Feeder_CAN_Id = 51;
     public static final int INTIAL_BEAM_BREAK_PORT = 8;
-    public static final int FINAL_BEAM_BREAK_PORT = 9; // TODO: Make sure the wiring can be here
-    public static final int ENCODER_PORT = 10; // TODO: Make sure the wiring can be here
+    //public static final int FINAL_BEAM_BREAK_PORT = 9; // TODO: Make sure the wiring can be here
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
@@ -290,7 +289,7 @@ public final class Constants {
 
     public static final double FEEDER_ADJUST_TIME = 0.15;
 
-    public static final double FEEDER_DISTANCE_PER_REV = 2 * Math.PI * 12; //TODO: get this number from robot. Units should be inches
+    public static final double FEEDER_DISTANCE_PER_REV = 2 * Math.PI * 12;
 
     //TODO: Copied these values from arm. So probally not correct
     public static final double kP = 0.5;
@@ -303,7 +302,7 @@ public final class Constants {
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
     public static final double ADJUST_POSITION = 15.0;
     public static final double SHOOT_POSITION = -5.0;
-    public static final double POSITION_TOLLERANCE = 0.5;
+    public static final double POSITION_TOLLERANCE = 2;
  
   }
 
@@ -316,7 +315,7 @@ public final class Constants {
       public static final double kI = 0.000005;
       public static final double kD = 0.0;
 
-      public static final double SHOOTER_SPEED = 5000;
+      public static final double SHOOTER_SPEED = 1500; //TODO: revert to 5000, low speed b/c small space
       public static final double AMP_SPEED = 2500;
       public static final double REVERSE_SPEED = -400;
       public static final double EJECT_SPEED = 1000;

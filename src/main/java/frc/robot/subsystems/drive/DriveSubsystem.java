@@ -264,7 +264,7 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads,boolean fieldRelative){
+  public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
     rotController.setSetpoint(targetHeadingRads.getRadians());
     
     drive(
