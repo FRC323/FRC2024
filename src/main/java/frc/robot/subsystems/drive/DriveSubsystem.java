@@ -71,9 +71,9 @@ public class DriveSubsystem extends SubsystemBase {
   private Optional<Pose2d> targetPose = Optional.empty();
 
   private PIDController rotController = new PIDController(
-        6.0, 
-        0.1,
-        0.1
+        Constants.Swerve.ROT_CONTROLLER_KP, 
+        Constants.Swerve.ROT_CONTROLLER_KI,
+        Constants.Swerve.ROT_CONTROLLER_KD
     );
 
   SwerveDriveOdometry odometry =
@@ -267,12 +267,16 @@ public class DriveSubsystem extends SubsystemBase {
   public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
     rotController.setSetpoint(targetHeadingRads.getRadians());
     
+    double rotControllerValue = rotController.calculate(
+        this.getPose().getRotation().getRadians() % (Math.PI * 2)
+      );
+
+    //(rotControllerValue + Constants.Swerve.ROT_CONTROLLER_FEEDFWD * Math.signum(rotControllerValue)) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
+
     drive(
       xSpeed,
       ySpeed,
-      rotController.calculate(
-        this.getPose().getRotation().getRadians() % (Math.PI * 2)
-      ) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
+      5.0 * (rotControllerValue) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
       fieldRelative
     );
   }

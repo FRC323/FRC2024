@@ -163,6 +163,12 @@ public final class Constants {
     public static boolean REAR_RIGHT_IS_INVERTED = false;
     public static String REAR_RIGHT_OFFSET_KEY = "RR_Offset";
 
+    //Align While Driving PID
+    public static double ROT_CONTROLLER_KP = 1.5; 
+    public static double ROT_CONTROLLER_KI = 0;
+    public static double ROT_CONTROLLER_KD = 0.1;
+    //public static double ROT_CONTROLLER_FEEDFWD = Math.PI/8;
+
     public static class Module {
       //      TODO: Group these in a sane way
       public static final boolean DRIVING_ENCODER_INVERTED = true;
