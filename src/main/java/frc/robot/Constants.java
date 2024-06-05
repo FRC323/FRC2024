@@ -164,7 +164,7 @@ public final class Constants {
     public static String REAR_RIGHT_OFFSET_KEY = "RR_Offset";
 
     //Align While Driving PID
-    public static double ROT_CONTROLLER_KP = 4;
+    public static double ROT_CONTROLLER_KP = 3.25;
     public static double ROT_CONTROLLER_KI = 0;
     public static double ROT_CONTROLLER_KD = 0;
     //public static double ROT_CONTROLLER_FEEDFWD = Math.PI/8;

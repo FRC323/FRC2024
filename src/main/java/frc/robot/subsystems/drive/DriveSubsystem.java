@@ -265,22 +265,14 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
-    rotController.setSetpoint(targetHeadingRads.getRadians());
-    
-    //(this.getPose().getRotation().getRadians() + 3 * actualChassisSpeed.omegaRadiansPerSecond/Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS) % (Math.PI * 2)
+
+    rotController.setSetpoint(targetHeadingRads.getRadians() + actualChassisSpeed.vyMetersPerSecond/7);
+
+    //+ 5 * actualChassisSpeed.omegaRadiansPerSecond/Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS
 
     double rotControllerValue = rotController.calculate(
         this.getPose().getRotation().getRadians() % (Math.PI * 2)
       );
-/*
-    double prevChangeInTargetAngle = 0;
-
-    double changeInTargetAngle = this.getPose().getRotation().getRadians() - prevChangeInTargetAngle * 50;
-
-    prevChangeInTargetAngle = changeInTargetAngle;
-*/
-    //(rotControllerValue + Constants.Swerve.ROT_CONTROLLER_FEEDFWD * Math.signum(rotControllerValue)) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
-    //rotControllerValue / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS * (Math.abs(getChassisSpeed().vyMetersPerSecond)+1),
 
     drive(
       xSpeed,
