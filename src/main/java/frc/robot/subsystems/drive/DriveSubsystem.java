@@ -267,16 +267,25 @@ public class DriveSubsystem extends SubsystemBase {
   public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
     rotController.setSetpoint(targetHeadingRads.getRadians());
     
+    //(this.getPose().getRotation().getRadians() + 3 * actualChassisSpeed.omegaRadiansPerSecond/Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS) % (Math.PI * 2)
+
     double rotControllerValue = rotController.calculate(
         this.getPose().getRotation().getRadians() % (Math.PI * 2)
       );
+/*
+    double prevChangeInTargetAngle = 0;
 
+    double changeInTargetAngle = this.getPose().getRotation().getRadians() - prevChangeInTargetAngle * 50;
+
+    prevChangeInTargetAngle = changeInTargetAngle;
+*/
     //(rotControllerValue + Constants.Swerve.ROT_CONTROLLER_FEEDFWD * Math.signum(rotControllerValue)) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
+    //rotControllerValue / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS * (Math.abs(getChassisSpeed().vyMetersPerSecond)+1),
 
     drive(
       xSpeed,
       ySpeed,
-      5.0 * (rotControllerValue) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
+      (rotControllerValue) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
       fieldRelative
     );
   }
@@ -345,6 +354,8 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Actual Velocity X", () -> actualChassisSpeed.vxMetersPerSecond, null);
     builder.addDoubleProperty("Actual Velocity Y", () -> actualChassisSpeed.vyMetersPerSecond, null);
 
+    builder.addDoubleProperty("Actual Velocity Omega", () -> actualChassisSpeed.omegaRadiansPerSecond, null);
+
     builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
     builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
@@ -377,5 +388,6 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Rear Right Velocity", rearRight::getModuleVelocity, null);
     builder.addDoubleProperty("RR Current",rearRight::getCurrent, null);
     builder.addDoubleProperty("Rot Error", () -> rotController.getPositionError() , null);
+    builder.addDoubleProperty("Rot Target", () -> rotController.getSetpoint() , null);
   }
 }
