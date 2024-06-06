@@ -177,7 +177,7 @@ public class SwerveModule implements Sendable {
 
     }
 
-    if (count > 5) {
+    if (count > 10) {
 
       correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
       
@@ -188,10 +188,13 @@ public class SwerveModule implements Sendable {
     } 
     else {
 
-      correctedDesiredState.speedMetersPerSecond = lastNonSlippingWheelVelocity;
+      //correctedDesiredState.speedMetersPerSecond = lastNonSlippingWheelVelocity;
+
       //Looking at advantgescope shows that this isn't really working
 
-      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+      correctedDesiredState.angle = Rotation2d.fromRadians(robotVelocityDirection + moduleOffset);
+
+      //correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
       
     }
 
