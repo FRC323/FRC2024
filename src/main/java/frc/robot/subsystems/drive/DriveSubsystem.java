@@ -258,10 +258,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
+
+    
     frontLeft.setDesiredState(swerveModuleStates[0]);
     frontRight.setDesiredState(swerveModuleStates[1]);
     rearLeft.setDesiredState(swerveModuleStates[2]);
     rearRight.setDesiredState(swerveModuleStates[3]);
+
   }
 
   public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
@@ -377,6 +380,40 @@ public class DriveSubsystem extends SubsystemBase {
         "Rear Left Distance (m)", () -> rearLeft.getPosition().distanceMeters, null);
     builder.addDoubleProperty(
         "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
+
+    builder.addDoubleProperty(
+        "Front Left Speed", () -> Math.abs(frontLeft.getModuleVelocity()), null);
+    builder.addDoubleProperty(
+        "Front Right Speed", () -> Math.abs(frontRight.getModuleVelocity()), null);
+    builder.addDoubleProperty(
+        "Rear Left Speed", () -> Math.abs(rearLeft.getModuleVelocity()), null);
+    builder.addDoubleProperty(
+        "Rear Right Speed", () -> Math.abs(rearRight.getModuleVelocity()), null);
+
+    builder.addDoubleProperty(
+        "Front Left Acceleration", () -> Math.abs(frontLeft.getModuleAcceleration()), null);
+    builder.addDoubleProperty(
+        "Front Right Acceleration", () -> Math.abs(frontRight.getModuleAcceleration()), null);
+    builder.addDoubleProperty(
+        "Rear Left Acceleration", () -> Math.abs(rearLeft.getModuleAcceleration()), null);
+    builder.addDoubleProperty(
+        "Rear Right Acceleration", () -> Math.abs(rearRight.getModuleAcceleration()), null);
+
+    builder.addDoubleProperty(
+        "Front Left Jerk", () -> Math.abs(frontLeft.getModuleJerk()), null);
+
+    builder.addDoubleProperty(
+        "Front Left: Jerk per Current", () -> frontLeft.getModuleJerktoCurrent(), null);
+
+    builder.addDoubleProperty(
+        "Front Left Current", () -> Math.abs(frontLeft.getCurrent()), null);
+    builder.addDoubleProperty(
+        "Front Right Current", () -> Math.abs(frontRight.getCurrent()), null);
+    builder.addDoubleProperty(
+        "Rear Left Current", () -> Math.abs(rearLeft.getCurrent()), null);
+    builder.addDoubleProperty(
+        "Rear Right Current", () -> Math.abs(rearRight.getCurrent()), null);
+
     builder.addDoubleProperty("Rear Right Velocity", rearRight::getModuleVelocity, null);
     builder.addDoubleProperty("RR Current",rearRight::getCurrent, null);
     builder.addDoubleProperty("Rot Error", () -> rotController.getPositionError() , null);

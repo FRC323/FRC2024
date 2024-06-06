@@ -30,6 +30,12 @@ public class SwerveModule implements Sendable {
   private final boolean isInverted;
   private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d(0));
 
+  private double drivingEncoderPrevVelocity = 0;
+  private double moduleAcceleration = 0;
+
+  private double drivingEncoderPrevAcceleration = 0;
+  private double moduleJerk = 0;
+
   public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset,boolean isInverted) {
     drivingSpark = new CANSparkMax(drivingCanId, MotorType.kBrushless);
     turningSpark = new CANSparkMax(turningCanId, MotorType.kBrushless);
@@ -46,6 +52,7 @@ public class SwerveModule implements Sendable {
 
     desiredState.angle = new Rotation2d(turningEncoder.getPosition());
     drivingEncoder.setPosition(0.0);
+    
   }
 
   private boolean initTurnSpark() {
@@ -144,9 +151,21 @@ public class SwerveModule implements Sendable {
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
+
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
+
     correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+
+    //Traction control code
+
+    if (getModuleJerktoCurrent() < 200) { // 200 is gotten experimentally through looking at (Jerk / Current) and listening for wheel slip. TODO: Check this value stays constants for all coeffecicents of friction
+
+      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+
+    }
+
     correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+
     SwerveModuleState optimizedState =
         SwerveModuleState.optimize(
             correctedDesiredState, new Rotation2d(turningEncoder.getPosition()));
@@ -165,12 +184,30 @@ public class SwerveModule implements Sendable {
     return drivingEncoder.getVelocity();
   }
 
+  public double getModuleAcceleration(){
+    return moduleAcceleration;
+  }
+
+  public double getModuleJerk(){
+    return Math.min(1000, moduleJerk); // So dumb
+  }
+
+  public double getModuleJerktoCurrent(){
+    return Math.abs(getModuleJerk()) / (getCurrent()+1);
+  }
+
   public double getCurrent(){
     return drivingSpark.getOutputCurrent();
   }
 
   public void periodic() {
     turningAbsoluteEncoderChecker.addReading(turningEncoder.getPosition());
+
+    moduleAcceleration = (drivingEncoder.getVelocity() - drivingEncoderPrevVelocity) * 50; // 1000 ms / 20 ms loop time = 50
+    drivingEncoderPrevVelocity = drivingEncoder.getVelocity();
+    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50; // 1000 ms / 20 ms loop time = 50
+    drivingEncoderPrevAcceleration = moduleAcceleration;
+
   }
 
   public void setModuleOffset(double offset){
