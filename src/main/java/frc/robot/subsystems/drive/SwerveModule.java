@@ -39,6 +39,12 @@ public class SwerveModule implements Sendable {
   private double lastNonSlippingWheelVelocity = 0;
   private double count = 0;
 
+  private double desiredModuleAcceleration = 0;
+  private double desiredModuleVelocity = 0;
+  private double maxModuleAcceleration = 10;
+
+  private Rotation2d previousMoudleAngle = Rotation2d.fromRadians(0);
+
   public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset,boolean isInverted) {
     drivingSpark = new CANSparkMax(drivingCanId, MotorType.kBrushless);
     turningSpark = new CANSparkMax(turningCanId, MotorType.kBrushless);
@@ -157,46 +163,55 @@ public class SwerveModule implements Sendable {
 
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
 
-    correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+    moduleAcceleration = (getModuleVelocity() - drivingEncoderPrevVelocity) * 50; // 1000 ms / 20 ms loop time = 50
 
+    drivingEncoderPrevVelocity = getModuleVelocity();
+
+    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50; // 1000 ms / 20 ms loop time = 50
+
+    drivingEncoderPrevAcceleration = moduleAcceleration;
+
+
+
+    desiredModuleAcceleration = (desiredState.speedMetersPerSecond - getModuleVelocity()) * 50;
+
+    if (desiredModuleAcceleration > maxModuleAcceleration) {
+      desiredModuleAcceleration = maxModuleAcceleration;
+    } else if (desiredModuleAcceleration < -maxModuleAcceleration) {
+      desiredModuleAcceleration = -maxModuleAcceleration;
+    }
+
+    correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + desiredModuleAcceleration/50;
+
+    desiredModuleVelocity = correctedDesiredState.speedMetersPerSecond;
+        
     //Traction control code
 
-    //correctedDesiredState.angle = Rotation2d.fromRadians(robotVelocityDirection);
+    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
 
-    // 200 is gotten experimentally through looking at (Jerk / Current) and listening for wheel slip. TODO: Check this value stays constants for all coeffecicents of friction
+    // if (getModuleJerk() < 300) { 
 
-    //This is to remove noisy data
+    //   count++;
 
-    if (getModuleJerktoCurrent() < 200) { 
+    // } else {
 
-      count++;
+    //   count = 0;
 
-    } else {
+    // }
 
-      count = 0;
+    // if (count > 10) {
 
-    }
-
-    if (count > 10) {
-
-      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+    //   correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
       
-      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+    //   correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
       
-      lastNonSlippingWheelVelocity = getModuleVelocity(); //TODO: implement this as lastNonSlippingWheelAcceleration, probally
+    //lastNonSlippingWheelVelocity = getModuleVelocity(); //TODO: implement this as lastNonSlippingWheelAcceleration, probally
 
-    } 
-    else {
+    //   previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
 
-      //correctedDesiredState.speedMetersPerSecond = lastNonSlippingWheelVelocity;
+    //   //maxModuleAcceleration += 0.01;
 
-      //Looking at advantgescope shows that this isn't really working
-
-      correctedDesiredState.angle = Rotation2d.fromRadians(robotVelocityDirection + moduleOffset);
-
-      //correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-      
-    }
+    // } 
 
     SwerveModuleState optimizedState =
         SwerveModuleState.optimize(
@@ -212,12 +227,20 @@ public class SwerveModule implements Sendable {
     return turningEncoder.getPosition();
   }
 
+  public double getDesiredModuleVelocity () {
+    return desiredModuleVelocity;
+  }
+
   public double getModuleVelocity(){
     return drivingEncoder.getVelocity();
   }
 
   public double getModuleAcceleration(){
     return moduleAcceleration;
+  }
+
+  public double getDesiredModuleAcceleration(){
+    return desiredModuleAcceleration;
   }
 
   public double getModuleJerk(){
@@ -238,12 +261,6 @@ public class SwerveModule implements Sendable {
 
   public void periodic() {
     turningAbsoluteEncoderChecker.addReading(turningEncoder.getPosition());
-
-    moduleAcceleration = (drivingEncoder.getVelocity() - drivingEncoderPrevVelocity) * 50; // 1000 ms / 20 ms loop time = 50
-    drivingEncoderPrevVelocity = drivingEncoder.getVelocity();
-    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50; // 1000 ms / 20 ms loop time = 50
-    drivingEncoderPrevAcceleration = moduleAcceleration;
-
   }
 
   public void setModuleOffset(double offset){

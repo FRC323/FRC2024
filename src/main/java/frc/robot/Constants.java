@@ -136,8 +136,8 @@ public final class Constants {
             new Translation2d(WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2));
-    public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 2.0;
-    public static final double MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2 = 2.0;
+    public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 20.0; // 20.0
+    public static final double MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2 = 20.0; // 20.0
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 11;
     public static int FRONT_LEFT_TURNING_CAN_ID = 21;
@@ -172,9 +172,9 @@ public final class Constants {
     public static class Module {
       //      TODO: Group these in a sane way
       public static final boolean DRIVING_ENCODER_INVERTED = true;
-      public static final double DRIVING_K_P = 0.1;
+      public static final double DRIVING_K_P = 0.2; // 0.1
       public static final double DRIVING_K_I = 0.0;
-      public static final double DRIVING_K_D = 0.1;
+      public static final double DRIVING_K_D = 0.1; // 0.1
       
       public static final double DRIVING_MIN_OUTPUT = -1.0;
       public static final double DRIVING_MAX_OUTPUT = 1.0;

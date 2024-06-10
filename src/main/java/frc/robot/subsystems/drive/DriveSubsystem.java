@@ -394,7 +394,7 @@ public class DriveSubsystem extends SubsystemBase {
         "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
 
     builder.addDoubleProperty(
-        "Front Left Speed", () -> frontLeft.getModuleVelocity(), null); //Todo: add back math.abs
+        "Front Left Speed", () -> frontLeft.getModuleVelocity(), null); 
     builder.addDoubleProperty(
         "Front Right Speed", () -> Math.abs(frontRight.getModuleVelocity()), null);
     builder.addDoubleProperty(
@@ -402,18 +402,15 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty(
         "Rear Right Speed", () -> Math.abs(rearRight.getModuleVelocity()), null);
 
-    builder.addDoubleProperty(
-        "Front Left Acceleration", () -> Math.abs(frontLeft.getModuleAcceleration()), null);
-    builder.addDoubleProperty(
-        "Front Right Acceleration", () -> Math.abs(frontRight.getModuleAcceleration()), null);
-    builder.addDoubleProperty(
-        "Rear Left Acceleration", () -> Math.abs(rearLeft.getModuleAcceleration()), null);
-    builder.addDoubleProperty(
-        "Rear Right Acceleration", () -> Math.abs(rearRight.getModuleAcceleration()), null);
 
     builder.addDoubleProperty(
-        "Front Left Jerk", () -> Math.abs(frontLeft.getModuleJerk()), null);
-
+        "Front Left Desired Speed", () -> frontLeft.getDesiredModuleVelocity(), null); 
+    builder.addDoubleProperty(
+        "Front Left Acceleration", () -> frontLeft.getModuleAcceleration(), null);
+    builder.addDoubleProperty(
+        "Front Left Desired Acceleration", () -> frontLeft.getDesiredModuleAcceleration(), null);
+    builder.addDoubleProperty(
+        "Front Left Jerk", () -> frontLeft.getModuleJerk(), null);
     builder.addDoubleProperty(
         "Front Left: Jerk per Current", () -> frontLeft.getModuleJerktoCurrent(), null);
 
