@@ -173,19 +173,21 @@ public class SwerveModule implements Sendable {
 
 
 
-    desiredModuleAcceleration = (desiredState.speedMetersPerSecond - getModuleVelocity()) * 50;
+    // desiredModuleAcceleration = (desiredState.speedMetersPerSecond - getModuleVelocity()) * 50;
 
-    if (desiredModuleAcceleration > maxModuleAcceleration) {
-      desiredModuleAcceleration = maxModuleAcceleration;
-    } else if (desiredModuleAcceleration < -maxModuleAcceleration) {
-      desiredModuleAcceleration = -maxModuleAcceleration;
-    }
+    // if (desiredModuleAcceleration > maxModuleAcceleration) {
+    //   desiredModuleAcceleration = maxModuleAcceleration;
+    // } else if (desiredModuleAcceleration < -maxModuleAcceleration) {
+    //   desiredModuleAcceleration = -maxModuleAcceleration;
+    // }
 
-    correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + desiredModuleAcceleration/50;
+    // correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + desiredModuleAcceleration/50;
 
-    desiredModuleVelocity = correctedDesiredState.speedMetersPerSecond;
+    //desiredModuleVelocity = correctedDesiredState.speedMetersPerSecond;
         
     //Traction control code
+
+    correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
 
     correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
 
