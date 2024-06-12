@@ -44,6 +44,7 @@ public class SwerveModule implements Sendable {
   private double maxModuleAcceleration = 10;
 
   private Rotation2d previousMoudleAngle = Rotation2d.fromRadians(0);
+  private double lastNonSlippingWheelAcceleration = 0;
 
   public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset,boolean isInverted) {
     drivingSpark = new CANSparkMax(drivingCanId, MotorType.kBrushless);
@@ -171,49 +172,33 @@ public class SwerveModule implements Sendable {
 
     drivingEncoderPrevAcceleration = moduleAcceleration;
 
+    if (getModuleJerk() < 1000) { 
 
+      count++;
 
-    // desiredModuleAcceleration = (desiredState.speedMetersPerSecond - getModuleVelocity()) * 50;
+    } else {
 
-    // if (desiredModuleAcceleration > maxModuleAcceleration) {
-    //   desiredModuleAcceleration = maxModuleAcceleration;
-    // } else if (desiredModuleAcceleration < -maxModuleAcceleration) {
-    //   desiredModuleAcceleration = -maxModuleAcceleration;
-    // }
+      count = 0;
 
-    // correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + desiredModuleAcceleration/50;
+    }
 
-    //desiredModuleVelocity = correctedDesiredState.speedMetersPerSecond;
-        
-    //Traction control code
+    if (count > 1) {
 
-    correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
 
-    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-
-    // if (getModuleJerk() < 300) { 
-
-    //   count++;
-
-    // } else {
-
-    //   count = 0;
-
-    // }
-
-    // if (count > 10) {
-
-    //   correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
       
-    //   correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-      
-    //lastNonSlippingWheelVelocity = getModuleVelocity(); //TODO: implement this as lastNonSlippingWheelAcceleration, probally
+      lastNonSlippingWheelVelocity = getModuleVelocity(); //TODO: implement this as lastNonSlippingWheelAcceleration, probally
 
-    //   previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+      lastNonSlippingWheelAcceleration = moduleAcceleration;
 
-    //   //maxModuleAcceleration += 0.01;
+      previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
 
-    // } 
+    } else {
+
+      correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration/50;
+
+    }
 
     SwerveModuleState optimizedState =
         SwerveModuleState.optimize(

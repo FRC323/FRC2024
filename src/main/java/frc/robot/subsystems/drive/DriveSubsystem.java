@@ -410,7 +410,7 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty(
         "Front Left Desired Acceleration", () -> frontLeft.getDesiredModuleAcceleration(), null);
     builder.addDoubleProperty(
-        "Front Left Jerk", () -> frontLeft.getModuleJerk(), null);
+        "Front Left Jerk", () -> Math.abs(frontLeft.getModuleJerk()), null);
     builder.addDoubleProperty(
         "Front Left: Jerk per Current", () -> frontLeft.getModuleJerktoCurrent(), null);
 
