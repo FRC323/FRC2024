@@ -31,7 +31,7 @@ public class GotoAmpPose extends SequentialCommandGroup{
                 new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE),
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_HANDOFF_POSE),    
-                    new AdjustFeederNote(feederSubsystem,shooterSubsystem)
+                    new AdjustFeederNote(feederSubsystem)
                 ),
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE),

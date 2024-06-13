@@ -21,7 +21,7 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class AdjustFeederNote extends SequentialCommandGroup{
-    public AdjustFeederNote(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem){
+    public AdjustFeederNote(FeederSubsystem feederSubsystem){
         addCommands(
             // new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_ADJUST_SPEED),
             // new WaitUntilCommand(feederSubsystem::isHoldingNote),

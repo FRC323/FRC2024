@@ -305,8 +305,8 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints FEEDER_CONSTRAINTS =
         new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-    public static final double ADJUST_POSITION = 15.0;
-    public static final double SHOOT_POSITION = -5.0;
+    public static final double ADJUST_POSITION = 500.0;
+    public static final double SHOOT_POSITION = -500.0;
     public static final double POSITION_TOLLERANCE = 2;
  
   }

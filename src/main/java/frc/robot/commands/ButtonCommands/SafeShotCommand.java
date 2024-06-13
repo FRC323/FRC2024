@@ -30,7 +30,7 @@ public class SafeShotCommand extends SequentialCommandGroup{
                     new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
                 )
             ),
-            new AdjustFeederNote(feederSubsystem, shooterSubsystem),
+            new AdjustFeederNote(feederSubsystem),
             new ParallelCommandGroup(
                 new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
                 new SequentialCommandGroup(

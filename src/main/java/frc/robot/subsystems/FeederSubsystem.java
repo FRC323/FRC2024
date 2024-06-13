@@ -76,10 +76,6 @@ public class FeederSubsystem extends SubsystemBase{
         return feederEncoder.getPosition();
     }
 
-    public void adjustNote(){
-        // this.feederController.setGoal(getDistanceFromBeamBreak());
-    }
-
     public boolean atFeederPosition(){
         return Math.abs(feederEncoder.getPosition() - feederPositionTarget) < Feeder.POSITION_TOLLERANCE;
     }

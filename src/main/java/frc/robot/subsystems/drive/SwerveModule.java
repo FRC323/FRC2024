@@ -198,6 +198,8 @@ public class SwerveModule implements Sendable {
 
       correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration/50;
 
+      correctedDesiredState.angle = previousMoudleAngle;
+
     }
 
     SwerveModuleState optimizedState =

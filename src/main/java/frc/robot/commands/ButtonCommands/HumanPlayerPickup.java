@@ -30,8 +30,9 @@ public class HumanPlayerPickup extends SequentialCommandGroup{
             ),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
-            // new AdjustFeederNote(feederSubsystem)
+            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
+            new AdjustFeederNote(feederSubsystem)
+
         );
     }
 }

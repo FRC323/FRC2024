@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.Feeder;
+import frc.robot.commands.SetCommands.SetFeederPosition;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
 import frc.robot.subsystems.FeederSubsystem;
 
@@ -20,7 +21,6 @@ public class FeedUntilNote extends SequentialCommandGroup{
                 ),
                 feederSubsystem::isHoldingNote
             )
-
         );
     }
 }

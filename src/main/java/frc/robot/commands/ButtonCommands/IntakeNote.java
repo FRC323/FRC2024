@@ -45,14 +45,11 @@ public class IntakeNote extends SequentialCommandGroup{
                 ),
                 new FeedUntilNote(feederSubsystem)
             ),
-            new ConditionalCommand(
-                new SetFeederSpeed(feederSubsystem,Feeder.FEEDER_STOPED_SPEED),
-                new FeedUntilNote(feederSubsystem), 
-                feederSubsystem::isHoldingNote
-            ),
-            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
-            // new SetIntakeSpeed(intakeSubsystem, Intake.OUTTAKE_SPEED),
-            // new AdjustFeederNote(feederSubsystem)
+
+            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
+
+            new AdjustFeederNote(feederSubsystem)
+
         );
 
     }
