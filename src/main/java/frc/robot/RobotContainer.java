@@ -204,9 +204,6 @@ public class RobotContainer {
                     // TODO: Bring this back in but post verifying functionality
                     alignWhileDriving,
                 new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem))
-            )
-        .onFalse(
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
         );
 
     // // Shoot
@@ -218,42 +215,41 @@ public class RobotContainer {
     // // Intake Button
     m_driveJoystick
         .trigger()
+
+        // This somehow breaks transitions to other commands ughh
+        //.whileFalse(new SetIntakeSpeed(intakeSubsystem, 0))
+
         .whileTrue(
             new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
         );
-        //.toggleOnFalse(
-        //    new ParallelCommandGroup(
-        //        new SetIntakeUp(armSubsystem, intakeSubsystem),
-        //        new SetFeederSpeed(feederSubsystem, 0)
-        //    )
-        //);
 
     // Outtake
     m_driveJoystick
         .button(DriveStick.TOP_BIG_BUTTON)
-        .whileTrue(
-            
-            new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
 
+        // This somehow breaks transitions to other commands ughh
+        //.whileFalse(new SetIntakeSpeed(intakeSubsystem, 0))
+
+        .whileTrue(
+            new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
         );
 
     // Folded 
     m_driveJoystick
         .button(Constants.DriverConstants.DriveStick.BACK_SIDE_BUTTON)
-        .onTrue(
+        .whileTrue(
             new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem, feederSubsystem)
         );
 
     // //Human Player Pickup 
     m_steerJoystick
         .button(SteerStick.MIDDLE)
-        .onTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem))
-        .onFalse(new SetIntakeUp(armSubsystem, intakeSubsystem));
+        .whileTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem));
 
     // Safe Zone Shot
     m_steerJoystick
         .button(SteerStick.RIGHT)
-        .whileTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem));
+        .onTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem));
 
     // // Amp Pose
     m_steerJoystick
