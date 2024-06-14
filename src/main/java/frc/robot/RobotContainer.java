@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -166,6 +168,21 @@ public class RobotContainer {
         new SetIntakeSpeed(intakeSubsystem, 0)
     );
 
+    //TODO make this less janky
+    armSubsystem.setDefaultCommand(
+        new ConditionalCommand(
+            new SequentialCommandGroup(
+                new ConditionalCommand(
+                    new SetIntakeUp(armSubsystem, intakeSubsystem),
+                    new InstantCommand(),
+                    () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE_INTERNAL + Constants.MARGIN_OF_ERROR_RADS // TO check if robot is in folded pose
+                ),
+                new SetIntakeSpeed(intakeSubsystem, 0)
+            ),
+            new InstantCommand(),
+            () -> shooterSubsystem.getCurrentCommand() == null // This check is here to make sure the robot doesn't fold up when shooting
+        )
+    );
 
 
     // Reset Gyro
@@ -196,25 +213,28 @@ public class RobotContainer {
     m_driveJoystick
         .button(DriveStick.LEFT_SIDE_BUTTON)
         .toggleOnTrue(
-            new ShootCommand(feederSubsystem,shooterSubsystem,armSubsystem)
+            new ShootCommand(feederSubsystem, shooterSubsystem, armSubsystem)
         );
     // // Intake Button
     m_driveJoystick
         .trigger()
-        .toggleOnTrue(
+        .whileTrue(
             new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
-        ).toggleOnFalse(
-            new ParallelCommandGroup(
-                new SetIntakeUp(armSubsystem, intakeSubsystem),
-                new SetFeederSpeed(feederSubsystem, 0)
-            )
         );
+        //.toggleOnFalse(
+        //    new ParallelCommandGroup(
+        //        new SetIntakeUp(armSubsystem, intakeSubsystem),
+        //        new SetFeederSpeed(feederSubsystem, 0)
+        //    )
+        //);
 
     // Outtake
     m_driveJoystick
         .button(DriveStick.TOP_BIG_BUTTON)
         .whileTrue(
+            
             new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
+
         );
 
     // Folded 
