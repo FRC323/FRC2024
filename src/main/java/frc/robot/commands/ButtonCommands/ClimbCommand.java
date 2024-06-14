@@ -9,6 +9,7 @@ import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.SetCommands.SetArmTarget;
+import frc.robot.commands.SetCommands.SetIntakeSpeed;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -16,7 +17,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class ClimbCommand extends SequentialCommandGroup{
     public ClimbCommand(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem){
         addCommands(
-            
+
+            new SetIntakeSpeed(intakeSubsystem, 0),
+
             new ConditionalCommand(
                 new SequentialCommandGroup(
                     new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),

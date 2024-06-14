@@ -14,6 +14,7 @@ import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.Procedures.SetIntakeFoldedInternal;
 import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
+import frc.robot.commands.SetCommands.SetIntakeSpeed;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.commands.SetCommands.SetShooterSpeed;
 import frc.robot.subsystems.ArmSubsystem;
@@ -25,7 +26,7 @@ public class SafeShotCommand extends SequentialCommandGroup{
     public SafeShotCommand(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, ShooterSubsystem shooterSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
 
-            //new WaitUntilCommand(() -> feederSubsystem.isHoldingNote()),
+            new SetIntakeSpeed(intakeSubsystem, 0),
 
             new ConditionalCommand(
                 new SequentialCommandGroup(

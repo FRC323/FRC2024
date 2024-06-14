@@ -19,6 +19,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class SetIntakeFoldedInternal extends SequentialCommandGroup{
     public SetIntakeFoldedInternal(IntakeSubsystem intakeSubsystem,ArmSubsystem armSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
+
+            new SetIntakeSpeed(intakeSubsystem, 0),
+
             new ConditionalCommand(
                 new SequentialCommandGroup(
                     new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),

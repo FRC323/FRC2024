@@ -164,23 +164,23 @@ public class RobotContainer {
         new SetFeederSpeed(feederSubsystem, 0)
     );
 
-    intakeSubsystem.setDefaultCommand(
-        new SetIntakeSpeed(intakeSubsystem, 0)
-    );
+    // intakeSubsystem.setDefaultCommand(
+    //     new SetIntakeSpeed(intakeSubsystem, 0)
+    // );
 
     //TODO make this less janky
-    armSubsystem.setDefaultCommand(
-        new ConditionalCommand(
-            new SequentialCommandGroup(
-                new ConditionalCommand(
-                    new SetIntakeUp(armSubsystem, intakeSubsystem),
-                    new InstantCommand(),
-                    () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE_INTERNAL + Constants.MARGIN_OF_ERROR_RADS // TO check if robot is in folded pose
-                ),
-                new SetIntakeSpeed(intakeSubsystem, 0)
-            ),
-            new InstantCommand(),
-            () -> shooterSubsystem.getCurrentCommand() == null // This check is here to make sure the robot doesn't fold up when shooting
+    intakeSubsystem.setDefaultCommand(
+        new SequentialCommandGroup(
+            new SetIntakeSpeed(intakeSubsystem, 0),
+            new ConditionalCommand(
+                    new ConditionalCommand(
+                        new SetIntakeUp(armSubsystem, intakeSubsystem),
+                        new InstantCommand(),
+                        () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE_INTERNAL + Constants.MARGIN_OF_ERROR_RADS // TO check if robot is in folded pose
+                    ),
+                new InstantCommand(),
+                () -> shooterSubsystem.getCurrentCommand() == null // This check is here to make sure the robot doesn't fold up when shooting
+            )
         )
     );
 
@@ -199,11 +199,10 @@ public class RobotContainer {
     m_steerJoystick
         .trigger()
         .whileTrue(
-            //Todo: Maybe add repeat command to fix error when pressing buttons too fast
             new ParallelCommandGroup(
-                    // TODO: Bring this back in but post verifying functionality
-                    alignWhileDriving,
-                new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem))
+                alignWhileDriving,
+                new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem)
+            )
         );
 
     // // Shoot
@@ -215,10 +214,8 @@ public class RobotContainer {
     // // Intake Button
     m_driveJoystick
         .trigger()
-
         // This somehow breaks transitions to other commands ughh
         //.whileFalse(new SetIntakeSpeed(intakeSubsystem, 0))
-
         .whileTrue(
             new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
         );
@@ -226,10 +223,8 @@ public class RobotContainer {
     // Outtake
     m_driveJoystick
         .button(DriveStick.TOP_BIG_BUTTON)
-
         // This somehow breaks transitions to other commands ughh
         //.whileFalse(new SetIntakeSpeed(intakeSubsystem, 0))
-
         .whileTrue(
             new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
         );

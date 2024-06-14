@@ -16,6 +16,7 @@ import frc.robot.commands.Procedures.SetIntakeFoldedInternal;
 import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.SetIntakeSpeed;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.commands.SetCommands.SetShooterSpeed;
 import frc.robot.subsystems.ArmSubsystem;
@@ -27,7 +28,7 @@ public class GotoAmpPose extends SequentialCommandGroup{
     public GotoAmpPose(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
 
-            //new WaitUntilCommand(() -> feederSubsystem.isHoldingNote()),
+            new SetIntakeSpeed(intakeSubsystem, 0),
 
             new ConditionalCommand(
                 new SequentialCommandGroup(
