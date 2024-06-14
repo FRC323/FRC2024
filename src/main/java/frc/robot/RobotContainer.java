@@ -253,10 +253,7 @@ public class RobotContainer {
     // Safe Zone Shot
     m_steerJoystick
         .button(SteerStick.RIGHT)
-        .onTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem))
-        .onFalse(
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
-        );
+        .whileTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem));
 
     // // Amp Pose
     m_steerJoystick

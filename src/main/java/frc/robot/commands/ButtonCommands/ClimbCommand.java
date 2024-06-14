@@ -22,7 +22,8 @@ public class ClimbCommand extends SequentialCommandGroup{
                     new WaitUntilCommand(() -> intakeSubsystem.getWristAngleRads() > Intake.SHOOTING_POSE),
                     new SetArmTarget(armSubsystem, Arm.ARM_CLIMB_POSE)
                 )
-            )
+            ),
+            new WaitUntilCommand(() -> false) // This is here otherwise command ends and robot will go to traverse position
         );
     }
 }
