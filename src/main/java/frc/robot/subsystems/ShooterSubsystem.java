@@ -99,6 +99,10 @@ public class ShooterSubsystem extends SubsystemBase{
     return errors == 0;
   }
 
+  public boolean isRunning() {
+    return leftShooterEncoder.getVelocity() > 1000; // Higher is better on this one
+  }
+
   @Override
   public void initSendable(SendableBuilder builder){
     super.initSendable(builder);
@@ -108,12 +112,10 @@ public class ShooterSubsystem extends SubsystemBase{
     builder.addDoubleProperty("Shooter Current L", leftShooterSpark::getOutputCurrent,null);
     builder.addDoubleProperty("Shooter Current R", rightShooterSpark::getOutputCurrent, null);
 
+    builder.addBooleanProperty("Shooter is Running?", () -> isRunning(), null);
+
     builder.addDoubleProperty("Target Speed", () -> targetShooterVelocity, null);
     builder.addBooleanProperty("At Speed", this::atShootSpeed, null);
   }
-
-public boolean isRunning() {
-  return targetShooterVelocity != 0.0;
-}
 
 }

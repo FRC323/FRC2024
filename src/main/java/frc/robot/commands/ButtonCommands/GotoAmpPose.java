@@ -12,6 +12,7 @@ import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
+import frc.robot.commands.Procedures.SetIntakeFoldedInternal;
 import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
@@ -38,35 +39,12 @@ public class GotoAmpPose extends SequentialCommandGroup{
                 () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE_INTERNAL + Constants.MARGIN_OF_ERROR_RADS
             ),
 
-            new WaitUntilCommand(() -> !(feederSubsystem.isHoldingNote())),
+            new WaitUntilCommand(() -> (shooterSubsystem.isRunning())),
 
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
+            new WaitUntilCommand(() -> !(shooterSubsystem.isRunning())),
 
-            // // new GotoArmIntakeState(armSubsystem, intakeSubsystem, Arm.ARM_AMP_POSE, Intake.SHOOTING_POSE),
-            // new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.SHOOTING_POSE),
-            // new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
-            // new ParallelCommandGroup(
-            //     new SetArmTarget(armSubsystem, Constants.Arm.ARM_AMP_POSE),
-            //     new SequentialCommandGroup(
-            //         new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_HANDOFF_POSE),    
-            //         new AdjustFeederNote(feederSubsystem)
-            //     ),
-            //     new SequentialCommandGroup(
-            //         new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE),
-            //         new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
-            //     )
-            // ),
-            // new ParallelCommandGroup(
-            //     new SetShooterSpeed(shooterSubsystem, Constants.Shooter.AMP_SPEED),
-            //     new SequentialCommandGroup(
-            //         new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE),
-            //         new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
-            //     )
-            // ),
-            // new WaitUntilCommand(() -> !(feederSubsystem.isHoldingNote())),
-            // new WaitCommand(0.5),
-            // new SetShooterSpeed(shooterSubsystem, 0.0),
-            // new SetIntakeUp(armSubsystem, intakeSubsystem)
+            new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem, feederSubsystem)
+
         );
     }
 }

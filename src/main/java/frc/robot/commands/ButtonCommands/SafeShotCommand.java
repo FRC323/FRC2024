@@ -11,6 +11,7 @@ import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
 import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
+import frc.robot.commands.Procedures.SetIntakeFoldedInternal;
 import frc.robot.commands.Procedures.SetIntakeUp;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
@@ -35,29 +36,11 @@ public class SafeShotCommand extends SequentialCommandGroup{
                 () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE_INTERNAL + Constants.MARGIN_OF_ERROR_RADS
             ),
 
-            new WaitUntilCommand(() -> !(feederSubsystem.isHoldingNote()))
+            new WaitUntilCommand(() -> (shooterSubsystem.isRunning())),
 
-            //new SetIntakeUp(armSubsystem, intakeSubsystem)
+            new WaitUntilCommand(() -> !(shooterSubsystem.isRunning())),
 
-            // new CheckIntakeGotoOut(armSubsystem, intakeSubsystem,Intake.SHOOTING_POSE),
-            // new SetIntakeTarget(intakeSubsystem, Intake.SHOOTING_POSE),
-            // new ParallelCommandGroup(
-            //     new SetArmTarget(armSubsystem, Arm.ARM_INTAKE_UNFOLDING_POSE),
-            //     new SequentialCommandGroup(
-            //         new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE),
-            //         new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL)
-            //     )
-            // ),
-            // new AdjustFeederNote(feederSubsystem),
-            // new ParallelCommandGroup(
-            //     new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED),
-            //     new SequentialCommandGroup(
-            //         new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_INTAKE_UNFOLDING_POSE + Arm.AT_TARGET_TOLLERANCE),
-            //         new SetIntakeTarget(intakeSubsystem, Intake.FOLDED_POSE_INTERNAL),
-            //         new SetArmTarget(armSubsystem, Arm.ARM_SAFE_ZONE_SHOT)
-            //     )
-            // ),
-            // new WaitUntilCommand(() -> !(feederSubsystem.isHoldingNote()))
+            new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem, feederSubsystem)
         );
     }
 }

@@ -265,11 +265,8 @@ public class RobotContainer {
     // // Climb Button
     m_driveJoystick
         .button(DriveStick.SMALL_TOP_BUTTON)
-        .onTrue(
+        .whileTrue(
             new ClimbCommand(armSubsystem, intakeSubsystem)
-        )
-        .onFalse(
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
         );
 
     // // Manual Arm
