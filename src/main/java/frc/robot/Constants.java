@@ -164,7 +164,7 @@ public final class Constants {
     public static String REAR_RIGHT_OFFSET_KEY = "RR_Offset";
 
     //Align While Driving PID
-    public static double ROT_CONTROLLER_KP = 3.25;
+    public static double ROT_CONTROLLER_KP = 4.5;
     public static double ROT_CONTROLLER_KI = 0;
     public static double ROT_CONTROLLER_KD = 0;
     //public static double ROT_CONTROLLER_FEEDFWD = Math.PI/8;
@@ -283,7 +283,7 @@ public final class Constants {
 
   public static class Feeder{
     public static final int Feeder_CAN_Id = 51;
-    public static final int INTIAL_BEAM_BREAK_PORT = 8;
+    public static final int INTIAL_BEAM_BREAK_PORT = 7;
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
@@ -320,7 +320,7 @@ public final class Constants {
       public static final double kI = 0.000005;
       public static final double kD = 0.0;
 
-      public static final double SHOOTER_SPEED = 1500; //TODO: revert to 5000, low speed b/c small space
+      public static final double SHOOTER_SPEED = 5000; //TODO: revert to 5000, low speed b/c small space
       public static final double AMP_SPEED = 2500;
       public static final double REVERSE_SPEED = -400;
       public static final double EJECT_SPEED = 1000;

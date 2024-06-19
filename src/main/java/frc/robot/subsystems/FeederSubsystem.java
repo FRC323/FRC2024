@@ -34,6 +34,8 @@ public class FeederSubsystem extends SubsystemBase{
     private boolean hasNoteFlag = false;
     private double feederPositionTarget = 0.0;
 
+    private Integer isHoldingNoteCount = 0;
+
     public FeederSubsystem(){
         feederSpark = new CANSparkMax(Feeder.Feeder_CAN_Id, MotorType.kBrushless);
         beamBreakSensor = new DigitalInput(Feeder.INTIAL_BEAM_BREAK_PORT);
@@ -58,6 +60,10 @@ public class FeederSubsystem extends SubsystemBase{
 
         hasNoteFlag = beamBreakSensor.get();
 
+        if (isHoldingNote() == false) {
+            isHoldingNoteCount = 0;
+        }
+
     }
 
     public void setFeederSpeed(double vel) {
@@ -65,7 +71,12 @@ public class FeederSubsystem extends SubsystemBase{
     }
 
     public boolean isHoldingNote(){
+        isHoldingNoteCount++;
         return beamBreakSensor.get();
+    }
+
+    public boolean isHoldingNoteExtended(){
+        return isHoldingNoteCount > 5;
     }
 
     public void resetDistanceFromBeamBreak(){
