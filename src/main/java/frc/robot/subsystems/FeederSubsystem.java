@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Feeder;
-import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.vision.LimelightHelpers;
 
 
@@ -47,12 +46,12 @@ public class FeederSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        if(isHoldingNote()){
-            // PhotonPoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
-            LimelightHelpers.setLEDMode_ForceBlink(Limelight._name);
-        }else{
-            LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
-        }
+        // if(isHoldingNote()){
+        //     // PhotonPoseEstimatorSubsystem.backPhotonCamera.setLED(VisionLEDMode.kBlink);
+        //     LimelightHelpers.setLEDMode_ForceBlink(Limelight._name);
+        // }else{
+        //     LimelightHelpers.setLEDMode_ForceOff(Limelight._name);
+        // }
 
         if(beamBreakSensor.get() && !hasNoteFlag){
             resetDistanceFromBeamBreak();

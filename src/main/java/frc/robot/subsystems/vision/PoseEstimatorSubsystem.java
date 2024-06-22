@@ -3,6 +3,8 @@ package frc.robot.subsystems.vision;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
+import org.photonvision.PhotonUtils;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -22,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.vision.Limelight.LimelightCaptureDetail;
 import frc.robot.utils.ShotState;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
@@ -32,9 +33,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
-    private Optional<LimelightCaptureDetail> limelightCapture = Optional.empty();
+    private PhotonVision camera = new PhotonVision(Vision.PV_CAMERA_NAME, Vision.BACK_CAMERA_TO_ROBOT);
+    //private Optional<LimelightCaptureDetail> limelightCapture = Optional.empty();
 
-    private final Limelight limelight = new Limelight();
+    //private final Limelight limelight = new Limelight();
     private boolean hasVisionTarget = false;
     
     private LinearFilter xFilter = LinearFilter.singlePoleIIR(0.2,0.02); //new SlewRateLimiter(1.0);
@@ -76,31 +78,59 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        try {
-            var tempCampture = limelight.capture();
-            if(tempCampture == null) limelightCapture = Optional.empty();
-            else limelightCapture = Optional.of(tempCampture);
-        }catch(Exception e){    
-            System.out.println("Limelight Exception: " + e.toString());
-            // System.out.println("No alliance info available for botpose");
+        if (camera.getEstimatedPose() != null && camera.getEstimatedPose().isPresent()) {
+            camera.updateEstimator();
         }
+        // try {
+        //     var tempCampture = limelight.capture();
+        //     if(tempCampture == null) limelightCapture = Optional.empty();
+        //     else limelightCapture = Optional.of(tempCampture);
+        // }catch(Exception e){    
+        //     System.out.println("Limelight Exception: " + e.toString());
+        //     // System.out.println("No alliance info available for botpose");
+        // }
 
-        if(!limelightCapture.isPresent()) return;
-        var capture =  limelightCapture.get();
-        double currentTimestamp = getTimestampSeconds(capture.latency());
+        //if(!limelightCapture.isPresent()) return;
+        //var capture =  limelightCapture.get();
+       // double currentTimestamp = getTimestampSeconds(capture.latency());
         // Actually do we only want to do this if we have multiple targets?
-        if (capture.hasTarget()) {
+       // if (capture.hasTarget()) {
           // Should this subtract the LL latency from the  timestamp?
-          poseEstimator.addVisionMeasurement(capture.botpose_blue(), currentTimestamp);
-        }
-       poseEstimator.updateWithTime(currentTimestamp,new Rotation2d(driveSubsystem.getGyroYaw()), driveSubsystem.getModulePositions());
+        //  poseEstimator.addVisionMeasurement(capture.botpose_blue(), currentTimestamp);
+        //}
+        hasVisionTarget = false;
 
-        if(capture.hasTarget() && !DriverStation.isAutonomous()){
+        System.out.println("is Pose NULL? " + camera.getEstimatedPose() == null);
+
+
+        // var res = cam.getLatestResult();
+        // if (res.hasTargets()) {
+        //     var imageCaptureTime = res.getTimestampSeconds();
+        //     var camToTargetTrans = res.getBestTarget().getBestCameraToTarget();
+        //     var camPose = Constants.kFarTargetPose.transformBy(camToTargetTrans.inverse());
+        //     m_poseEstimator.addVisionMeasurement(
+        //             camPose.transformBy(Constants.kCameraToRobot).toPose2d(), imageCaptureTime);
+        // }
+
+
+        if (camera.hasTargets()) {
+            System.out.println("camera.hasTargets() passed");
+            var camToTargetTrans = camera.getLatestResult().getBestTarget().getBestCameraToTarget();
+            //if (camera.getEstimatedPose() != null && camera.getEstimatedPose().isPresent()) {
+            //     System.out.println("camera.getEstimatedPose() passed");
+            //     var estPose = camera.getEstimatedPose().get();
+            //     poseEstimator.addVisionMeasurement(estPose.estimatedPose.toPose2d(), camera.getLatestResult().getTimestampSeconds());
+            // }
+            hasVisionTarget = true;
+        }
+        
+        poseEstimator.updateWithTime(camera.getLatestResult().getTimestampSeconds(), new Rotation2d(driveSubsystem.getGyroYaw()), driveSubsystem.getModulePositions());
+
+        if(!DriverStation.isAutonomous()){
             driveSubsystem.resetOdometry(poseEstimator.getEstimatedPosition());
-            // _driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
         }
 
-        hasVisionTarget = capture.hasTarget();
+        //hasVisionTarget = capture.hasTarget();
 
         estimatedPose = filterVisionPose(poseEstimator.getEstimatedPosition());
 
@@ -111,26 +141,23 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     public boolean updateOdometry(){
         System.out.println("updating odometry");
-        if(!limelightCapture.isPresent()) return false;
-        var capture = limelightCapture.get();
-        System.out.println("Has Capture");
-        // if(capture.aprilTagId() == 4.0){
-            // System.out.println("Has Target");
-        if(!capture.hasTarget()) return false;
-            // _driveSubsystem.resetYawToAngle(limelightCapture.botpose_alliance().getRotation().getRadians() + Math.PI);
-            driveSubsystem.resetYawToAngle(capture.botpose_blue().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
-            driveSubsystem.resetOdometry(poseEstimator.getEstimatedPosition());
-            System.out.println("Updated Odometry From Limelight");
+        if (!camera.getLatestResult().hasTargets()) return false;
+        driveSubsystem.resetYawToAngle(Rotation2d.fromDegrees(camera.getLatestResult().getBestTarget().getYaw()).plus(new Rotation2d(Math.PI)).getDegrees());
+        driveSubsystem.resetOdometry(poseEstimator.getEstimatedPosition());
+        System.out.println("Updated Odometry From PV");
         return true;
-        // }
     }
 
-    public OptionalDouble getTargetDistance(){
-        if(limelightCapture.isEmpty()) return OptionalDouble.empty();
-        double tagHeight = Constants.AprilTags.Speaker.HEIGHT;
-        double lensHeight = Constants.Vision.LIMELIGHT_LENS_HEIGHT_INCHES;
-        double goalAngleRads = Units.degreesToRadians(Constants.Vision.LIMELIGHT_MOUNT_ANGLE_DEGREES + limelightCapture.get().yOffset());
-        return OptionalDouble.of((tagHeight - lensHeight) / Math.tan(goalAngleRads));
+    public Double getTargetDistance(){
+        //if(limelightCapture.isEmpty()) return OptionalDouble.empty();
+       // double tagHeight = Constants.AprilTags.Speaker.HEIGHT;
+       // double lensHeight = Constants.Vision.LIMELIGHT_LENS_HEIGHT_INCHES;
+       // double goalAngleRads = Units.degreesToRadians(Constants.Vision.LIMELIGHT_MOUNT_ANGLE_DEGREES + camera.getLatestResult().getBestTarget().);
+      //  return OptionalDouble.of((tagHeight - lensHeight) / Math.tan(goalAngleRads));
+      return PhotonUtils.calculateDistanceToTargetMeters(Constants.Vision.LIMELIGHT_LENS_HEIGHT_INCHES,
+            Constants.Vision.LIMELIGHT_LENS_HEIGHT_INCHES * 39.37,
+            Units.degreesToRadians(Constants.Vision.LIMELIGHT_MOUNT_ANGLE_DEGREES),
+            Units.degreesToRadians(camera.getLatestResult().getBestTarget().getPitch()));
     }
 
     public static ShotState getShotState(){
@@ -192,6 +219,12 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         builder.addDoubleProperty("XPose",() -> poseEstimator.getEstimatedPosition().getX(), null);
         builder.addDoubleProperty("YPose", () -> poseEstimator.getEstimatedPosition().getY(), null);
+
+        if (camera.getEstimatedPose() != null && camera.getEstimatedPose().isPresent()) {
+            builder.addDoubleProperty("PV Pose X", () -> camera.getEstimatedPose().get().estimatedPose.getX(), null);
+            builder.addDoubleProperty("PV Pose Y", () -> camera.getEstimatedPose().get().estimatedPose.getY(), null);
+        }
+
         builder.addDoubleProperty("Filtered X", () -> estimatedPose.getX(), null);
         builder.addDoubleProperty("Rotation", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
 
