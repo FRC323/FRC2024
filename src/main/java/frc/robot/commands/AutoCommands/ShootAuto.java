@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Feeder;
 import frc.robot.Constants.Intake;
+import frc.robot.commands.ButtonCommands.ShootCommand;
 import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.AlignArmForShot;
 import frc.robot.commands.Procedures.AlignWhileDriving;
@@ -43,22 +44,19 @@ public class ShootAuto extends SequentialCommandGroup{
                 new SequentialCommandGroup(
                     new ParallelRaceGroup(
                     new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                            new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
-                            new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
-                            new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle)
-                        ),
+                        new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
                         new SequentialCommandGroup(
                             new AdjustFeederNote(feederSubsystem),
                             new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed)
-                        )
-                        // new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
+                        ),
+                        new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
                     ),
                         new WaitCommand(1.5)
                     ),
-                    new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
-                    new WaitUntilCommand(() -> !(feederSubsystem.isHoldingNote())),
-                    new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
+                    // new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
+                    // new WaitUntilCommand(() -> !(feederSubsystem.isHoldingNote())),
+                    // new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
+                    new ShootCommand(feederSubsystem, shooterSubsystem, armSubsystem)
                 )
             );
     }
