@@ -116,6 +116,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         if (camera.hasTargets()) {
             System.out.println("camera.hasTargets() passed");
             var camToTargetTrans = camera.getLatestResult().getBestTarget().getBestCameraToTarget();
+            var camPose = Vision.RED_SHOT_TARGET.transformBy(camToTargetTrans.inverse());
             //if (camera.getEstimatedPose() != null && camera.getEstimatedPose().isPresent()) {
             //     System.out.println("camera.getEstimatedPose() passed");
             //     var estPose = camera.getEstimatedPose().get();
