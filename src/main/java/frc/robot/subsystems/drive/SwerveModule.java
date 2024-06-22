@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.utils.AbsoluteEncoderChecker;
@@ -160,7 +162,7 @@ public class SwerveModule implements Sendable {
         drivingEncoder.getPosition(), new Rotation2d(turningEncoder.getPosition() - moduleOffset));
   }
 
-  public void setDesiredState(SwerveModuleState desiredState, double robotVelocityDirection) {
+  public void setDesiredState(SwerveModuleState desiredState) {
 
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
 
@@ -188,8 +190,6 @@ public class SwerveModule implements Sendable {
 
       correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
       
-      lastNonSlippingWheelVelocity = getModuleVelocity(); //TODO: implement this as lastNonSlippingWheelAcceleration, probally
-
       lastNonSlippingWheelAcceleration = moduleAcceleration;
 
       previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
@@ -198,9 +198,17 @@ public class SwerveModule implements Sendable {
 
       correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration/50;
 
-      correctedDesiredState.angle = previousMoudleAngle;
+      if (DriverStation.isAutonomous()) {
+        correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+      } else {
+        correctedDesiredState.angle = previousMoudleAngle;
+      }
 
     }
+
+    //correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+
+    //correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
 
     SwerveModuleState optimizedState =
         SwerveModuleState.optimize(

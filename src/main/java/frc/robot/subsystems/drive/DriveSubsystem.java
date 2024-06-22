@@ -259,18 +259,11 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
 
-    //TODO: I'm not sure if there is a way to do this so the robot direction doesn't have to be passed through
-    frontLeft.setDesiredState(swerveModuleStates[0], getRobotVelocityDirection ());
-    frontRight.setDesiredState(swerveModuleStates[1], getRobotVelocityDirection ());
-    rearLeft.setDesiredState(swerveModuleStates[2], getRobotVelocityDirection ());
-    rearRight.setDesiredState(swerveModuleStates[3], getRobotVelocityDirection ());
+    frontLeft.setDesiredState(swerveModuleStates[0]);
+    frontRight.setDesiredState(swerveModuleStates[1]);
+    rearLeft.setDesiredState(swerveModuleStates[2]);
+    rearRight.setDesiredState(swerveModuleStates[3]);
 
-  }
-
-  public double getRobotVelocityDirection (){
-    double direction = Math.atan2(actualChassisSpeed.vxMetersPerSecond, actualChassisSpeed.vyMetersPerSecond);
-
-    return direction;
   }
 
   public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
@@ -323,15 +316,10 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
 
-    // frontLeft.setDesiredState(desiredStates[0]);
-    // frontRight.setDesiredState(desiredStates[1]);
-    // rearLeft.setDesiredState(desiredStates[2]);
-    // rearRight.setDesiredState(desiredStates[3]);
-
-    frontLeft.setDesiredState(desiredStates[0], getRobotVelocityDirection ());
-    frontRight.setDesiredState(desiredStates[1], getRobotVelocityDirection ());
-    rearLeft.setDesiredState(desiredStates[2], getRobotVelocityDirection ());
-    rearRight.setDesiredState(desiredStates[3], getRobotVelocityDirection ());
+    frontLeft.setDesiredState(desiredStates[0]);
+    frontRight.setDesiredState(desiredStates[1]);
+    rearLeft.setDesiredState(desiredStates[2]);
+    rearRight.setDesiredState(desiredStates[3]);
   }
 
   public boolean atHeading(){
