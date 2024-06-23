@@ -11,10 +11,13 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -63,12 +66,11 @@ public final class Constants {
   public static class Vision {
     public static final int APRIL_TAG_PIPELINE = 0;
     public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
-    public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
-    public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.50,5.52);
+    public static final double LIMELIGHT_LENS_HEIGHT_METERS = Units.inchesToMeters(18.17);
+    public static final Translation2d RED_SHOT_TARGET = new Translation2d(16.50,5.52);
     public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
-
-    //public static final Transform3d bla = Transform3d(new Translation2d(16.50,5.52),  Rotation2d.fromDegrees(0));
-
+    public static final double SPEAKER_HEIGHT_METERS = Units.inchesToMeters(80.5);
+   
     //Todo
     public static final String PV_CAMERA_NAME = "RearCamera";
     public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,25.52,0.0));

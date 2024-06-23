@@ -48,8 +48,8 @@ public class ShootAuto extends SequentialCommandGroup{
                         new SequentialCommandGroup(
                             new AdjustFeederNote(feederSubsystem),
                             new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed)
-                        ),
-                        new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
+                        )
+                        //new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
                     ),
                         new WaitCommand(1.5)
                     ),
