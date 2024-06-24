@@ -44,22 +44,26 @@ public final class Constants {
       public static final int[] TAGS_CENTER = {4,7};
       public static final int[] TAGS_SIDE = {3,8};
       public static final double HEIGHT = 51.96 + APRILTAG_HEIGHT_HALF;
+      public static final double HEIGHT_METERS = Units.inchesToMeters(HEIGHT);
     }
 
     public static final class Amp {
       public static final int[] TAGS = {5,6};
       public static final double HEIGHT = 48.03 + APRILTAG_HEIGHT_HALF;
+      public static final double HEIGHT_METERS = Units.inchesToMeters(HEIGHT);
     }
 
     public static final class Source {
       public static final int[] TAGS_LEFT = {2,10};
       public static final int[] TAGS_RIGHT = {1,9};
       public static final double HEIGHT = 48.03 + APRILTAG_HEIGHT_HALF;
+      public static final double HEIGHT_METERS = Units.inchesToMeters(HEIGHT);
     }
 
     public static final class Stage {
       public static final int[] TAGS = {11,12,13,14,15,16};
       public static final double HEIGHT = 47.63 + APRILTAG_HEIGHT_HALF;
+      public static final double HEIGHT_METERS = Units.inchesToMeters(HEIGHT);
     }
   }
 

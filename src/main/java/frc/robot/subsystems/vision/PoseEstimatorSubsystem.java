@@ -1,11 +1,6 @@
 package frc.robot.subsystems.vision;
 
-import java.beans.Visibility;
 import java.util.Optional;
-import java.util.OptionalDouble;
-
-import javax.swing.text.html.Option;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -18,13 +13,12 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.utils.Functions;
 import frc.robot.utils.ShotState;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
@@ -42,14 +37,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
-    //private PhotonVision camera = new PhotonVision(Vision.PV_CAMERA_NAME, Vision.BACK_CAMERA_TO_ROBOT);
     private PhotonCamera camera = new PhotonCamera(Vision.PV_CAMERA_NAME);
     private AprilTagFieldLayout AprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     private PhotonPoseEstimator estimator = new PhotonPoseEstimator(AprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, Vision.BACK_CAMERA_TO_ROBOT);
     private Optional<EstimatedRobotPose> estimatedPose = Optional.empty();
-    //private Optional<LimelightCaptureDetail> limelightCapture = Optional.empty();
 
-    //private final Limelight limelight = new Limelight();
     private boolean hasVisionTarget = false;
     
     private LinearFilter xFilter = LinearFilter.singlePoleIIR(0.2,0.02); //new SlewRateLimiter(1.0);
@@ -57,8 +49,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private LinearFilter rotFilter = LinearFilter.singlePoleIIR(0.2,0.02);// new SlewRateLimiter(Math.PI);
 
     private static ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
-
-   // private Pose2d estimatedPose = new Pose2d();
 
     public PoseEstimatorSubsystem(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
@@ -80,13 +70,20 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         return Timer.getFPGATimestamp() - (latencyMillis / 1000d);
     }
 
-    public Pose2d filterVisionPose(Pose2d estimatedPose){
-        var x = xFilter.calculate(estimatedPose.getX());
-        var y = yFilter.calculate(estimatedPose.getY());
-        var rot = rotFilter.calculate(estimatedPose.getRotation().getRadians());
-        return new Pose2d(
-            x,y,new Rotation2d(rot)
-        );
+    public Optional<EstimatedRobotPose> filterVisionPose(EstimatedRobotPose estimatedPose){
+        var x = xFilter.calculate(estimatedPose.estimatedPose.getX());
+        var y = yFilter.calculate(estimatedPose.estimatedPose.getY());
+        var z = estimatedPose.estimatedPose.getZ();
+
+        var rot = rotFilter.calculate(estimatedPose.estimatedPose.getRotation().toRotation2d().getRadians());
+
+        Pose3d filteredPose = new Pose3d(x, y, z, new Rotation3d(0, 0, rot));
+        return Optional.of(new EstimatedRobotPose(
+            filteredPose,
+            estimatedPose.timestampSeconds,
+            estimatedPose.targetsUsed,
+            estimatedPose.strategy
+        ));
     }
 
     @Override
@@ -96,7 +93,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         if (camera.getLatestResult().hasTargets()) {
             if (estimatedPose != null && estimatedPose.isPresent()) {
-                poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), camera.getLatestResult().getTimestampSeconds());
+                if (isValidPose(estimatedPose.get().estimatedPose)) {
+                    estimatedPose = filterVisionPose(estimatedPose.get());
+                    poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), camera.getLatestResult().getTimestampSeconds());
+                }
             }
 
             hasVisionTarget = true;
@@ -104,23 +104,37 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         poseEstimator.updateWithTime(camera.getLatestResult().getTimestampSeconds(), new Rotation2d(driveSubsystem.getGyroYaw()), driveSubsystem.getModulePositions());
 
-        //estimatedPose = filterVisionPose(poseEstimator.getEstimatedPosition());
         if (estimatedPose != null && estimatedPose.isPresent())
             this.computeShotState(driveSubsystem, estimatedPose.get().estimatedPose.toPose2d());
+    }
+
+    //source: https://github.com/FRC2539/javabot-2023/blob/6ae5fbeaa23ecbab80d5643f13ae76686bb1a6d5/src/main/java/frc/robot/subsystems/VisionSubsystem.java#L177
+    private boolean isValidPose(Pose3d pose) {
+        boolean isWithinField = Functions.isInRange(pose.getY(), -5, AprilTagFieldLayout.getFieldWidth() + 5)
+                && Functions.isInRange(pose.getX(), -5, AprilTagFieldLayout.getFieldLength() + 5);
+
+        boolean isNearRobot = driveSubsystem
+                        .getPose()
+                        .getTranslation()
+                        .getDistance(pose.getTranslation().toTranslation2d())
+                < 1.4;
+
+        return isWithinField && isNearRobot;
     }
 
     public boolean updateOdometry(){
         System.out.println("updating odometry");
         if (!camera.getLatestResult().hasTargets()) return false;
-        driveSubsystem.resetYawToAngle(Rotation2d.fromDegrees(camera.getLatestResult().getBestTarget().getYaw()).plus(new Rotation2d(Math.PI)).getDegrees());
+        driveSubsystem.resetYawToAngle(poseEstimator.getEstimatedPosition().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
         driveSubsystem.resetOdometry(poseEstimator.getEstimatedPosition());
+        poseEstimator.resetPosition(Rotation2d.fromDegrees(driveSubsystem.getGyroYaw()), driveSubsystem.getModulePositions(), poseEstimator.getEstimatedPosition());
         System.out.println("Updated Odometry From PV");
         return true;
     }
 
     public Double getTargetDistance(){
       return PhotonUtils.calculateDistanceToTargetMeters(Constants.Vision.LIMELIGHT_LENS_HEIGHT_METERS,
-            Vision.SPEAKER_HEIGHT_METERS,
+            Constants.AprilTags.Speaker.HEIGHT_METERS,
             Units.degreesToRadians(Constants.Vision.LIMELIGHT_MOUNT_ANGLE_DEGREES),
             Units.degreesToRadians(camera.getLatestResult().getBestTarget().getPitch()));
     }
@@ -185,12 +199,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         builder.addDoubleProperty("XPose",() -> poseEstimator.getEstimatedPosition().getX(), null);
         builder.addDoubleProperty("YPose", () -> poseEstimator.getEstimatedPosition().getY(), null);
 
-       // if (camera.getEstimatedPose() != null && camera.getEstimatedPose().isPresent()) {
-         //   builder.addDoubleProperty("PV Pose X", () -> camera.getEstimatedPose().get().estimatedPose.getX(), null);
-         //   builder.addDoubleProperty("PV Pose Y", () -> camera.getEstimatedPose().get().estimatedPose.getY(), null);
-        //}
-
-       // builder.addDoubleProperty("Filtered X", () -> estimatedPose.getX(), null);
         builder.addDoubleProperty("Rotation", () -> poseEstimator.getEstimatedPosition().getRotation().getRadians(), null);
 
         builder.addDoubleProperty("Heading", () -> shotState.get_heading().getDegrees(), null);
