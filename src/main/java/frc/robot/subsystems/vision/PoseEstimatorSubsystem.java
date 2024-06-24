@@ -94,7 +94,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         if (camera.getLatestResult().hasTargets()) {
             if (estimatedPose != null && estimatedPose.isPresent()) {
                 if (isValidPose(estimatedPose.get().estimatedPose)) {
-                    estimatedPose = filterVisionPose(estimatedPose.get());
                     poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), camera.getLatestResult().getTimestampSeconds());
                 }
             }
@@ -102,9 +101,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             hasVisionTarget = true;
         }
 
-        poseEstimator.updateWithTime(camera.getLatestResult().getTimestampSeconds(), new Rotation2d(driveSubsystem.getGyroYaw()), driveSubsystem.getModulePositions());
+        poseEstimator.update(new Rotation2d(driveSubsystem.getGyroYaw()), driveSubsystem.getModulePositions());
 
         if (estimatedPose != null && estimatedPose.isPresent())
+            estimatedPose = filterVisionPose(estimatedPose.get());
             this.computeShotState(driveSubsystem, estimatedPose.get().estimatedPose.toPose2d());
     }
 
