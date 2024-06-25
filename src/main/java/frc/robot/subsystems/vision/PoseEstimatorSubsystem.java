@@ -103,9 +103,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         poseEstimator.update(new Rotation2d(driveSubsystem.getGyroYaw()), driveSubsystem.getModulePositions());
 
-        if (estimatedPose != null && estimatedPose.isPresent())
+        if (estimatedPose != null && estimatedPose.isPresent()){
             estimatedPose = filterVisionPose(estimatedPose.get());
             this.computeShotState(driveSubsystem, estimatedPose.get().estimatedPose.toPose2d());
+        }
     }
 
     //source: https://github.com/FRC2539/javabot-2023/blob/6ae5fbeaa23ecbab80d5643f13ae76686bb1a6d5/src/main/java/frc/robot/subsystems/VisionSubsystem.java#L177
