@@ -320,7 +320,7 @@ public final class Constants {
       public static final double kI = 0.000005;
       public static final double kD = 0.0;
 
-      public static final double SHOOTER_SPEED = 5000; //TODO: revert to 5000, low speed b/c small space
+      public static final double SHOOTER_SPEED = 2000; //TODO: revert to 5000, low speed b/c small space
       public static final double AMP_SPEED = 2500;
       public static final double REVERSE_SPEED = -400;
       public static final double EJECT_SPEED = 1000;
