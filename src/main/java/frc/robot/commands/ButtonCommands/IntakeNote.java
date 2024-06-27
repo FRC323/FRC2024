@@ -48,7 +48,9 @@ public class IntakeNote extends SequentialCommandGroup{
 
             new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
 
-            new AdjustFeederNote(feederSubsystem)
+            new AdjustFeederNote(feederSubsystem),
+
+            new WaitUntilCommand(() -> false)
 
         );
 

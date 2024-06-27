@@ -31,19 +31,21 @@ public class ShootCommand extends SequentialCommandGroup{
             new ParallelRaceGroup(
                 new ConditionalCommand(    
                     new WaitUntilCommand(shooterSubsystem::atShootSpeed),
-                    new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
+                    new SequentialCommandGroup(
+                        new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
+                        new WaitUntilCommand(shooterSubsystem::atShootSpeed)
+                    ),
                     () -> shooterSubsystem.isRunning()
                 ),
                 new WaitCommand(2.5)
             ),
-            new WaitUntilCommand(shooterSubsystem::atShootSpeed),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(feederSubsystem::isHoldingNote),
                     new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
                 ),
-                new WaitCommand(1.25)
+                new WaitCommand(5)
             )
         );
     }

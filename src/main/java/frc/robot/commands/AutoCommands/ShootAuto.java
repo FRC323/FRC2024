@@ -43,14 +43,14 @@ public class ShootAuto extends SequentialCommandGroup{
                 //Todo: Make sure filtering doesn't break robot
                 new SequentialCommandGroup(
                     new ParallelRaceGroup(
-                    new ParallelCommandGroup(
-                        new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
-                        new SequentialCommandGroup(
-                            new AdjustFeederNote(feederSubsystem),
-                            new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed)
+                        new ParallelCommandGroup(
+                            new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
+                            new SequentialCommandGroup(
+                                new AdjustFeederNote(feederSubsystem),
+                                new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed)
+                            )//,
+                            //new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
                         ),
-                        new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
-                    ),
                         new WaitCommand(1.5)
                     ),
                     // new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
