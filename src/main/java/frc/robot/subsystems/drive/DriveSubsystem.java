@@ -5,6 +5,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.Preferences;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
+  private double previousTargetHeading = 0;
 
   @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
   private double throttleMultiplier = 1.0;
@@ -266,9 +268,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
-  public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
+  private MedianFilter filter = new MedianFilter(5);
 
-    rotController.setSetpoint(targetHeadingRads.getRadians() + actualChassisSpeed.vyMetersPerSecond/7);
+  public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
+    var delta = filter.calculate((targetHeadingRads.getRadians() - previousTargetHeading));
+    
+    rotController.setSetpoint(targetHeadingRads.getRadians() + delta*20);
 
     //+ 5 * actualChassisSpeed.omegaRadiansPerSecond/Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS
 
@@ -282,6 +287,8 @@ public class DriveSubsystem extends SubsystemBase {
       (rotControllerValue) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
       fieldRelative
     );
+
+    previousTargetHeading = targetHeadingRads.getRadians();
   }
 
   public void turnToHeading(Rotation2d targeRotation2d){
