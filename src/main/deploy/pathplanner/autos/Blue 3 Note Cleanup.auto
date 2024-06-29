@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 15.470457958459779,
-      "y": 3.9595559892874177
-    },
-    "rotation": -125.15382104174341
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -24,13 +18,13 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Red Middle Line 1"
+                  "pathName": "Blue Second Note"
                 }
               },
               {
@@ -41,32 +35,6 @@
                       "type": "named",
                       "data": {
                         "name": "HandoffProc"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Red Middle Line 2"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AlignArm"
                       }
                     }
                   ]
@@ -82,13 +50,13 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Red Middle Line 3"
+                  "pathName": "Blue Third Note"
                 }
               },
               {
@@ -99,32 +67,6 @@
                       "type": "named",
                       "data": {
                         "name": "HandoffProc"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Red Middle Line 4"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AlignArm"
                       }
                     }
                   ]
@@ -142,6 +84,6 @@
       ]
     }
   },
-  "folder": "Red",
+  "folder": "Blue",
   "choreoAuto": false
 }

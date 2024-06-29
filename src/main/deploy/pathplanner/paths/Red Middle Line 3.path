@@ -3,77 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 14.222581151715008,
-        "y": 3.344528170537823
+        "x": 15.107727408437274,
+        "y": 3.624030230516602
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.490404864431758,
-        "y": 2.613046310465013
-      },
-      "isLocked": false,
-      "linkedName": "Back From Line Red"
-    },
-    {
-      "anchor": {
-        "x": 12.033663212223889,
-        "y": 1.7842057536846667
-      },
-      "prevControl": {
-        "x": 13.039382111670237,
-        "y": 2.053061301061412
-      },
-      "nextControl": {
-        "x": 11.048937632321422,
-        "y": 1.5209622818295518
+        "x": 13.54798604334051,
+        "y": 0.649639720332073
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.153314996088682,
-        "y": 2.502549050682148
+        "x": 8.306529595515332,
+        "y": 2.4360876791929025
       },
       "prevControl": {
-        "x": 9.663028252362412,
-        "y": 1.8797923324692345
+        "x": 10.147387136879537,
+        "y": 1.8557187991568964
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "End Red Midline 3"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.9,
-      "rotationDegrees": 155.7454330476313,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 2.75,
-      "rotationDegrees": -134.61,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.1,
-    "maxAcceleration": 4.7,
+    "maxVelocity": 4.7,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -138.90049374238185,
+    "rotation": 168.34070734647705,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Red Middle Line Paths",
   "previewStartingState": {
-    "rotation": -135.9648309959807,
+    "rotation": -125.31121343963318,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

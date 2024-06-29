@@ -3,38 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 14.023780526191523,
-        "y": 4.244978062608944
+        "x": 14.962635188428273,
+        "y": 5.473956035631369
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.409687622794046,
-        "y": 4.420390379242297
+        "x": 14.39133457214283,
+        "y": 5.492092563132496
       },
       "isLocked": false,
-      "linkedName": "Second Note"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 13.97700390842377,
-        "y": 5.615860732909115
+        "x": 13.593327362093321,
+        "y": 5.600911728139245
       },
       "prevControl": {
-        "x": 15.087948580455564,
-        "y": 5.227287035770654
+        "x": 13.566122570841634,
+        "y": 5.392341661876307
+      },
+      "nextControl": {
+        "x": 13.61798579056087,
+        "y": 5.789959679723776
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 14.962635188428273,
+        "y": 5.473956035631369
+      },
+      "prevControl": {
+        "x": 14.083013604623702,
+        "y": 5.573706936887558
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "End Third"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.25,
-      "rotationDegrees": 121.46656352067784,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -51,7 +61,7 @@
   "reversed": false,
   "folder": "Red 5 Note Paths",
   "previewStartingState": {
-    "rotation": -146.30993247402031,
+    "rotation": -178.025065989118,
     "velocity": 0
   },
   "useDefaultConstraints": false

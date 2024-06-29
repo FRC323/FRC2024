@@ -270,6 +270,7 @@ public final class Constants {
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.9;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
+    public static final double ARM_AUTO_STATIC_SHOOT_POSE = -0.35;
     public static final double ARM_OUTAKE_POSE = -0.41;
     public static final double ARM_AMP_POSE = -1.9;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;

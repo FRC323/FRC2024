@@ -32,7 +32,10 @@ public class ShootCommand extends SequentialCommandGroup{
                 new ConditionalCommand(    
                     new WaitUntilCommand(shooterSubsystem::atShootSpeed),
                     new SequentialCommandGroup(
-                        new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
+                        new ConditionalCommand(
+                            new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
+                            new SetShooterSpeed(shooterSubsystem, Shooter.AMP_SPEED),
+                            () -> armSubsystem.getArmAngleRads() > -1.6),
                         new WaitUntilCommand(shooterSubsystem::atShootSpeed)
                     ),
                     () -> shooterSubsystem.isRunning()

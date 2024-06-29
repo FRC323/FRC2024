@@ -1,5 +1,6 @@
 package frc.robot.commands.ButtonCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -50,7 +51,7 @@ public class IntakeNote extends SequentialCommandGroup{
 
             new AdjustFeederNote(feederSubsystem),
 
-            new WaitUntilCommand(() -> false)
+            new WaitUntilCommand(() -> DriverStation.isAutonomous())
 
         );
 
