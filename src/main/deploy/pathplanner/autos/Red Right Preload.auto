@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.4291761916857164,
-      "y": 5.54
-    },
-    "rotation": 0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -26,6 +20,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Red 2 Notes",
   "choreoAuto": false
 }

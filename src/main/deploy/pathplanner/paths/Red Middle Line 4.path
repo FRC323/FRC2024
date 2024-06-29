@@ -3,32 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 9.022922431809777,
-        "y": 2.1912445579277136
+        "x": 8.28,
+        "y": 1.77
       },
       "prevControl": null,
       "nextControl": {
-        "x": 10.0113631806211,
-        "y": 1.6108756778917073
+        "x": 9.966021861868285,
+        "y": 0.812868467842199
       },
       "isLocked": false,
-      "linkedName": "End Red Midline 3"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 14.85381602342152,
-        "y": 3.624030230516602
+        "x": 15.570208859715965,
+        "y": 4.231603901804295
       },
       "prevControl": {
-        "x": 13.892580065861885,
-        "y": 1.4204421391298931
+        "x": 14.60897290215633,
+        "y": 2.0280158104175863
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -141.6825882969115,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -39,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -134.19307054552667,
+    "rotation": -132.70938995736142,
     "rotateFast": false
   },
   "reversed": false,
