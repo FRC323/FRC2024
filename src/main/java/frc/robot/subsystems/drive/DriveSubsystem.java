@@ -5,6 +5,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.Preferences;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
+  private double previousTargetHeading = 0;
 
   @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
   private double throttleMultiplier = 1.0;
@@ -71,9 +73,9 @@ public class DriveSubsystem extends SubsystemBase {
   private Optional<Pose2d> targetPose = Optional.empty();
 
   private PIDController rotController = new PIDController(
-        6.0, 
-        0.1,
-        0.1
+        Constants.Swerve.ROT_CONTROLLER_KP, 
+        Constants.Swerve.ROT_CONTROLLER_KI,
+        Constants.Swerve.ROT_CONTROLLER_KD
     );
 
   SwerveDriveOdometry odometry =
@@ -258,23 +260,35 @@ public class DriveSubsystem extends SubsystemBase {
 
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
+
     frontLeft.setDesiredState(swerveModuleStates[0]);
     frontRight.setDesiredState(swerveModuleStates[1]);
     rearLeft.setDesiredState(swerveModuleStates[2]);
     rearRight.setDesiredState(swerveModuleStates[3]);
+
   }
 
-  public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads,boolean fieldRelative){
-    rotController.setSetpoint(targetHeadingRads.getRadians());
+  private MedianFilter filter = new MedianFilter(5);
+
+  public void driveWithHeading(double xSpeed, double ySpeed, Rotation2d targetHeadingRads, boolean fieldRelative){
+    var delta = filter.calculate((targetHeadingRads.getRadians() - previousTargetHeading));
     
+    rotController.setSetpoint(targetHeadingRads.getRadians() + delta*20);
+
+    //+ 5 * actualChassisSpeed.omegaRadiansPerSecond/Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS
+
+    double rotControllerValue = rotController.calculate(
+        this.getPose().getRotation().getRadians() % (Math.PI * 2)
+      );
+
     drive(
       xSpeed,
       ySpeed,
-      rotController.calculate(
-        this.getPose().getRotation().getRadians() % (Math.PI * 2)
-      ) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
+      (rotControllerValue) / Constants.Swerve.MAX_ANGULAR_SPEED_RAD_PER_SECONDS,
       fieldRelative
     );
+
+    previousTargetHeading = targetHeadingRads.getRadians();
   }
 
   public void turnToHeading(Rotation2d targeRotation2d){
@@ -308,6 +322,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, Constants.Swerve.MAX_SPEED_METERS_PER_SECOND);
+
     frontLeft.setDesiredState(desiredStates[0]);
     frontRight.setDesiredState(desiredStates[1]);
     rearLeft.setDesiredState(desiredStates[2]);
@@ -341,6 +356,8 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Actual Velocity X", () -> actualChassisSpeed.vxMetersPerSecond, null);
     builder.addDoubleProperty("Actual Velocity Y", () -> actualChassisSpeed.vyMetersPerSecond, null);
 
+    builder.addDoubleProperty("Actual Velocity Omega", () -> actualChassisSpeed.omegaRadiansPerSecond, null);
+
     builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
     builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
@@ -370,8 +387,42 @@ public class DriveSubsystem extends SubsystemBase {
         "Rear Left Distance (m)", () -> rearLeft.getPosition().distanceMeters, null);
     builder.addDoubleProperty(
         "Rear Right Distance (m)", () -> rearRight.getPosition().distanceMeters, null);
+
+    builder.addDoubleProperty(
+        "Front Left Speed", () -> frontLeft.getModuleVelocity(), null); 
+    builder.addDoubleProperty(
+        "Front Right Speed", () -> Math.abs(frontRight.getModuleVelocity()), null);
+    builder.addDoubleProperty(
+        "Rear Left Speed", () -> Math.abs(rearLeft.getModuleVelocity()), null);
+    builder.addDoubleProperty(
+        "Rear Right Speed", () -> Math.abs(rearRight.getModuleVelocity()), null);
+
+
+    builder.addDoubleProperty(
+        "Front Left Desired Speed", () -> frontLeft.getDesiredModuleVelocity(), null); 
+    builder.addDoubleProperty(
+        "Front Left Acceleration", () -> frontLeft.getModuleAcceleration(), null);
+    builder.addDoubleProperty(
+        "Front Left Desired Acceleration", () -> frontLeft.getDesiredModuleAcceleration(), null);
+    builder.addDoubleProperty(
+        "Front Left Jerk", () -> Math.abs(frontLeft.getModuleJerk()), null);
+    builder.addDoubleProperty(
+        "Front Left: Jerk per Current", () -> frontLeft.getModuleJerktoCurrent(), null);
+
+    builder.addDoubleProperty("lastNonSlippingWheelVelocity", () -> frontLeft.getLastNonSlippingWheelVelocity(), null);
+
+    builder.addDoubleProperty(
+        "Front Left Current", () -> Math.abs(frontLeft.getCurrent()), null);
+    builder.addDoubleProperty(
+        "Front Right Current", () -> Math.abs(frontRight.getCurrent()), null);
+    builder.addDoubleProperty(
+        "Rear Left Current", () -> Math.abs(rearLeft.getCurrent()), null);
+    builder.addDoubleProperty(
+        "Rear Right Current", () -> Math.abs(rearRight.getCurrent()), null);
+
     builder.addDoubleProperty("Rear Right Velocity", rearRight::getModuleVelocity, null);
     builder.addDoubleProperty("RR Current",rearRight::getCurrent, null);
     builder.addDoubleProperty("Rot Error", () -> rotController.getPositionError() , null);
+    builder.addDoubleProperty("Rot Target", () -> rotController.getSetpoint() , null);
   }
 }

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -162,10 +164,25 @@ public class RobotContainer {
         new SetFeederSpeed(feederSubsystem, 0)
     );
 
-    intakeSubsystem.setDefaultCommand(
-        new SetIntakeSpeed(intakeSubsystem, 0)
-    );
+    // intakeSubsystem.setDefaultCommand(
+    //     new SetIntakeSpeed(intakeSubsystem, 0)
+    // );
 
+    //TODO make this less janky
+    intakeSubsystem.setDefaultCommand(
+        new SequentialCommandGroup(
+            new SetIntakeSpeed(intakeSubsystem, 0),
+            new ConditionalCommand(
+                    new ConditionalCommand(
+                        new SetIntakeUp(armSubsystem, intakeSubsystem),
+                        new InstantCommand(),
+                        () -> intakeSubsystem.getWristAngleRads() > Intake.FOLDED_POSE_INTERNAL + Constants.MARGIN_OF_ERROR_RADS // TO check if robot is in folded pose
+                    ),
+                new InstantCommand(),
+                () -> shooterSubsystem.getCurrentCommand() == null // This check is here to make sure the robot doesn't fold up when shooting
+            )
+        )
+    );
 
 
     // Reset Gyro
@@ -182,37 +199,32 @@ public class RobotContainer {
     m_steerJoystick
         .trigger()
         .whileTrue(
-            //Todo: Maybe add repeat command to fix error when pressing buttons too fast
             new ParallelCommandGroup(
-                    // TODO: Bring this back in but post verifying functionality
-                    alignWhileDriving,
-                new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem))
+                alignWhileDriving,
+                new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem)
             )
-        .onFalse(
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
         );
 
     // // Shoot
     m_driveJoystick
         .button(DriveStick.LEFT_SIDE_BUTTON)
         .toggleOnTrue(
-            new ShootCommand(feederSubsystem,shooterSubsystem,armSubsystem)
+            new ShootCommand(feederSubsystem, shooterSubsystem, armSubsystem)
         );
     // // Intake Button
     m_driveJoystick
         .trigger()
-        .toggleOnTrue(
+        // This somehow breaks transitions to other commands ughh
+        //.whileFalse(new SetIntakeSpeed(intakeSubsystem, 0))
+        .whileTrue(
             new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
-        ).toggleOnFalse(
-            new ParallelCommandGroup(
-                new SetIntakeUp(armSubsystem, intakeSubsystem),
-                new SetFeederSpeed(feederSubsystem, 0)
-            )
         );
 
     // Outtake
     m_driveJoystick
         .button(DriveStick.TOP_BIG_BUTTON)
+        // This somehow breaks transitions to other commands ughh
+        //.whileFalse(new SetIntakeSpeed(intakeSubsystem, 0))
         .whileTrue(
             new OuttakeCommand(armSubsystem, intakeSubsystem, feederSubsystem, shooterSubsystem)
         );
@@ -220,23 +232,19 @@ public class RobotContainer {
     // Folded 
     m_driveJoystick
         .button(Constants.DriverConstants.DriveStick.BACK_SIDE_BUTTON)
-        .onTrue(
+        .whileTrue(
             new SetIntakeFoldedInternal(intakeSubsystem, armSubsystem, feederSubsystem)
         );
 
     // //Human Player Pickup 
     m_steerJoystick
         .button(SteerStick.MIDDLE)
-        .onTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem))
-        .onFalse(new SetIntakeUp(armSubsystem, intakeSubsystem));
+        .whileTrue(new HumanPlayerPickup(intakeSubsystem, armSubsystem, feederSubsystem));
 
     // Safe Zone Shot
     m_steerJoystick
         .button(SteerStick.RIGHT)
-        .onTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem))
-        .onFalse(
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
-        );
+        .onTrue(new SafeShotCommand(intakeSubsystem, armSubsystem, shooterSubsystem, feederSubsystem));
 
     // // Amp Pose
     m_steerJoystick
@@ -248,11 +256,8 @@ public class RobotContainer {
     // // Climb Button
     m_driveJoystick
         .button(DriveStick.SMALL_TOP_BUTTON)
-        .onTrue(
+        .whileTrue(
             new ClimbCommand(armSubsystem, intakeSubsystem)
-        )
-        .onFalse(
-            new SetIntakeUp(armSubsystem, intakeSubsystem)
         );
 
     // // Manual Arm

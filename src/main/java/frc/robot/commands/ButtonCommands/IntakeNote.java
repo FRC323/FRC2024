@@ -1,5 +1,6 @@
 package frc.robot.commands.ButtonCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -45,14 +46,13 @@ public class IntakeNote extends SequentialCommandGroup{
                 ),
                 new FeedUntilNote(feederSubsystem)
             ),
-            new ConditionalCommand(
-                new SetFeederSpeed(feederSubsystem,Feeder.FEEDER_STOPED_SPEED),
-                new FeedUntilNote(feederSubsystem), 
-                feederSubsystem::isHoldingNote
-            ),
-            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
-            // new SetIntakeSpeed(intakeSubsystem, Intake.OUTTAKE_SPEED),
-            // new AdjustFeederNote(feederSubsystem)
+
+            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
+
+            new AdjustFeederNote(feederSubsystem),
+
+            new WaitUntilCommand(() -> DriverStation.isAutonomous())
+
         );
 
     }

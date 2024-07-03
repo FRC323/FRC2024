@@ -34,7 +34,7 @@ public class AlignArmForShot extends SequentialCommandGroup{
                 new SetIntakeTarget(intakeSubsystem, Intake.UNFOLDED_POSE), 
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() < Arm.ARM_HANDOFF_POSE),
-                    new AdjustFeederNote(feederSubsystem,shooterSubsystem),
+                    new AdjustFeederNote(feederSubsystem),
                     new SetShooterSpeed(shooterSubsystem, Shooter.SHOOTER_SPEED)
                 ),
                 new SequentialCommandGroup(

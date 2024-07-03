@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.83,
-      "y": 4.21
-    },
-    "rotation": -60.0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -24,13 +18,13 @@
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue Right line from Start"
+                  "pathName": "Blue Second Note"
                 }
               },
               {
@@ -41,12 +35,6 @@
                       "type": "named",
                       "data": {
                         "name": "HandoffProc"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AlignArm"
                       }
                     }
                   ]
@@ -62,13 +50,13 @@
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue Mid Line 2"
+                  "pathName": "Blue Third Note"
                 }
               },
               {
@@ -79,12 +67,6 @@
                       "type": "named",
                       "data": {
                         "name": "HandoffProc"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AlignArm"
                       }
                     }
                   ]

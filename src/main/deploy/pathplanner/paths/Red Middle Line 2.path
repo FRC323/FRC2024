@@ -3,40 +3,40 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.550916247131639,
-        "y": 0.725037575431277
+        "x": 8.27,
+        "y": 0.26
       },
       "prevControl": null,
       "nextControl": {
-        "x": 9.135901740143005,
-        "y": 1.0175303219369605
+        "x": 7.6441453763245635,
+        "y": 0.07008943205743492
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 14.222581151715008,
-        "y": 3.344528170537823
+        "x": 15.61555017846878,
+        "y": 4.276945220557108
       },
       "prevControl": {
-        "x": 11.626448223874787,
-        "y": 1.6957006393948038
+        "x": 13.511712988338259,
+        "y": 2.1459032391749
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "End Red Mid Line 2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.45,
-      "rotationDegrees": -161.40938485259764,
+      "rotationDegrees": -136.10107426736388,
       "rotateFast": false
     },
     {
       "waypointRelativePos": 0.8,
-      "rotationDegrees": -146.41630185297734,
+      "rotationDegrees": -123.91582027101146,
       "rotateFast": false
     }
   ],
@@ -50,7 +50,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -136.6846843178963,
+    "rotation": -126.6561084159669,
     "rotateFast": false
   },
   "reversed": false,

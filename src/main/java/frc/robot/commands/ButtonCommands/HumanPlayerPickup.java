@@ -11,6 +11,7 @@ import frc.robot.commands.Procedures.AdjustFeederNote;
 import frc.robot.commands.Procedures.CheckIntakeGotoOut;
 import frc.robot.commands.SetCommands.SetArmTarget;
 import frc.robot.commands.SetCommands.SetFeederSpeed;
+import frc.robot.commands.SetCommands.SetIntakeSpeed;
 import frc.robot.commands.SetCommands.SetIntakeTarget;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
@@ -19,6 +20,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class HumanPlayerPickup extends SequentialCommandGroup{
     public HumanPlayerPickup(IntakeSubsystem intake,ArmSubsystem armSubsystem, FeederSubsystem feederSubsystem){
         addCommands(
+
+            new SetIntakeSpeed(intake, 0),
+            
             new CheckIntakeGotoOut(armSubsystem, intake, Intake.SHOOTING_POSE),
             new SetIntakeTarget(intake, Intake.SHOOTING_POSE),
             new ParallelCommandGroup(
@@ -30,8 +34,9 @@ public class HumanPlayerPickup extends SequentialCommandGroup{
             ),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEEDER_INTAKE_SPEED),
             new WaitUntilCommand(feederSubsystem::isHoldingNote),
-            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED)
-            // new AdjustFeederNote(feederSubsystem)
+            new SetFeederSpeed(feederSubsystem, Feeder.FEEDER_STOPED_SPEED),
+            new AdjustFeederNote(feederSubsystem)
+
         );
     }
 }

@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.utils.AbsoluteEncoderChecker;
@@ -30,6 +32,22 @@ public class SwerveModule implements Sendable {
   private final boolean isInverted;
   private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d(0));
 
+  private double drivingEncoderPrevVelocity = 0;
+  private double moduleAcceleration = 0;
+
+  private double drivingEncoderPrevAcceleration = 0;
+  private double moduleJerk = 0;
+
+  private double lastNonSlippingWheelVelocity = 0;
+  private double count = 0;
+
+  private double desiredModuleAcceleration = 0;
+  private double desiredModuleVelocity = 0;
+  private double maxModuleAcceleration = 10;
+
+  private Rotation2d previousMoudleAngle = Rotation2d.fromRadians(0);
+  private double lastNonSlippingWheelAcceleration = 0;
+
   public SwerveModule(int drivingCanId, int turningCanId, double moduleOffset,boolean isInverted) {
     drivingSpark = new CANSparkMax(drivingCanId, MotorType.kBrushless);
     turningSpark = new CANSparkMax(turningCanId, MotorType.kBrushless);
@@ -46,6 +64,7 @@ public class SwerveModule implements Sendable {
 
     desiredState.angle = new Rotation2d(turningEncoder.getPosition());
     drivingEncoder.setPosition(0.0);
+    
   }
 
   private boolean initTurnSpark() {
@@ -144,9 +163,53 @@ public class SwerveModule implements Sendable {
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
+
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
-    correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+
+    moduleAcceleration = (getModuleVelocity() - drivingEncoderPrevVelocity) * 50; // 1000 ms / 20 ms loop time = 50
+
+    drivingEncoderPrevVelocity = getModuleVelocity();
+
+    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50; // 1000 ms / 20 ms loop time = 50
+
+    drivingEncoderPrevAcceleration = moduleAcceleration;
+
+    if (getModuleJerk() < 1000) { 
+
+      count++;
+
+    } else {
+
+      count = 0;
+
+    }
+
+    if (count > 1) {
+
+      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+
+      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+      
+      lastNonSlippingWheelAcceleration = moduleAcceleration;
+
+      previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+
+    } else {
+
+      correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration/50;
+
+      if (DriverStation.isAutonomous()) {
+        correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+      } else {
+        correctedDesiredState.angle = previousMoudleAngle;
+      }
+
+    }
+
+    //correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+
+    //correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+
     SwerveModuleState optimizedState =
         SwerveModuleState.optimize(
             correctedDesiredState, new Rotation2d(turningEncoder.getPosition()));
@@ -161,8 +224,32 @@ public class SwerveModule implements Sendable {
     return turningEncoder.getPosition();
   }
 
+  public double getDesiredModuleVelocity () {
+    return desiredModuleVelocity;
+  }
+
   public double getModuleVelocity(){
     return drivingEncoder.getVelocity();
+  }
+
+  public double getModuleAcceleration(){
+    return moduleAcceleration;
+  }
+
+  public double getDesiredModuleAcceleration(){
+    return desiredModuleAcceleration;
+  }
+
+  public double getModuleJerk(){
+    return moduleJerk;
+  }
+
+  public double getLastNonSlippingWheelVelocity(){
+    return lastNonSlippingWheelVelocity;
+  }
+
+  public double getModuleJerktoCurrent(){
+    return Math.min(1000, Math.abs(getModuleJerk()) / (getCurrent()+2)); // +1 is for divide by zero error. Also, values shouldn't be too big at low speeds (Where current is 0)
   }
 
   public double getCurrent(){
@@ -195,5 +282,7 @@ public class SwerveModule implements Sendable {
     builder.addDoubleProperty("Desired Steer (rad)", () -> desiredState.angle.getRadians(), null);
     builder.addBooleanProperty(
         "Turning encoder connected", turningAbsoluteEncoderChecker::encoderConnected, null);
+
   }
+
 }

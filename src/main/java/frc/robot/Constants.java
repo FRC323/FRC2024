@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -137,8 +136,8 @@ public final class Constants {
             new Translation2d(WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, TRACK_WIDTH_METERS / 2),
             new Translation2d(-WHEEL_BASE_METERS / 2, -TRACK_WIDTH_METERS / 2));
-    public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 2.0;
-    public static final double MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2 = 2.0;
+    public static final double MAX_ACCELERATION_METERS_PER_SECOND_2 = 20.0; // 20.0
+    public static final double MAX_ANGULAR_ACCELERATION_RADS_PER_SECOND_2 = 20.0; // 20.0
 
     public static int FRONT_LEFT_DRIVING_CAN_ID = 11;
     public static int FRONT_LEFT_TURNING_CAN_ID = 21;
@@ -164,12 +163,18 @@ public final class Constants {
     public static boolean REAR_RIGHT_IS_INVERTED = false;
     public static String REAR_RIGHT_OFFSET_KEY = "RR_Offset";
 
+    //Align While Driving PID
+    public static double ROT_CONTROLLER_KP = 4.5;
+    public static double ROT_CONTROLLER_KI = 0;
+    public static double ROT_CONTROLLER_KD = 0;
+    //public static double ROT_CONTROLLER_FEEDFWD = Math.PI/8;
+
     public static class Module {
       //      TODO: Group these in a sane way
       public static final boolean DRIVING_ENCODER_INVERTED = true;
-      public static final double DRIVING_K_P = 0.1;
+      public static final double DRIVING_K_P = 0.2; // 0.1
       public static final double DRIVING_K_I = 0.0;
-      public static final double DRIVING_K_D = 0.1;
+      public static final double DRIVING_K_D = 0.1; // 0.1
       
       public static final double DRIVING_MIN_OUTPUT = -1.0;
       public static final double DRIVING_MAX_OUTPUT = 1.0;
@@ -265,6 +270,7 @@ public final class Constants {
     public static final double ARM_INTAKE_UNFOLDING_POSE = -0.9;
     public static final double ARM_DOWN_POSE = 0;
     public static final double ARM_HANDOFF_POSE = -0.25; 
+    public static final double ARM_AUTO_STATIC_SHOOT_POSE = -0.40;
     public static final double ARM_OUTAKE_POSE = -0.41;
     public static final double ARM_AMP_POSE = -1.9;
     public static final double ARM_HUMAN_PLAYER_POSE =  -1.27;
@@ -278,7 +284,7 @@ public final class Constants {
 
   public static class Feeder{
     public static final int Feeder_CAN_Id = 51;
-    public static final int BEAM_BREAK_PORT = 8;
+    public static final int INTIAL_BEAM_BREAK_PORT = 7;
 
     public static final double FEEDER_INTAKE_SPEED = -0.75;
     public static final double FEED_SHOOT_SPEED = -1.0;
@@ -288,6 +294,21 @@ public final class Constants {
     public static final double FEEDER_STOPED_SPEED = 0.0;
 
     public static final double FEEDER_ADJUST_TIME = 0.15;
+
+    public static final double FEEDER_DISTANCE_PER_REV = 2 * Math.PI * 16;
+
+    //TODO: Copied these values from arm. So probally not correct
+    public static final double kP = 0.5;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double MAX_VELOCITY = Units.degreesToRadians(2048);
+    public static final double MAX_ACCELERATION = Units.degreesToRadians(18096);
+
+    public static final TrapezoidProfile.Constraints FEEDER_CONSTRAINTS =
+        new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+    public static final double ADJUST_POSITION = 500.0;
+    public static final double SHOOT_POSITION = -500.0;
+    public static final double POSITION_TOLLERANCE = 2;
  
   }
 
@@ -300,7 +321,7 @@ public final class Constants {
       public static final double kI = 0.000005;
       public static final double kD = 0.0;
 
-      public static final double SHOOTER_SPEED = 5000;
+      public static final double SHOOTER_SPEED = 5000; //TODO: revert to 5000, low speed b/c small space
       public static final double AMP_SPEED = 2500;
       public static final double REVERSE_SPEED = -400;
       public static final double EJECT_SPEED = 1000;
@@ -333,7 +354,7 @@ public final class Constants {
 
     public static final double UNFOLDED_POSE = 3.01;
     public static final double FOLDED_POSE_INTERNAL = 0.02; 
-    public static final double SHOOTING_POSE = 1.65;
+    public static final double SHOOTING_POSE = 1.75;
     public static final double FOLDED_POSE = 0.92;
 
     //Danger Zones

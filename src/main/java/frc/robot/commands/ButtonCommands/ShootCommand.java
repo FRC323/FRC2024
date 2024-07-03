@@ -24,26 +24,31 @@ public class ShootCommand extends SequentialCommandGroup{
     public ShootCommand(FeederSubsystem feederSubsystem,ShooterSubsystem shooterSubsystem, ArmSubsystem armSubsystem){
         addCommands(
             new SetShooterSpeed(shooterSubsystem, () -> shooterSubsystem.getShootSpeedTarget()),
-            new SequentialCommandGroup(
-                new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() <= Arm.ARM_HANDOFF_POSE + Arm.AT_TARGET_TOLLERANCE),
-                new AdjustFeederNote(feederSubsystem, shooterSubsystem)
-            ),
+            // new SequentialCommandGroup(
+            //     new WaitUntilCommand(() -> armSubsystem.getArmAngleRads() <= Arm.ARM_HANDOFF_POSE + Arm.AT_TARGET_TOLLERANCE),
+            //     new AdjustFeederNote(feederSubsystem)
+            // ),
             new ParallelRaceGroup(
                 new ConditionalCommand(    
                     new WaitUntilCommand(shooterSubsystem::atShootSpeed),
-                    new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
+                    new SequentialCommandGroup(
+                        new ConditionalCommand(
+                            new SetShooterSpeed(shooterSubsystem,Shooter.SHOOTER_SPEED),
+                            new SetShooterSpeed(shooterSubsystem, Shooter.AMP_SPEED),
+                            () -> armSubsystem.getArmAngleRads() > -1.6),
+                        new WaitUntilCommand(shooterSubsystem::atShootSpeed)
+                    ),
                     () -> shooterSubsystem.isRunning()
                 ),
                 new WaitCommand(2.5)
             ),
-            new WaitUntilCommand(shooterSubsystem::atShootSpeed),
             new SetFeederSpeed(feederSubsystem, Constants.Feeder.FEED_SHOOT_SPEED),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(feederSubsystem::isHoldingNote),
                     new WaitUntilCommand(() -> !feederSubsystem.isHoldingNote())
                 ),
-                new WaitCommand(1.25)
+                new WaitCommand(5)
             )
         );
     }

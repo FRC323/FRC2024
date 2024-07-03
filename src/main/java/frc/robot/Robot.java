@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
       m_robotContainer.intakeSubsystem.getWristAngleRads()
     );
 
-    var intakeCommand = m_robotContainer.armSubsystem.getCurrentCommand();
+    var intakeCommand = m_robotContainer.intakeSubsystem.getCurrentCommand();
     if(intakeCommand != null) intakeCommand.cancel();
     // m_robotContainer.armSubsystem.enableCoast();
   }
