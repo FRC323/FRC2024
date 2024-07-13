@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static frc.robot.utils.SparkMaxUtils.check;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;

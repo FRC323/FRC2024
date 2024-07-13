@@ -11,10 +11,16 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -60,16 +66,21 @@ public final class Constants {
   }
 
   public static class Vision {
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     public static final int APRIL_TAG_PIPELINE = 0;
     public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
     public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
     public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.50,5.52);
     public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
 
-    //Todo
+    public static final String BACK_CAMERA_NAME = "BackCamera";
     public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,25.52,0.0));
-    public static final Transform3d FRONT_RIGHT_CAMERA_TO_ROBOT = new Transform3d();
-    public static final Transform3d FRONT_LEFT_CAMERA_TO_ROBOT = new Transform3d();
+    public static final String RIGHT_CAMERA_NAME = "RightCamera";
+    public static final Transform3d RIGHT_CAMERA_TO_ROBOT = new Transform3d(); //TODO POPULATE THIS
+    public static final String LEFT_CAMERA_NAME = "LeftCamera";
+    public static final Transform3d LEFT_CAMERA_TO_ROBOT = new Transform3d(); //TODO POPULATE THIS
   }
 
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;

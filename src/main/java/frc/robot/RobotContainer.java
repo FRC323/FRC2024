@@ -43,14 +43,10 @@ import frc.robot.commands.ButtonCommands.ClimbCommand;
 import frc.robot.commands.ButtonCommands.GotoAmpPose;
 import frc.robot.commands.ButtonCommands.IntakeNote;
 import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
-// import frc.robot.commands.ButtonCommands.ClimbCommand;
-// import frc.robot.commands.ButtonCommands.HandoffProc;
-// import frc.robot.commands.ButtonCommands.HumanPlayerPickup;
 import frc.robot.commands.ButtonCommands.ManualArmControl;
 import frc.robot.commands.ButtonCommands.ManualIntakeControl;
 import frc.robot.commands.ButtonCommands.OuttakeCommand;
 import frc.robot.commands.ButtonCommands.SafeShotCommand;
-// import frc.robot.commands.ButtonCommands.OuttakeCommand;
 import frc.robot.commands.ButtonCommands.ShootCommand;
 import frc.robot.commands.Procedures.AlignArmForShot;
 import frc.robot.commands.Procedures.AlignWhileDriving;
@@ -71,8 +67,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.led.LedSubsystem;
-import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -87,15 +81,6 @@ public class RobotContainer {
   public final FeederSubsystem feederSubsystem = new FeederSubsystem();
   public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  public final PoseEstimatorSubsystem poseEstimatorSubsystem =
-      new PoseEstimatorSubsystem(driveSubsystem);
-//   public final PhotonPoseEstimatorSubsystem photonPoseEstimatorSubsystem =
-    //   new PhotonPoseEstimatorSubsystem(driveSubsystem);
-  private final LedSubsystem ledSubsystem = new LedSubsystem(feederSubsystem);
-
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  // private final CommandXboxController m_operatorController =
-  //     new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   private final CommandJoystick m_driveJoystick =
       new CommandJoystick(Constants.DriverConstants.kDriveStickPort);
@@ -110,7 +95,6 @@ public class RobotContainer {
   private AlignWhileDriving alignWhileDriving =
       new AlignWhileDriving(
           driveSubsystem,
-          poseEstimatorSubsystem,
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
           () -> Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()));
@@ -126,7 +110,6 @@ public class RobotContainer {
     Shuffleboard.getTab("Subsystems").add(feederSubsystem.getName(), feederSubsystem);
     Shuffleboard.getTab("Subsystems").add(shooterSubsystem.getName(), shooterSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
-    Shuffleboard.getTab("Subsystems").add(poseEstimatorSubsystem.getName(),poseEstimatorSubsystem);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     addShuffleBoardData();
@@ -201,7 +184,7 @@ public class RobotContainer {
         .whileTrue(
             new ParallelCommandGroup(
                 alignWhileDriving,
-                new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem)
+                new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, driveSubsystem)
             )
         );
 
@@ -337,7 +320,7 @@ public class RobotContainer {
         // .add("HandoffProc", new HandoffProc(intakeSubsystem, armSubsystem, feederSubsystem));
 
     Shuffleboard.getTab("Buttons")
-        .add("ResetPose", new ResetOdomFromLimelight(poseEstimatorSubsystem));
+        .add("ResetPose", new ResetOdomFromLimelight(driveSubsystem));
 
     Shuffleboard.getTab("Buttons").add("Auto Chooser", autoChooser);
 
@@ -350,13 +333,13 @@ public class RobotContainer {
 
   private void addCommandsToAutoChooser() {
     NamedCommands.registerCommand("HandoffProc", new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem));
-    NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(poseEstimatorSubsystem));
+    NamedCommands.registerCommand("Reset Odom", new ResetOdomFromLimelight(driveSubsystem));
     NamedCommands.registerCommand(
         "UnfoldIntake", new SetIntakeUnfolded(intakeSubsystem, armSubsystem));
     NamedCommands.registerCommand(
-        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem, poseEstimatorSubsystem));
+        "ShootAuto", new ShootAuto(driveSubsystem, armSubsystem, intakeSubsystem, shooterSubsystem, feederSubsystem));
     NamedCommands.registerCommand("EjectNote", new EjectNote(shooterSubsystem, feederSubsystem, intakeSubsystem, armSubsystem));
-    NamedCommands.registerCommand("AlignArm", new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, poseEstimatorSubsystem));
+    NamedCommands.registerCommand("AlignArm", new AlignArmForShot(armSubsystem, shooterSubsystem, feederSubsystem, intakeSubsystem, driveSubsystem));
   }
 
   /**
