@@ -163,61 +163,54 @@ public class SwerveModule implements Sendable {
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
-
-    moduleAcceleration = (getModuleVelocity() - drivingEncoderPrevVelocity) * 50; // 1000 ms / 20 ms loop time = 50
-
-    drivingEncoderPrevVelocity = getModuleVelocity();
-
-    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50; // 1000 ms / 20 ms loop time = 50
-
-    drivingEncoderPrevAcceleration = moduleAcceleration;
-
-    if (getModuleJerk() < 1000) { 
-
+    updateModuleKinematics();
+    
+    if (isModuleJerkWithinThreshold()) {
       count++;
-
     } else {
-
       count = 0;
-
     }
 
     if (count > 1) {
-
-      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-
-      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-      
-      lastNonSlippingWheelAcceleration = moduleAcceleration;
-
-      previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-
+      applyDesiredState(correctedDesiredState, desiredState);
     } else {
-
-      correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration/50;
-
-      if (DriverStation.isAutonomous()) {
-        correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-      } else {
-        correctedDesiredState.angle = previousMoudleAngle;
-      }
-
+      applyCorrectedState(correctedDesiredState, desiredState);
     }
 
-    //correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-
-    //correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-
-    SwerveModuleState optimizedState =
-        SwerveModuleState.optimize(
-            correctedDesiredState, new Rotation2d(turningEncoder.getPosition()));
+    SwerveModuleState optimizedState = SwerveModuleState.optimize(correctedDesiredState, new Rotation2d(turningEncoder.getPosition()));
     this.desiredState = optimizedState;
-    drivingPIDController.setReference(
-        optimizedState.speedMetersPerSecond, CANSparkBase.ControlType.kVelocity);
-    turningPIDController.setReference(
-        optimizedState.angle.getRadians(), CANSparkBase.ControlType.kPosition);
+
+    drivingPIDController.setReference(optimizedState.speedMetersPerSecond, CANSparkBase.ControlType.kVelocity);
+    turningPIDController.setReference(optimizedState.angle.getRadians(), CANSparkBase.ControlType.kPosition);
+  }
+    
+  private void updateModuleKinematics() {
+    moduleAcceleration = (getModuleVelocity() - drivingEncoderPrevVelocity) * 50;
+    drivingEncoderPrevVelocity = getModuleVelocity();
+    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50;
+    drivingEncoderPrevAcceleration = moduleAcceleration;
+  } 
+    
+  private boolean isModuleJerkWithinThreshold() {
+    return getModuleJerk() < Constants.Swerve.Module.JERK_THRESHOLD;
+  }
+    
+  private void applyDesiredState(SwerveModuleState correctedState, SwerveModuleState desiredState) { 
+    correctedState.speedMetersPerSecond = desiredState.speedMetersPerSecond; 
+    correctedState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset)); 
+    lastNonSlippingWheelAcceleration = moduleAcceleration; 
+    previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset)); 
+  } 
+    
+  private void applyCorrectedState(SwerveModuleState correctedState, SwerveModuleState desiredState) {
+    correctedState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration / 50;
+    
+    if (DriverStation.isAutonomous()) {
+      correctedState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+    } else {
+      correctedState.angle = previousMoudleAngle;
+    }
   }
 
   public double getEncoderAbsPositionRad() {

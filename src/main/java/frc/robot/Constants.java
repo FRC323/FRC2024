@@ -170,6 +170,7 @@ public final class Constants {
     //public static double ROT_CONTROLLER_FEEDFWD = Math.PI/8;
 
     public static class Module {
+      public static final int JERK_THRESHOLD = 1000;
       //      TODO: Group these in a sane way
       public static final boolean DRIVING_ENCODER_INVERTED = true;
       public static final double DRIVING_K_P = 0.2; // 0.1
