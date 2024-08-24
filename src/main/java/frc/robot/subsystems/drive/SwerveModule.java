@@ -43,7 +43,6 @@ public class SwerveModule implements Sendable {
 
   private double desiredModuleAcceleration = 0;
   private double desiredModuleVelocity = 0;
-  private double maxModuleAcceleration = 10;
 
   private Rotation2d previousMoudleAngle = Rotation2d.fromRadians(0);
   private double lastNonSlippingWheelAcceleration = 0;
@@ -166,15 +165,19 @@ public class SwerveModule implements Sendable {
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
     updateModuleKinematics();
     
+    // count is a filter to deal with jittery jerk values
     if (isModuleJerkWithinThreshold()) {
       count++;
     } else {
       count = 0;
     }
-
+    count = 2;
+    // check if count is above 1 as simple filter
     if (count > 1) {
+      // In this case, module acts like normal
       applyDesiredState(correctedDesiredState, desiredState);
     } else {
+      // In this case, module locks to angle and acceleration
       applyCorrectedState(correctedDesiredState, desiredState);
     }
 
@@ -204,11 +207,15 @@ public class SwerveModule implements Sendable {
   } 
     
   private void applyCorrectedState(SwerveModuleState correctedState, SwerveModuleState desiredState) {
+    //Module acceleration is locked here
     correctedState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration / 50;
     
     if (DriverStation.isAutonomous()) {
+      // Disables module angle locking for traction control during auto. Otherwise auto becomes all screwy. 
+      // The module anlge locking only matter for extremely sharp changes in desired direction. Which isn't a problem with pre-programmed paths.
       correctedState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
     } else {
+      // Module angle is locked here
       correctedState.angle = previousMoudleAngle;
     }
   }
