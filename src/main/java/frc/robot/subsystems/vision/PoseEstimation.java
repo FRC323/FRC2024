@@ -35,7 +35,7 @@ public class PoseEstimation {
         _camera = new PhotonCamera(cameraName);
         _estimator = new PhotonPoseEstimator(Constants.Vision.kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, _camera, robotToCamera);
 
-        _estimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_LAST_POSE);
+        _estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         if (Robot.isSimulation()) {
             // Create the vision system simulation which handles cameras and targets on the field.

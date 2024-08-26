@@ -26,8 +26,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double previousTargetHeading = 0;
     
   private final PoseEstimation _backVision = new PoseEstimation(Constants.Vision.BACK_CAMERA_NAME, Constants.Vision.BACK_CAMERA_TO_ROBOT);
-  private final PoseEstimation _leftVision = new PoseEstimation(Constants.Vision.LEFT_CAMERA_NAME, Constants.Vision.LEFT_CAMERA_TO_ROBOT);
-  private final PoseEstimation _rightVision = new PoseEstimation(Constants.Vision.RIGHT_CAMERA_NAME, Constants.Vision.RIGHT_CAMERA_TO_ROBOT);
+  //private final PoseEstimation _leftVision = new PoseEstimation(Constants.Vision.LEFT_CAMERA_NAME, Constants.Vision.LEFT_CAMERA_TO_ROBOT);
+  //private final PoseEstimation _rightVision = new PoseEstimation(Constants.Vision.RIGHT_CAMERA_NAME, Constants.Vision.RIGHT_CAMERA_TO_ROBOT);
 
   private ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
 
@@ -80,11 +80,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     //TODO: currently using default std devs for pose
     //visualize data to determine what is needed
-  SwerveDrivePoseEstimator odometry = new SwerveDrivePoseEstimator(
-                Constants.Swerve.DRIVE_KINEMATICS,
-                Rotation2d.fromDegrees(this.getGyroYaw()),
-                this.getModulePositions(),
-                this.getPose());
+  SwerveDrivePoseEstimator odometry;
 
   public SwerveDrivePoseEstimator getPoseEstimator() {
     return odometry;
@@ -92,8 +88,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void updateSim() {
     _backVision.simulationPeriodic(getPose());
-    _leftVision.simulationPeriodic(getPose());
-    _rightVision.simulationPeriodic(getPose());
+   // _leftVision.simulationPeriodic(getPose());
+    //_rightVision.simulationPeriodic(getPose());
   }
 
   private ChassisSpeeds actualChassisSpeed;
@@ -104,6 +100,12 @@ public class DriveSubsystem extends SubsystemBase {
     navx.reset();
 
     rotController.enableContinuousInput(-Math.PI, Math.PI);
+
+    odometry = new SwerveDrivePoseEstimator(
+                Constants.Swerve.DRIVE_KINEMATICS,
+                Rotation2d.fromDegrees(this.getGyroYaw()),
+                this.getModulePositions(),
+                new Pose2d());
 
     AutoBuilder.configureHolonomic(
         this::getPose,
@@ -125,8 +127,8 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.periodic();
 
     updatePoseEstimation(_backVision);
-    updatePoseEstimation(_leftVision);
-    updatePoseEstimation(_rightVision);
+    //updatePoseEstimation(_leftVision);
+    //updatePoseEstimation(_rightVision);
 
     //compute shot state for auto aiming
     computeShotState();
@@ -195,8 +197,8 @@ public class DriveSubsystem extends SubsystemBase {
 public boolean updateOdometry() {
   System.out.println("updating odometry");
   //TODO: should we make sure there's a target? Is is necessary?
-  if (_leftVision.canSeeTargets() ||
-    _rightVision.canSeeTargets() ||  
+  if (//_leftVision.canSeeTargets() ||
+   // _rightVision.canSeeTargets() ||  
     _backVision.canSeeTargets()) {
       resetYawToAngle(getPose().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
       resetOdometry(getPose());
