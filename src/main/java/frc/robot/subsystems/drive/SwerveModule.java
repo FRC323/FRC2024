@@ -43,7 +43,6 @@ public class SwerveModule implements Sendable {
 
   private double desiredModuleAcceleration = 0;
   private double desiredModuleVelocity = 0;
-  private double maxModuleAcceleration = 10;
 
   private Rotation2d previousMoudleAngle = Rotation2d.fromRadians(0);
   private double lastNonSlippingWheelAcceleration = 0;
@@ -163,61 +162,62 @@ public class SwerveModule implements Sendable {
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
-
-    moduleAcceleration = (getModuleVelocity() - drivingEncoderPrevVelocity) * 50; // 1000 ms / 20 ms loop time = 50
-
-    drivingEncoderPrevVelocity = getModuleVelocity();
-
-    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50; // 1000 ms / 20 ms loop time = 50
-
-    drivingEncoderPrevAcceleration = moduleAcceleration;
-
-    if (getModuleJerk() < 1000) { 
-
+    updateModuleKinematics();
+    
+    // count is a filter to deal with jittery jerk values
+    if (isModuleJerkWithinThreshold()) {
       count++;
-
     } else {
-
       count = 0;
-
     }
-
+    count = 2;
+    // check if count is above 1 as simple filter
     if (count > 1) {
-
-      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-
-      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-      
-      lastNonSlippingWheelAcceleration = moduleAcceleration;
-
-      previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-
+      // In this case, module acts like normal
+      applyDesiredState(correctedDesiredState, desiredState);
     } else {
-
-      correctedDesiredState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration/50;
-
-      if (DriverStation.isAutonomous()) {
-        correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-      } else {
-        correctedDesiredState.angle = previousMoudleAngle;
-      }
-
+      // In this case, module locks to angle and acceleration
+      applyCorrectedState(correctedDesiredState, desiredState);
     }
 
-    //correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-
-    //correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
-
-    SwerveModuleState optimizedState =
-        SwerveModuleState.optimize(
-            correctedDesiredState, new Rotation2d(turningEncoder.getPosition()));
+    SwerveModuleState optimizedState = SwerveModuleState.optimize(correctedDesiredState, new Rotation2d(turningEncoder.getPosition()));
     this.desiredState = optimizedState;
-    drivingPIDController.setReference(
-        optimizedState.speedMetersPerSecond, CANSparkBase.ControlType.kVelocity);
-    turningPIDController.setReference(
-        optimizedState.angle.getRadians(), CANSparkBase.ControlType.kPosition);
+
+    drivingPIDController.setReference(optimizedState.speedMetersPerSecond, CANSparkBase.ControlType.kVelocity);
+    turningPIDController.setReference(optimizedState.angle.getRadians(), CANSparkBase.ControlType.kPosition);
+  }
+    
+  private void updateModuleKinematics() {
+    moduleAcceleration = (getModuleVelocity() - drivingEncoderPrevVelocity) * 50;
+    drivingEncoderPrevVelocity = getModuleVelocity();
+    moduleJerk = (moduleAcceleration - drivingEncoderPrevAcceleration) * 50;
+    drivingEncoderPrevAcceleration = moduleAcceleration;
+  } 
+    
+  private boolean isModuleJerkWithinThreshold() {
+    return getModuleJerk() < Constants.Swerve.Module.JERK_THRESHOLD;
+  }
+    
+  private void applyDesiredState(SwerveModuleState correctedState, SwerveModuleState desiredState) { 
+    correctedState.speedMetersPerSecond = desiredState.speedMetersPerSecond; 
+    correctedState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset)); 
+    lastNonSlippingWheelAcceleration = moduleAcceleration; 
+    previousMoudleAngle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset)); 
+  } 
+    
+  private void applyCorrectedState(SwerveModuleState correctedState, SwerveModuleState desiredState) {
+    //Module acceleration is locked here
+    correctedState.speedMetersPerSecond = getModuleVelocity() + lastNonSlippingWheelAcceleration / 50;
+    
+    if (DriverStation.isAutonomous()) {
+      // Disables module angle locking for traction control during auto. Otherwise auto becomes all screwy. 
+      // The module anlge locking only matter for extremely sharp changes in desired direction. Which isn't a problem with pre-programmed paths.
+      correctedState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleOffset));
+    } else {
+      // Module angle is locked here
+      correctedState.angle = previousMoudleAngle;
+    }
   }
 
   public double getEncoderAbsPositionRad() {
