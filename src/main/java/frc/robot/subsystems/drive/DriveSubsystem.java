@@ -2,13 +2,17 @@ package frc.robot.subsystems.drive;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,9 +29,9 @@ public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
   private double previousTargetHeading = 0;
     
-  private final PoseEstimation _backVision = new PoseEstimation(Constants.Vision.BACK_CAMERA_NAME, Constants.Vision.BACK_CAMERA_TO_ROBOT);
-  //private final PoseEstimation _leftVision = new PoseEstimation(Constants.Vision.LEFT_CAMERA_NAME, Constants.Vision.LEFT_CAMERA_TO_ROBOT);
-  //private final PoseEstimation _rightVision = new PoseEstimation(Constants.Vision.RIGHT_CAMERA_NAME, Constants.Vision.RIGHT_CAMERA_TO_ROBOT);
+  private final PoseEstimation _centerVision = new PoseEstimation(Constants.Vision.CENTER_CAMERA_NAME, Constants.Vision.CENTER_CAMERA_TO_ROBOT);
+  private final PoseEstimation _leftVision = new PoseEstimation(Constants.Vision.LEFT_CAMERA_NAME, Constants.Vision.LEFT_CAMERA_TO_ROBOT);
+  private final PoseEstimation _rightVision = new PoseEstimation(Constants.Vision.RIGHT_CAMERA_NAME, Constants.Vision.RIGHT_CAMERA_TO_ROBOT);
 
   private ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
 
@@ -87,9 +91,13 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void updateSim() {
-    _backVision.simulationPeriodic(getPose());
-   // _leftVision.simulationPeriodic(getPose());
-    //_rightVision.simulationPeriodic(getPose());
+
+    if (Constants.Vision.USE_CENTER_CAMERA)
+      _centerVision.simulationPeriodic(Constants.Vision.INIT_SIM_POSE);
+    if (Constants.Vision.USE_LEFT_CAMERA)
+      _leftVision.simulationPeriodic(Constants.Vision.INIT_SIM_POSE);
+    if (Constants.Vision.USE_RIGHT_CAMERA)
+      _rightVision.simulationPeriodic(Constants.Vision.INIT_SIM_POSE);
   }
 
   private ChassisSpeeds actualChassisSpeed;
@@ -126,9 +134,12 @@ public class DriveSubsystem extends SubsystemBase {
     rearLeft.periodic();
     rearRight.periodic();
 
-    updatePoseEstimation(_backVision);
-    //updatePoseEstimation(_leftVision);
-    //updatePoseEstimation(_rightVision);
+    if (Constants.Vision.USE_CENTER_CAMERA)
+      updatePoseEstimation(_centerVision);
+    if (Constants.Vision.USE_LEFT_CAMERA)
+      updatePoseEstimation(_leftVision);
+    if (Constants.Vision.USE_RIGHT_CAMERA)
+      updatePoseEstimation(_rightVision);
 
     //compute shot state for auto aiming
     computeShotState();
@@ -194,20 +205,27 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.burnFlashSparks();
   }
 
-public boolean updateOdometry() {
-  System.out.println("updating odometry");
-  //TODO: should we make sure there's a target? Is is necessary?
-  if (//_leftVision.canSeeTargets() ||
-   // _rightVision.canSeeTargets() ||  
-    _backVision.canSeeTargets()) {
-      resetYawToAngle(getPose().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
-      resetOdometry(getPose());
-      System.out.println("Updated Odometry");
+  public boolean updateOdometry() {
+    System.out.println("updating odometry");
+    if (canSeeTargets()) {
+        resetYawToAngle(getPose().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+        resetOdometry(getPose());
+        System.out.println("Updated Odometry");
+        return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean canSeeTargets() {
+    if (Constants.Vision.USE_CENTER_CAMERA && _centerVision.canSeeTargets())
       return true;
-  } else {
+    if (Constants.Vision.USE_LEFT_CAMERA && _leftVision.canSeeTargets())
+      return true;
+    if (Constants.Vision.USE_RIGHT_CAMERA && _rightVision.canSeeTargets())
+      return true;
     return false;
   }
-}
 
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();
@@ -484,7 +502,12 @@ public boolean updateOdometry() {
     builder.addDoubleProperty(
         "Front Left: Jerk per Current", () -> frontLeft.getModuleJerktoCurrent(), null);
 
-    builder.addDoubleProperty("lastNonSlippingWheelVelocity", () -> frontLeft.getLastNonSlippingWheelVelocity(), null);
+    if (Constants.Vision.USE_RIGHT_CAMERA)
+      builder.addIntegerArrayProperty("PV Right View", () -> _rightVision.targetsInView().stream().mapToLong(i -> i.getFiducialId()).toArray(), null);
+    if (Constants.Vision.USE_LEFT_CAMERA)
+      builder.addIntegerArrayProperty("PV Left View", () -> _leftVision.targetsInView().stream().mapToLong(i -> i.getFiducialId()).toArray(), null);
+    if (Constants.Vision.USE_CENTER_CAMERA)
+      builder.addIntegerArrayProperty("PV Center View", () -> _centerVision.targetsInView().stream().mapToLong(i -> i.getFiducialId()).toArray(), null);
 
     builder.addDoubleProperty(
         "Front Left Current", () -> Math.abs(frontLeft.getCurrent()), null);

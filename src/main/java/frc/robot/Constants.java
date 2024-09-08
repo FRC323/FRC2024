@@ -15,6 +15,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -75,14 +77,22 @@ public final class Constants {
     public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.50,5.52);
     public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
 
-    public static final String BACK_CAMERA_NAME = "RearCamera";
-    //public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,25.52,0.0));
+    public static final String CENTER_CAMERA_NAME = "RearCamera";
+    public static final boolean USE_CENTER_CAMERA = false;
+    public static final Transform3d CENTER_CAMERA_TO_ROBOT = new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,Units.degreesToRadians(-25.52),Units.degreesToRadians(180)));
     //temp location
-    public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.3302,0.1539,0.2523, new Rotation3d(0.0,25.52,0.0));
+    //public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.3302,0.1539,0.2523, new Rotation3d(0.0,Units.degreesToRadians(-25.52),Units.degreesToRadians(180)));
     public static final String RIGHT_CAMERA_NAME = "RightCamera";
-    public static final Transform3d RIGHT_CAMERA_TO_ROBOT = new Transform3d(); //TODO POPULATE THIS
+    public static final boolean USE_RIGHT_CAMERA = true;
+    public static final Transform3d RIGHT_CAMERA_TO_ROBOT = 
+      new Transform3d(-0.285,-0.285,0.209, new Rotation3d(0.0,Units.degreesToRadians(-45.0),Units.degreesToRadians(225)));
+
     public static final String LEFT_CAMERA_NAME = "LeftCamera";
-    public static final Transform3d LEFT_CAMERA_TO_ROBOT = new Transform3d(); //TODO POPULATE THIS
+    public static final boolean USE_LEFT_CAMERA = false;
+    public static final Transform3d LEFT_CAMERA_TO_ROBOT =
+      new Transform3d(-0.285,0.285,0.209, new Rotation3d(0.0,Units.degreesToRadians(-45.0),Units.degreesToRadians(135)));
+
+    public static Pose2d INIT_SIM_POSE = new Pose2d(new Translation2d(.76, 6.70), Rotation2d.fromDegrees(59.20));
   }
 
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;

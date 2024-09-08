@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -10,6 +11,7 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.utils.Functions;
@@ -39,16 +42,16 @@ public class PoseEstimation {
 
         if (Robot.isSimulation()) {
             // Create the vision system simulation which handles cameras and targets on the field.
-            _visionSim = new VisionSystemSim("main");
+            _visionSim = new VisionSystemSim("RearCamera");
             // Add all the AprilTags inside the tag layout as visible targets to this simulated field.
             _visionSim.addAprilTags(Constants.Vision.kTagLayout);
             // Create simulated camera properties. These can be set to mimic your actual camera.
             var cameraProp = new SimCameraProperties();
-            cameraProp.setCalibration(960, 720, Rotation2d.fromDegrees(90));
-            cameraProp.setCalibError(0.35, 0.10);
-            cameraProp.setFPS(15);
-            cameraProp.setAvgLatencyMs(50);
-            cameraProp.setLatencyStdDevMs(15);
+            cameraProp.setCalibration(1280, 720, Rotation2d.fromDegrees(70));
+            cameraProp.setCalibError(0.25, 0.08);
+            cameraProp.setFPS(20);
+            cameraProp.setAvgLatencyMs(35);
+            cameraProp.setLatencyStdDevMs(5);
             // Create a PhotonCameraSim which will update the linked PhotonCamera's values with visible
             // targets.
             _cameraSim = new PhotonCameraSim(_camera, cameraProp);
@@ -56,6 +59,8 @@ public class PoseEstimation {
             _visionSim.addCamera(_cameraSim, robotToCamera);
 
             _cameraSim.enableDrawWireframe(true);
+
+            SmartDashboard.putData("VisionSimulation", _visionSim.getDebugField());
         }
     }
 
@@ -79,21 +84,14 @@ public class PoseEstimation {
         return _camera.getLatestResult().hasTargets();
     }
 
+    public List<PhotonTrackedTarget> targetsInView() {
+        return _camera.getLatestResult().getTargets();
+    }
+
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
         var visionEst = _estimator.update();
         double latestTimestamp = _camera.getLatestResult().getTimestampSeconds();
         boolean newResult = Math.abs(latestTimestamp - _lastEstTimestamp) > 1e-5;
-        if (Robot.isSimulation()) {
-            visionEst.ifPresentOrElse(
-                est ->
-                    _visionSim.getDebugField()
-                        .getObject("VisionEstimation")
-                        .setPose(est.estimatedPose.toPose2d()),
-                () -> {
-                    if (newResult)
-                        _visionSim.getDebugField().getObject("VisionEstimation").setPoses();
-                });
-        }
         if (newResult) _lastEstTimestamp = latestTimestamp;
         return visionEst;
     }
