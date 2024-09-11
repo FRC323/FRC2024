@@ -110,6 +110,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Subsystems").add(feederSubsystem.getName(), feederSubsystem);
     Shuffleboard.getTab("Subsystems").add(shooterSubsystem.getName(), shooterSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
+    Shuffleboard.getTab("Field").add(driveSubsystem.getField());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     addShuffleBoardData();
@@ -133,7 +134,7 @@ public class RobotContainer {
                 driveSubsystem.drive(
                     invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
                     invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
-                    Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()) * (m_steerJoystick.trigger().getAsBoolean() ? 0.0 : 1.0),
+                    Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()) * (m_steerJoystick.getHID().getTrigger() ? 0.0 : 1.0),
                     true) // !m_steerJoystick.trigger().getAsBoolean())
             ,
             driveSubsystem));

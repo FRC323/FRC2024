@@ -23,6 +23,7 @@ import frc.robot.utils.GeometryUtils;
 import frc.robot.utils.ShotState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.Preferences;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -32,6 +33,8 @@ public class DriveSubsystem extends SubsystemBase {
   private final PoseEstimation _centerVision = new PoseEstimation(Constants.Vision.CENTER_CAMERA_NAME, Constants.Vision.CENTER_CAMERA_TO_ROBOT);
   private final PoseEstimation _leftVision = new PoseEstimation(Constants.Vision.LEFT_CAMERA_NAME, Constants.Vision.LEFT_CAMERA_TO_ROBOT);
   private final PoseEstimation _rightVision = new PoseEstimation(Constants.Vision.RIGHT_CAMERA_NAME, Constants.Vision.RIGHT_CAMERA_TO_ROBOT);
+
+  private final Field2d _field = new Field2d();
 
   private ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
 
@@ -90,6 +93,10 @@ public class DriveSubsystem extends SubsystemBase {
     return odometry;
   }
 
+  public Field2d getField() {
+    return _field;
+  }
+
   public void updateSim() {
 
     if (Constants.Vision.USE_CENTER_CAMERA)
@@ -146,6 +153,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     odometry.update(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions());
     actualChassisSpeed = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
+
+    _field.setRobotPose(getPose());
   }
 
   private void updatePoseEstimation(PoseEstimation poseEstimation) {
@@ -454,6 +463,7 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
     builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
+
     builder.addDoubleProperty(
         "Odometry Yaw (deg)", () -> (getPose().getRotation().getDegrees()%360.0), null);
     builder.addDoubleProperty(
