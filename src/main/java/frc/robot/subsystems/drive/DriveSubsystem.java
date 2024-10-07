@@ -2,17 +2,13 @@ package frc.robot.subsystems.drive;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -85,8 +81,6 @@ public class DriveSubsystem extends SubsystemBase {
         Constants.Swerve.ROT_CONTROLLER_KD
     );
 
-    //TODO: currently using default std devs for pose
-    //visualize data to determine what is needed
   SwerveDrivePoseEstimator odometry;
 
   public SwerveDrivePoseEstimator getPoseEstimator() {
@@ -124,13 +118,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     AutoBuilder.configureHolonomic(
         this::getPose,
-        this::resetOdometry,
+        this::resetPose,
         this::getChassisSpeed,
         this::setPathFollowerSpeeds,
         Constants.PathFollowing.holonomicPathFollowerConfig,
         ()->false,
         this);
-
   }
 
   @Override
@@ -154,7 +147,8 @@ public class DriveSubsystem extends SubsystemBase {
     odometry.update(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions());
     actualChassisSpeed = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
 
-    _field.setRobotPose(getPose());
+    if (Constants.LOGGING.SHOW_2D_FIELD)
+      _field.setRobotPose(getPose());
   }
 
   private void updatePoseEstimation(PoseEstimation poseEstimation) {
@@ -214,17 +208,18 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.burnFlashSparks();
   }
 
-  public boolean updateOdometry() {
-    System.out.println("updating odometry");
-    if (canSeeTargets()) {
-        resetYawToAngle(getPose().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
-        resetOdometry(getPose());
-        System.out.println("Updated Odometry");
-        return true;
-    } else {
-      return false;
-    }
-  }
+  //public boolean updateOdometry() {
+    // System.out.println("updating odometry");
+    // if (canSeeTargets()) {
+    //     resetYawToAngle(getEstimatedRobotPose().estimatedPose.getRotation().toRotation2d().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+    //    // resetYawToAngle(getPose().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+    //     resetOdometry(getPose());
+    //     System.out.println("Updated Odometry");
+    //     return true;
+    // } else {
+    //   return false;
+    // }
+  //}
 
   public boolean canSeeTargets() {
     if (Constants.Vision.USE_CENTER_CAMERA && _centerVision.canSeeTargets())
@@ -256,15 +251,16 @@ public class DriveSubsystem extends SubsystemBase {
     odometry.resetPosition(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions(), resetPose);
   }
 
-  // public Pose2d getRobotPose2d(){
-  //   return odometry.getPoseMeters();
-  // }
+  public void resetPose(Pose2d pose) {
+    setGyroYaw(getPose().getRotation().getDegrees());
+    odometry.resetPosition(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions(), pose);
+  }
 
   public double getGyroYaw() {
     // TODO: Handle Gyro Reverse
     return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ? -1 : 1);
   }
-  
+
   public void setGyroYaw(double yawDeg) {
     // I'm not 100% sure on this to be honest
     // Reset it to 0, then add an offset negative what you want.
@@ -283,10 +279,6 @@ public class DriveSubsystem extends SubsystemBase {
     Pose2d resetPose = new Pose2d(curPose.getTranslation(), Rotation2d.fromDegrees(yawDeg));
     odometry.resetPosition(Rotation2d.fromDegrees(yawDeg), getModulePositions(), resetPose);
     targetHeadingDegrees = yawDeg + offsetToTargetDeg;
-  }
-
-  public void resetYaw() {
-    resetYawToAngle(0.0);
   }
 
   public void setWheelOffsets() {

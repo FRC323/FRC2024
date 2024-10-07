@@ -2,30 +2,30 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4291761916857164,
-      "y": 5.54
+      "x": 15.75,
+      "y": 4.38
     },
-    "rotation": 0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Reset Odom"
+            "pathName": "MyHousePathRed"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "ShootAuto"
+            "pathName": "MyHousePathRed2"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Red",
   "choreoAuto": false
 }

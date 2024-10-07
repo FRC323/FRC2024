@@ -36,6 +36,10 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class LOGGING {
+    public static final boolean SHOW_2D_FIELD = true;
+  }
+
   public static final class LED {
     public static final int BLINKIN_PORT = 1;
   }
@@ -71,17 +75,14 @@ public final class Constants {
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-    public static final int APRIL_TAG_PIPELINE = 0;
-    public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
-    public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
     public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.50,5.52);
     public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
 
-    public static final String CENTER_CAMERA_NAME = "CenterCamera";
-    public static final boolean USE_CENTER_CAMERA = false;
-    public static final Transform3d CENTER_CAMERA_TO_ROBOT = new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,Units.degreesToRadians(-25.52),Units.degreesToRadians(180)));
-    //temp location
-    //public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.3302,0.1539,0.2523, new Rotation3d(0.0,Units.degreesToRadians(-25.52),Units.degreesToRadians(180)));
+    public static final String CENTER_CAMERA_NAME = "camera03";
+    public static final boolean USE_CENTER_CAMERA = true;
+    public static final Transform3d CENTER_CAMERA_TO_ROBOT = 
+      new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,Units.degreesToRadians(-25.52),Units.degreesToRadians(180)));
+    
     public static final String RIGHT_CAMERA_NAME = "camera02";
     public static final boolean USE_RIGHT_CAMERA = true;
     public static final Transform3d RIGHT_CAMERA_TO_ROBOT = 
@@ -91,6 +92,12 @@ public final class Constants {
     public static final boolean USE_LEFT_CAMERA = true;
     public static final Transform3d LEFT_CAMERA_TO_ROBOT =
       new Transform3d(-0.285,0.285,0.209, new Rotation3d(0.0,Units.degreesToRadians(-45.0),Units.degreesToRadians(135)));
+
+    public static final String FRONT_CAMERA_NAME = "frontcamera";
+    public static final boolean USE_FRONT_CAMERA = true;
+    //TODO: GET ACCURATE MEASUREMENTS
+    public static final Transform3d FRONT_CAMERA_TO_ROBOT = 
+      new Transform3d(0.1661,0.0,0.4616, new Rotation3d(0.0,Units.degreesToRadians(20),0));
 
     public static Pose2d INIT_SIM_POSE = new Pose2d(new Translation2d(2.55, 5.58), Rotation2d.fromDegrees(45));
   }

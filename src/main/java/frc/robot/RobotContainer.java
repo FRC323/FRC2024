@@ -49,6 +49,7 @@ import frc.robot.commands.ButtonCommands.OuttakeCommand;
 import frc.robot.commands.ButtonCommands.SafeShotCommand;
 import frc.robot.commands.ButtonCommands.ShootCommand;
 import frc.robot.commands.Procedures.AlignArmForShot;
+import frc.robot.commands.Procedures.AlignIntakeForPickup;
 import frc.robot.commands.Procedures.AlignWhileDriving;
 import frc.robot.commands.Procedures.SetIntakeFoldedInternal;
 import frc.robot.commands.Procedures.SetIntakeUnfolded;
@@ -66,7 +67,7 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.led.LedSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -81,6 +82,8 @@ public class RobotContainer {
   public final FeederSubsystem feederSubsystem = new FeederSubsystem();
   public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  public final VisionSubsystem visionSubsystem = 
+    new VisionSubsystem(Constants.Vision.FRONT_CAMERA_NAME, Constants.Vision.FRONT_CAMERA_TO_ROBOT);
 
   private final CommandJoystick m_driveJoystick =
       new CommandJoystick(Constants.DriverConstants.kDriveStickPort);
@@ -99,6 +102,11 @@ public class RobotContainer {
           () -> invertedDriveStick.getAsInt() * m_driveJoystick.getX(),
           () -> Math.pow(m_steerJoystick.getX(), 2) * Math.signum(-m_steerJoystick.getX()));
 
+  private AlignIntakeForPickup alignIntakeForPickup = 
+    new AlignIntakeForPickup(visionSubsystem, driveSubsystem, 
+        () -> invertedDriveStick.getAsInt() * m_driveJoystick.getY(),
+        () -> invertedDriveStick.getAsInt() * m_driveJoystick.getX());
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     addCommandsToAutoChooser();
@@ -110,7 +118,9 @@ public class RobotContainer {
     Shuffleboard.getTab("Subsystems").add(feederSubsystem.getName(), feederSubsystem);
     Shuffleboard.getTab("Subsystems").add(shooterSubsystem.getName(), shooterSubsystem);
     Shuffleboard.getTab("Subsystems").add(intakeSubsystem.getName(), intakeSubsystem);
-    Shuffleboard.getTab("Field").add(driveSubsystem.getField());
+    Shuffleboard.getTab("Subsystems").add(visionSubsystem.getName(), visionSubsystem);
+    if (Constants.LOGGING.SHOW_2D_FIELD)
+        Shuffleboard.getTab("Field").add(driveSubsystem.getField());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     addShuffleBoardData();
@@ -201,7 +211,9 @@ public class RobotContainer {
         // This somehow breaks transitions to other commands ughh
         //.whileFalse(new SetIntakeSpeed(intakeSubsystem, 0))
         .whileTrue(
-            new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
+            new ParallelCommandGroup(
+                new IntakeNote(intakeSubsystem, armSubsystem, feederSubsystem)
+            )   
         );
 
     // Outtake

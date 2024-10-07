@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 15.760642398477781,
-        "y": 4.403900913064984
+        "x": 8.288393068014207,
+        "y": 7.432701005752889
       },
       "prevControl": null,
       "nextControl": {
-        "x": 15.71064239847778,
-        "y": 4.403900913064984
+        "x": 9.288393068014207,
+        "y": 7.432701005752889
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 13.629600417095572,
-        "y": 2.100561920422087
+        "x": 14.935430397176585,
+        "y": 5.573706936887558
       },
       "prevControl": {
-        "x": 13.645411805396412,
-        "y": 2.0531277555195615
+        "x": 13.935430397176585,
+        "y": 5.573706936887558
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,21 +32,21 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.5,
+    "maxVelocity": 4.7,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": 178.36929956627102,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Searcy",
   "previewStartingState": {
-    "rotation": -117.71850162818342,
+    "rotation": -179.96052911276334,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
