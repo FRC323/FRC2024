@@ -26,7 +26,6 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.vision.PoseEstimatorSubsystem;
 import frc.robot.utils.ShotState;
 
 public class ShootAuto extends SequentialCommandGroup{
@@ -35,8 +34,7 @@ public class ShootAuto extends SequentialCommandGroup{
         ArmSubsystem armSubsystem, 
         IntakeSubsystem intakeSubsystem, 
         ShooterSubsystem shooterSubsystem, 
-        FeederSubsystem feederSubsystem, 
-        PoseEstimatorSubsystem poseEstimatorSubsystem
+        FeederSubsystem feederSubsystem
         ){ 
             addCommands(
                 // new CheckIntakeGotoOut(armSubsystem, intakeSubsystem, Intake.SHOOTING_POSE), 
@@ -48,7 +46,7 @@ public class ShootAuto extends SequentialCommandGroup{
                            // new SetArmTarget(armSubsystem, poseEstimatorSubsystem::get_armAngle),
                             new SequentialCommandGroup(
                                 //new AdjustFeederNote(feederSubsystem),
-                                new SetShooterSpeed(shooterSubsystem, poseEstimatorSubsystem::get_shooterSpeed)
+                                new SetShooterSpeed(shooterSubsystem, driveSubsystem.getShotState().get_shooterSpeed())
                             )//,
                             //new TurnToHeading(driveSubsystem, poseEstimatorSubsystem)
                         ),

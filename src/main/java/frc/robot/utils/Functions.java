@@ -9,4 +9,14 @@ public class Functions {
         }
         return false;
     }
+
+    public static boolean isInRange(double value, double minValue, double maxValue) {
+        if (minValue > value) {
+            return false;
+        } else if (maxValue < value) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

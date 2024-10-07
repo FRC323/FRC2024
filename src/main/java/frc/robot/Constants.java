@@ -11,10 +11,18 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -28,6 +36,10 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class LOGGING {
+    public static final boolean SHOW_2D_FIELD = true;
+  }
+
   public static final class LED {
     public static final int BLINKIN_PORT = 1;
   }
@@ -60,16 +72,34 @@ public final class Constants {
   }
 
   public static class Vision {
-    public static final int APRIL_TAG_PIPELINE = 0;
-    public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 25.52;
-    public static final double LIMELIGHT_LENS_HEIGHT_INCHES = 18.17;
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     public static final Translation2d RED_SHOT_TARGET =  new Translation2d(16.50,5.52);
     public static final Translation2d BLUE_SHOT_TARGET = new Translation2d(0.0,5.52);
 
-    //Todo
-    public static final Transform3d BACK_CAMERA_TO_ROBOT = new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,25.52,0.0));
-    public static final Transform3d FRONT_RIGHT_CAMERA_TO_ROBOT = new Transform3d();
-    public static final Transform3d FRONT_LEFT_CAMERA_TO_ROBOT = new Transform3d();
+    public static final String CENTER_CAMERA_NAME = "camera03";
+    public static final boolean USE_CENTER_CAMERA = true;
+    public static final Transform3d CENTER_CAMERA_TO_ROBOT = 
+      new Transform3d(-0.1661,0.0,0.4616, new Rotation3d(0.0,Units.degreesToRadians(-25.52),Units.degreesToRadians(180)));
+    
+    public static final String RIGHT_CAMERA_NAME = "camera02";
+    public static final boolean USE_RIGHT_CAMERA = true;
+    public static final Transform3d RIGHT_CAMERA_TO_ROBOT = 
+      new Transform3d(-0.285,-0.285,0.209, new Rotation3d(0.0,Units.degreesToRadians(-45.0),Units.degreesToRadians(225)));
+
+    public static final String LEFT_CAMERA_NAME = "camera01";
+    public static final boolean USE_LEFT_CAMERA = true;
+    public static final Transform3d LEFT_CAMERA_TO_ROBOT =
+      new Transform3d(-0.285,0.285,0.209, new Rotation3d(0.0,Units.degreesToRadians(-45.0),Units.degreesToRadians(135)));
+
+    public static final String FRONT_CAMERA_NAME = "frontcamera";
+    public static final boolean USE_FRONT_CAMERA = true;
+    //TODO: GET ACCURATE MEASUREMENTS
+    public static final Transform3d FRONT_CAMERA_TO_ROBOT = 
+      new Transform3d(0.1661,0.0,0.4616, new Rotation3d(0.0,Units.degreesToRadians(20),0));
+
+    public static Pose2d INIT_SIM_POSE = new Pose2d(new Translation2d(2.55, 5.58), Rotation2d.fromDegrees(45));
   }
 
   public static final int SPARK_INIT_RETRY_ATTEMPTS = 5;
@@ -170,6 +200,7 @@ public final class Constants {
     //public static double ROT_CONTROLLER_FEEDFWD = Math.PI/8;
 
     public static class Module {
+      public static final int JERK_THRESHOLD = 1000;
       //      TODO: Group these in a sane way
       public static final boolean DRIVING_ENCODER_INVERTED = true;
       public static final double DRIVING_K_P = 0.2; // 0.1

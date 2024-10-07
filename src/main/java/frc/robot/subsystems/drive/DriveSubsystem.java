@@ -1,39 +1,45 @@
 package frc.robot.subsystems.drive;
 
-import com.fasterxml.jackson.core.StreamReadConstraints.Builder;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.PathFollowing;
+import frc.robot.Constants.Vision;
+import frc.robot.subsystems.vision.PoseEstimation;
 import frc.robot.utils.GeometryUtils;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-
+import frc.robot.utils.ShotState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.Preferences;
 
 public class DriveSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
   private double previousTargetHeading = 0;
+    
+  private final PoseEstimation _centerVision = new PoseEstimation(Constants.Vision.CENTER_CAMERA_NAME, Constants.Vision.CENTER_CAMERA_TO_ROBOT);
+  private final PoseEstimation _leftVision = new PoseEstimation(Constants.Vision.LEFT_CAMERA_NAME, Constants.Vision.LEFT_CAMERA_TO_ROBOT);
+  private final PoseEstimation _rightVision = new PoseEstimation(Constants.Vision.RIGHT_CAMERA_NAME, Constants.Vision.RIGHT_CAMERA_TO_ROBOT);
+
+  private final Field2d _field = new Field2d();
+
+  private ShotState shotState = new ShotState(new Rotation2d(0.0), new Rotation2d(0.0), 0.0); 
 
   @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
   private double throttleMultiplier = 1.0;
 
   private ChassisSpeeds lastSetChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   AHRS navx;
-  public final SwerveModule frontLeft =
+  private final SwerveModule frontLeft =
       new SwerveModule(
           Constants.Swerve.FRONT_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_LEFT_TURNING_CAN_ID,
@@ -42,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
               Constants.Swerve.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.FRONT_LEFT_IS_INVERTED);
 
-  public final SwerveModule frontRight =
+  private final SwerveModule frontRight =
       new SwerveModule(
           Constants.Swerve.FRONT_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.FRONT_RIGHT_TURNING_CAN_ID,
@@ -51,7 +57,7 @@ public class DriveSubsystem extends SubsystemBase {
               Constants.Swerve.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.FRONT_RIGHT_IS_INVERTED);
 
-  public final SwerveModule rearLeft =
+  private final SwerveModule rearLeft =
       new SwerveModule(
           Constants.Swerve.REAR_LEFT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_LEFT_TURNING_CAN_ID,
@@ -60,7 +66,7 @@ public class DriveSubsystem extends SubsystemBase {
               Constants.Swerve.REAR_LEFT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.REAR_LEFT_IS_INVERTED);
 
-  public final SwerveModule rearRight =
+  private final SwerveModule rearRight =
       new SwerveModule(
           Constants.Swerve.REAR_RIGHT_DRIVING_CAN_ID,
           Constants.Swerve.REAR_RIGHT_TURNING_CAN_ID,
@@ -69,34 +75,53 @@ public class DriveSubsystem extends SubsystemBase {
               Constants.Swerve.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET_RAD),
           Constants.Swerve.REAR_RIGHT_IS_INVERTED);
 
-  private ChassisSpeeds lastSetChassisSpeed = new ChassisSpeeds(0, 0, 0);
-  private Optional<Pose2d> targetPose = Optional.empty();
-
   private PIDController rotController = new PIDController(
         Constants.Swerve.ROT_CONTROLLER_KP, 
         Constants.Swerve.ROT_CONTROLLER_KI,
         Constants.Swerve.ROT_CONTROLLER_KD
     );
 
-  SwerveDriveOdometry odometry =
-      new SwerveDriveOdometry(
-          Constants.Swerve.DRIVE_KINEMATICS, Rotation2d.fromDegrees(0.0), getModulePositions());
+  SwerveDrivePoseEstimator odometry;
+
+  public SwerveDrivePoseEstimator getPoseEstimator() {
+    return odometry;
+  }
+
+  public Field2d getField() {
+    return _field;
+  }
+
+  public void updateSim() {
+
+    if (Constants.Vision.USE_CENTER_CAMERA)
+      _centerVision.simulationPeriodic(Constants.Vision.INIT_SIM_POSE);
+    if (Constants.Vision.USE_LEFT_CAMERA)
+      _leftVision.simulationPeriodic(Constants.Vision.INIT_SIM_POSE);
+    if (Constants.Vision.USE_RIGHT_CAMERA)
+      _rightVision.simulationPeriodic(Constants.Vision.INIT_SIM_POSE);
+  }
+
   private ChassisSpeeds actualChassisSpeed;
 
   public DriveSubsystem() {
     navx = new AHRS(SerialPort.Port.kMXP);
     actualChassisSpeed = new ChassisSpeeds(0, 0, 0);
     navx.reset();
-    // TODO: Make this in a different initilztion place
 
     rotController.enableContinuousInput(-Math.PI, Math.PI);
+
+    odometry = new SwerveDrivePoseEstimator(
+                Constants.Swerve.DRIVE_KINEMATICS,
+                Rotation2d.fromDegrees(this.getGyroYaw()),
+                this.getModulePositions(),
+                new Pose2d());
+
     AutoBuilder.configureHolonomic(
         this::getPose,
-        this::resetOdometry,
+        this::resetPose,
         this::getChassisSpeed,
         this::setPathFollowerSpeeds,
         Constants.PathFollowing.holonomicPathFollowerConfig,
-        // this::mirrorForRedAlliance,
         ()->false,
         this);
   }
@@ -108,8 +133,57 @@ public class DriveSubsystem extends SubsystemBase {
     frontRight.periodic();
     rearLeft.periodic();
     rearRight.periodic();
+
+    if (Constants.Vision.USE_CENTER_CAMERA)
+      updatePoseEstimation(_centerVision);
+    if (Constants.Vision.USE_LEFT_CAMERA)
+      updatePoseEstimation(_leftVision);
+    if (Constants.Vision.USE_RIGHT_CAMERA)
+      updatePoseEstimation(_rightVision);
+
+    //compute shot state for auto aiming
+    computeShotState();
+
     odometry.update(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions());
     actualChassisSpeed = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
+
+    if (Constants.LOGGING.SHOW_2D_FIELD)
+      _field.setRobotPose(getPose());
+  }
+
+  private void updatePoseEstimation(PoseEstimation poseEstimation) {
+    var estimatedPoseOpt = poseEstimation.getEstimatedGlobalPose();
+    if (PoseEstimation.checkIfValidPose(estimatedPoseOpt)) {
+      var estimatedPose = estimatedPoseOpt.get();
+      var estimatedPose2d = estimatedPose.estimatedPose.toPose2d();
+      getPoseEstimator().addVisionMeasurement(estimatedPose2d, estimatedPose.timestampSeconds, poseEstimation.getEstimationStdDevs(estimatedPose2d));
+    }
+  }
+
+  private void computeShotState(){
+    //Shot Target
+    if(DriverStation.getAlliance().isEmpty()){
+        return;
+    } 
+    var shotTarget = DriverStation.getAlliance().get() == Alliance.Red ? Vision.RED_SHOT_TARGET : Vision.BLUE_SHOT_TARGET;
+
+    //Robot Velocity
+    var robotVelocity = this.getChassisSpeed();
+
+    //dt (Todo: find actual dt)
+    var dt = DriverStation.isAutonomous() ? 0.0 : 0.5;
+
+    this.shotState =  ShotState.computedFromPose(
+        shotTarget,
+        // rangeToTarget,
+        getPose(),
+        robotVelocity,
+        dt
+      );
+  }
+
+  public ShotState getShotState() {
+    return this.shotState;
   }
 
   private SwerveModuleState[] getModuleStates() {
@@ -134,8 +208,31 @@ public class DriveSubsystem extends SubsystemBase {
     rearRight.burnFlashSparks();
   }
 
+  //public boolean updateOdometry() {
+    // System.out.println("updating odometry");
+    // if (canSeeTargets()) {
+    //     resetYawToAngle(getEstimatedRobotPose().estimatedPose.getRotation().toRotation2d().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+    //    // resetYawToAngle(getPose().getRotation().rotateBy(new Rotation2d(Math.PI)).getDegrees());
+    //     resetOdometry(getPose());
+    //     System.out.println("Updated Odometry");
+    //     return true;
+    // } else {
+    //   return false;
+    // }
+  //}
+
+  public boolean canSeeTargets() {
+    if (Constants.Vision.USE_CENTER_CAMERA && _centerVision.canSeeTargets())
+      return true;
+    if (Constants.Vision.USE_LEFT_CAMERA && _leftVision.canSeeTargets())
+      return true;
+    if (Constants.Vision.USE_RIGHT_CAMERA && _rightVision.canSeeTargets())
+      return true;
+    return false;
+  }
+
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return odometry.getEstimatedPosition();
   }
 
   public ChassisSpeeds getChassisSpeed() {
@@ -154,15 +251,16 @@ public class DriveSubsystem extends SubsystemBase {
     odometry.resetPosition(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions(), resetPose);
   }
 
-  public Pose2d getRobotPose2d(){
-    return odometry.getPoseMeters();
+  public void resetPose(Pose2d pose) {
+    setGyroYaw(getPose().getRotation().getDegrees());
+    odometry.resetPosition(Rotation2d.fromDegrees(getGyroYaw()), getModulePositions(), pose);
   }
 
   public double getGyroYaw() {
     // TODO: Handle Gyro Reverse
     return navx.getAngle() * (Constants.Swerve.GYRO_REVERSED ? -1 : 1);
   }
-  
+
   public void setGyroYaw(double yawDeg) {
     // I'm not 100% sure on this to be honest
     // Reset it to 0, then add an offset negative what you want.
@@ -181,10 +279,6 @@ public class DriveSubsystem extends SubsystemBase {
     Pose2d resetPose = new Pose2d(curPose.getTranslation(), Rotation2d.fromDegrees(yawDeg));
     odometry.resetPosition(Rotation2d.fromDegrees(yawDeg), getModulePositions(), resetPose);
     targetHeadingDegrees = yawDeg + offsetToTargetDeg;
-  }
-
-  public void resetYaw() {
-    resetYawToAngle(0.0);
   }
 
   public void setWheelOffsets() {
@@ -361,6 +455,7 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Gyro Yaw (deg)", this::getGyroYaw, null);
     builder.addDoubleProperty("Odometry X (m)", () -> getPose().getX(), null);
     builder.addDoubleProperty("Odometry Y (m)", () -> getPose().getY(), null);
+
     builder.addDoubleProperty(
         "Odometry Yaw (deg)", () -> (getPose().getRotation().getDegrees()%360.0), null);
     builder.addDoubleProperty(
@@ -409,7 +504,12 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty(
         "Front Left: Jerk per Current", () -> frontLeft.getModuleJerktoCurrent(), null);
 
-    builder.addDoubleProperty("lastNonSlippingWheelVelocity", () -> frontLeft.getLastNonSlippingWheelVelocity(), null);
+    if (Constants.Vision.USE_RIGHT_CAMERA)
+      builder.addIntegerArrayProperty("PV Right View", () -> _rightVision.targetsInView().stream().mapToLong(i -> i.getFiducialId()).toArray(), null);
+    if (Constants.Vision.USE_LEFT_CAMERA)
+      builder.addIntegerArrayProperty("PV Left View", () -> _leftVision.targetsInView().stream().mapToLong(i -> i.getFiducialId()).toArray(), null);
+    if (Constants.Vision.USE_CENTER_CAMERA)
+      builder.addIntegerArrayProperty("PV Center View", () -> _centerVision.targetsInView().stream().mapToLong(i -> i.getFiducialId()).toArray(), null);
 
     builder.addDoubleProperty(
         "Front Left Current", () -> Math.abs(frontLeft.getCurrent()), null);
